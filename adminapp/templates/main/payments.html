@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+      <div class="page-wrapper">
+        <div class="content container-fluid">
+          <div class="page-header">
+            <div class="row align-items-center">
+              <div class="col">
+                <h3 class="page-title">Loan Payments</h3>
+                <ul class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="{% url 'payments' %}">Loan Payments</a>
+                  </li>
+                  <li class="breadcrumb-item active">Loan Payment Details</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="card">
+                <div class="card-body">
+                  <!-- Loan Payments Table -->
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Payment Date</th>
+                        <th>Amount Paid</th>
+                        <th>Payment Status</th>
+                        <th>Loan ID</th>
+                        <th>Actions</th>
+                        <!-- Added Actions column -->
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>2024-11-25</td>
+                        <td>Ugx 500</td>
+                        <td>Paid</td>
+                        <td>12345</td>
+                        <td>
+                          <!-- Edit Button -->
+                          <button class="btn btn-primary btn-sm">Edit</button>
+                          <!-- Delete Button -->
+                          <button class="btn btn-danger btn-sm">Delete</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}

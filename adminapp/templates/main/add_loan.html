@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+   {% if messages %}
+  <div>
+    {% for message in messages %}
+      <div style="
+        padding: 12px;
+        margin-bottom: 16px;
+        border-radius: 6px;
+        font-weight: bold;
+        color: #fff !important;
+        background-color: {% if message.tags == 'success' %}#28a745
+                         {% elif message.tags == 'error' or message.tags == 'danger' %}#dc3545
+                         {% elif message.tags == 'warning' %}#ffc107
+                         {% elif message.tags == 'info' %}#17a2b8
+                         {% else %}#6c757d{% endif %} !important;
+        z-index: 9999;
+        position: relative;
+      ">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+
+
+
+      <div class="page-wrapper">
+        <div class="content container-fluid">
+          <div class="page-header">
+            <div class="row align-items-center">
+              <div class="col">
+                <h3 class="page-title">Add Loan</h3>
+                <ul class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="{% url 'loans' %}">Loans</a>
+                  </li>
+                  <li class="breadcrumb-item active">Add Loan</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="card">
+                <div class="card-body">
+                  <form method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                      <!-- Borrower ID Field (Dropdown) -->
+                      <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                          <label for="borrower_id">Select Borrower</label>
+                          <select id="borrower_id" name="borrower_id" class="form-control">
+    {% for borrower in borrowers %}
+      <option value="{{ borrower.id }}">{{ borrower.name }}</option>
+    {% endfor %}
+  </select>
+                        </div>
+                      </div>
+
+                      <!-- Amount Field -->
+                      <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                          <label for="amount">Amount</label>
+                            <input type="number" id="amount" name="amount" class="form-control">
+                        </div>
+                      </div>
+
+                      <!-- Interest Rate Field -->
+                      <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                          <label for="interest_rate">Interest Rate (%)</label>
+                            <input type="number" id="interest_rate" name="interest_rate" class="form-control">
+                        </div>
+                      </div>
+
+                      <!-- Loan Status Field -->
+                      <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                          <label for="loan_status">Loan Status</label>
+                          <select id="loan_status" name="loan_status" class="form-control">
+                            <option value="">Select Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <!-- Submit Button -->
+                      <div class="col-12">
+                        <button type="submit" class="btn btn-primary">
+                          Submit
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+{% endblock content %}

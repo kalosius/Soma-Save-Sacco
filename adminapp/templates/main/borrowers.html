@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+{% if messages %}
+  <div>
+    {% for message in messages %}
+      <div style="
+        padding: 12px;
+        margin-bottom: 16px;
+        border-radius: 6px;
+        font-weight: bold;
+        color: #fff !important;
+        background-color: {% if message.tags == 'success' %}#28a745
+                         {% elif message.tags == 'error' or message.tags == 'danger' %}#dc3545
+                         {% elif message.tags == 'warning' %}#ffc107
+                         {% elif message.tags == 'info' %}#17a2b8
+                         {% else %}#6c757d{% endif %} !important;
+        z-index: 9999;
+        position: relative;
+      ">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col">
+          <h3 class="page-title">Borrowers List</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'loans' %}">Loans</a></li>
+            <li class="breadcrumb-item active">Borrowers</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone Number</th>
+                  <th>Address</th>
+                  <th>Date Joined</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for borrower in borrowers %}
+                <tr>
+                  <td>{{ borrower.name }}</td>
+                  <td>{{ borrower.email }}</td>
+                  <td>{{ borrower.phone }}</td>
+                  <td>{{ borrower.address }}</td>
+                  <td>{{ borrower.date_joined|date:"M d, Y" }}</td>
+                  <td>
+                    <button class="btn btn-primary btn-sm">Edit</button>
+                    <button class="btn btn-danger btn-sm">Delete</button>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="6" class="text-center">No borrowers found.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock content %}
