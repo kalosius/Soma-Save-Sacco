@@ -6,7 +6,13 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
+# account
+@login_required(login_url='login')
+def user_account(request):
+    return render(request, 'main/account.html')
+
 # userprofile
+@login_required(login_url='login')
 def userprofile(request):
     return render(request, 'main/userprofile.html')
 

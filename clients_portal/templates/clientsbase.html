@@ -27,9 +27,9 @@
 
         <!-- Desktop Menu -->
         <nav class="hidden md:flex space-x-6 text-sm font-medium">
-          <a href="#" class="hover:text-blue-600">Dashboard</a>
-          <a href="#" class="hover:text-blue-600">My Profile</a>
-          <a href="#" class="hover:text-blue-600">Accounts</a>
+          <a href="{% url 'client_dashboard' %}" class="hover:text-blue-600">Dashboard</a>
+          <a href="{% url 'userprofile' %}" class="hover:text-blue-600">My Profile</a>
+          <a href="{% url 'account' %}" class="hover:text-blue-600">Accounts</a>
           <a href="#" class="hover:text-blue-600">Loans</a>
           <a href="#" class="hover:text-blue-600">Shares</a>
           <a href="#" class="hover:text-blue-600">My Statement</a>
@@ -54,9 +54,9 @@
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="md:hidden hidden px-4 pb-4 text-sm">
       <ul class="space-y-2">
-        <li><a href="#" class="block">Dashboard</a></li>
-        <li><a href="#" class="block">My Profile</a></li>
-        <li><a href="#" class="block">Accounts</a></li>
+        <li><a href="{% url 'client_dashboard' %}" class="block">Dashboard</a></li>
+        <li><a href="{% url 'userprofile' %}" class="block">My Profile</a></li>
+        <li><a href="{% url 'account' %}" class="block">Accounts</a></li>
         <li><a href="#" class="block">Loans</a></li>
         <li><a href="#" class="block">Shares</a></li>
         <li><a href="#" class="block">My Statement</a></li>
