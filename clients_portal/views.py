@@ -5,6 +5,15 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+# withdrawal
+def withdrawal(request):
+    if request.method == 'POST':
+        amount = request.POST.get('amount')
+        # Here you would typically handle the withdrawal logic
+        messages.success(request, f'Withdrawal of {amount} processed successfully.')
+        return redirect('client_dashboard')
+    return render(request, 'main/withdraw.html')
+
 
 # loan request
 @login_required(login_url='login')

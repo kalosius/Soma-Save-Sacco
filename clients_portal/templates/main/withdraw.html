@@ -1,0 +1,81 @@
+{% extends 'clientsbase.html' %}
+{% block content %}
+
+<div class="max-w-xl mx-auto mt-10 bg-white rounded-lg shadow p-6">
+  <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Withdraw Funds</h2>
+
+  <form action="" method="POST" enctype="multipart/form-data" class="space-y-5">
+    {% csrf_token %}
+
+    <!-- Withdrawal Amount -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="amount">Amount (UGX)</label>
+      <input 
+        type="number" 
+        name="amount" 
+        id="amount" 
+        required
+        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+        placeholder="e.g., 1,000,000"
+      >
+    </div>
+
+    <!-- Withdrawal Method -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="method">Withdrawal Method</label>
+      <select 
+        name="method" 
+        id="method" 
+        required
+        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+      >
+        <option value="">Select Method</option>
+        <option value="mobile_money">Mobile Money</option>
+        <option value="bank_transfer">Bank Transfer</option>
+      </select>
+    </div>
+
+    <!-- Destination Account -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="destination">Destination Account</label>
+      <input 
+        type="text" 
+        name="destination" 
+        id="destination" 
+        required
+        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+        placeholder="Phone number or Bank Account"
+      >
+    </div>
+
+    <!-- Reason for Withdrawal -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="reason">Reason (Optional)</label>
+      <input 
+        type="text" 
+        name="reason" 
+        id="reason" 
+        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+        placeholder="e.g., School Fees"
+      >
+    </div>
+
+    <!-- Withdrawal Fee Information (Optional Static Display) -->
+    <div class="bg-blue-50 text-blue-700 text-sm p-2 rounded border border-blue-300">
+      <strong>Note:</strong> Withdrawal fee of <span class="font-semibold">UGX 2,500</span> applies.
+    </div>
+
+    <!-- Submit Button -->
+    <div class="pt-4">
+      <button 
+        type="submit" 
+        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+      >
+        Submit Withdrawal Request
+      </button>
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}

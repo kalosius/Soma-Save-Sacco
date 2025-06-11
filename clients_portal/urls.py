@@ -12,4 +12,5 @@ urlpatterns = [
     path('client_shares/', views.shares, name='shares'),
     path('mystatement/', views.statement, name='statement'),
     path('loanrequest/', views.loanrequest, name='loanrequest'),
+    path('withdrawal/', views.withdrawal, name='withdrawal'),
 ]
