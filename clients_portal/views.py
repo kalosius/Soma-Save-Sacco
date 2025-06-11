@@ -5,7 +5,14 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+
+# transactions
+@login_required(login_url='login')
+def transactions(request):
+    return render(request, 'main/transactions.html')
+
 # withdrawal
+@login_required(login_url='login')
 def withdrawal(request):
     if request.method == 'POST':
         amount = request.POST.get('amount')

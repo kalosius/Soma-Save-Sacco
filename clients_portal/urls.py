@@ -13,4 +13,5 @@ urlpatterns = [
     path('mystatement/', views.statement, name='statement'),
     path('loanrequest/', views.loanrequest, name='loanrequest'),
     path('withdrawal/', views.withdrawal, name='withdrawal'),
+    path('transactions/', views.transactions, name='transactions')
 ]

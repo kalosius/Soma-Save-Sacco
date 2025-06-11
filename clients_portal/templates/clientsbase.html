@@ -35,7 +35,7 @@
           <a href="{% url 'statement' %}" class="hover:text-blue-600">My Statement</a>
           <a href="{% url 'loanrequest' %}" class="hover:text-blue-600">Loan Requests</a>
           <a href="{% url 'withdrawal' %}" class="hover:text-blue-600">Withdraw Requests</a>
-          <a href="#" class="hover:text-blue-600">Transactions</a>
+          <a href="{% url 'transactions' %}" class="hover:text-blue-600">Transactions</a>
           <a href="#" onclick="showLogoutCard(event)" class="block text-red-500">Log Out</a>
     </nav>
 
@@ -62,7 +62,7 @@
         <li><a href="{% url 'statement' %}" class="block">My Statement</a></li>
         <li><a href="{% url 'loanrequest' %}" class="block">Loan Requests</a></li>
         <li><a href="{% url 'withdrawal' %}" class="block">Withdraw Requests</a></li>
-        <li><a href="#" class="block">Transactions</a></li>
+        <li><a href="{% url 'transactions' %}" class="block">Transactions</a></li>
         <li>
           <a href="#" onclick="showLogoutCard(event)" class="block text-red-500">Log Out</a>
         </li>

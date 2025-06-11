@@ -1,0 +1,90 @@
+{% extends 'clientsbase.html' %}
+{% block content %}
+
+<div class="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow mt-10">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">My Transactions</h2>
+
+  <!-- Filters Section -->
+  <form method="GET" action="{% url 'transactions' %}" class="flex flex-wrap gap-3 mb-6">
+    <input 
+      type="text" 
+      name="search" 
+      placeholder="Search description..." 
+      class="border rounded px-3 py-2 w-full sm:w-auto flex-grow focus:ring focus:ring-blue-400"
+    >
+    <select 
+      name="type" 
+      class="border rounded px-3 py-2 w-full sm:w-auto focus:ring focus:ring-blue-400"
+    >
+      <option value="">All Types</option>
+      <option value="deposit">Deposit</option>
+      <option value="withdrawal">Withdrawal</option>
+      <option value="loan">Loan</option>
+      <option value="share">Share</option>
+    </select>
+    <button 
+      type="submit" 
+      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+    >
+      Filter
+    </button>
+  </form>
+
+  <!-- Transactions Table -->
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-100 text-gray-700">
+        <tr>
+          <th class="px-3 py-2 border">Date</th>
+          <th class="px-3 py-2 border">Type</th>
+          <th class="px-3 py-2 border">Description</th>
+          <th class="px-3 py-2 border text-right">Amount (UGX)</th>
+          <th class="px-3 py-2 border text-right">Balance After</th>
+          <th class="px-3 py-2 border">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for txn in transactions %}
+        <tr class="border-b last:border-b-0 hover:bg-gray-50">
+          <td class="px-3 py-2 border">{{ txn.date|date:"Y-m-d H:i" }}</td>
+          <td class="px-3 py-2 border">{{ txn.type|title }}</td>
+          <td class="px-3 py-2 border">{{ txn.description }}</td>
+          <td class="px-3 py-2 border text-right {% if txn.amount < 0 %}text-red-600{% else %}text-green-600{% endif %}">
+            {{ txn.amount|floatformat:0 }}
+          </td>
+          <td class="px-3 py-2 border text-right text-gray-800">{{ txn.balance_after|floatformat:0 }}</td>
+          <td class="px-3 py-2 border">
+            <span class="inline-block px-2 py-0.5 rounded text-xs 
+              {% if txn.status == 'success' %} bg-green-100 text-green-700 
+              {% elif txn.status == 'pending' %} bg-yellow-100 text-yellow-700 
+              {% else %} bg-red-100 text-red-700 
+              {% endif %}
+            ">
+              {{ txn.status|title }}
+            </span>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center py-4 text-gray-500">No transactions found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination (Optional if needed) -->
+  {% if is_paginated %}
+  <div class="flex justify-between items-center mt-4 text-sm">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}" class="text-blue-600 hover:underline">Previous</a>
+    {% endif %}
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}" class="text-blue-600 hover:underline">Next</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
