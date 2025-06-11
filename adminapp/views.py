@@ -171,3 +171,30 @@ def delete_borrower(request, id):
     borrower.delete()
     messages.success(request, 'Borrower deleted successfully!')
     return redirect('borrowers')
+
+
+# editing and deleting loans
+def edit_loan(request, id):
+    loan = get_object_or_404(Loan, id=id)
+    
+    if request.method == 'POST':
+        try:
+            loan.amount = request.POST.get('amount')
+            loan.interest_rate = request.POST.get('interest_rate')
+            loan.due_date = request.POST.get('due_date')
+            loan.loan_status = request.POST.get('loan_status')
+            loan.save()
+            messages.success(request, 'Loan updated successfully.')
+            return redirect('loans')
+        except Exception as e:
+            messages.error(request, f'Error updating loan: {e}')
+    
+    return render(request, 'edit/edit_loan.html', {'loan': loan})
+
+
+# Delete Loan View
+def delete_loan(request, id):
+    loan = get_object_or_404(Loan, id=id)
+    loan.delete()
+    messages.success(request, 'Loan deleted successfully.')
+    return redirect('loans')

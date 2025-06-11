@@ -13,5 +13,7 @@ urlpatterns = [
 
     # editing and deleting
     path('borrower/edit/<int:id>/', views.edit_borrower, name='edit_borrower'),
-    path('borrower/delete/<int:id>/', views.delete_borrower, name='delete_borrower')
+    path('borrower/delete/<int:id>/', views.delete_borrower, name='delete_borrower'),
+    path('loan/edit/<int:id>/', views.edit_loan, name='edit_loan'),
+    path('loan/delete/<int:id>/', views.delete_loan, name='delete_loan'),
 ]
