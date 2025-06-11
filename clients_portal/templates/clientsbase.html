@@ -36,8 +36,8 @@
           <a href="#" class="hover:text-blue-600">Loan Requests</a>
           <a href="#" class="hover:text-blue-600">Withdraw Requests</a>
           <a href="#" class="hover:text-blue-600">Transactions</a>
-          <a href="{% url 'logout' %}" class="text-red-500 hover:text-red-600">Log Out</a>
-        </nav>
+          <a href="#" onclick="showLogoutCard(event)" class="block text-red-500">Log Out</a>
+    </nav>
 
         <!-- Mobile menu button -->
         <div class="md:hidden">
@@ -63,7 +63,10 @@
         <li><a href="#" class="block">Loan Requests</a></li>
         <li><a href="#" class="block">Withdraw Requests</a></li>
         <li><a href="#" class="block">Transactions</a></li>
-        <li><a href="{% url 'logout' %}" class="block text-red-500">Log Out</a></li>
+        <li>
+          <a href="#" onclick="showLogoutCard(event)" class="block text-red-500">Log Out</a>
+        </li>
+
       </ul>
     </div>
   </header>
@@ -72,6 +75,60 @@
     {% block content %}
     {% endblock %}
 
+
+
+    <div id="logoutCard" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+  <div class="bg-white p-6 rounded-lg shadow-lg transform transition-all scale-95 opacity-0 duration-300 max-w-sm w-full text-center" id="logoutCardInner">
+    <h2 class="text-lg font-semibold mb-4">Are you sure you want to log out?</h2>
+    <form method="post" action="{% url 'logout' %}" onsubmit="showLogoutSpinner()">
+      {% csrf_token %}
+      <div class="flex justify-center gap-4">
+<button type="submit" id="logoutConfirmBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded flex items-center justify-center">
+  <span class="btn-text">Yes, Log Out</span>
+  <svg class="spinner hidden animate-spin h-5 w-5 ml-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+  </svg>
+</button>
+        <button type="button" onclick="hideLogoutCard()" class="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<script>
+  function showLogoutCard(event) {
+    event.preventDefault();
+    const card = document.getElementById('logoutCard');
+    const inner = document.getElementById('logoutCardInner');
+    card.classList.remove('hidden');
+    setTimeout(() => {
+      inner.classList.add('scale-100', 'opacity-100');
+      inner.classList.remove('scale-95', 'opacity-0');
+    }, 10);
+  }
+
+  function hideLogoutCard() {
+    const card = document.getElementById('logoutCard');
+    const inner = document.getElementById('logoutCardInner');
+    inner.classList.add('scale-95', 'opacity-0');
+    inner.classList.remove('scale-100', 'opacity-100');
+    setTimeout(() => {
+      card.classList.add('hidden');
+    }, 300); // match transition duration
+  }
+</script>
+
+<!-- spinnerjs -->
+<script>
+  function showLogoutSpinner() {
+    const btn = document.getElementById('logoutConfirmBtn');
+    btn.disabled = true;
+    btn.querySelector('.btn-text').classList.add('hidden');
+    btn.querySelector('.spinner').classList.remove('hidden');
+  }
+</script>
 
 </body>
 </html>
