@@ -1,0 +1,117 @@
+{% extends 'clientsbase.html' %}
+{% block content %}
+
+<div class="max-w-2xl mx-auto mt-10 bg-white rounded-lg shadow p-6">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Loan Request</h2>
+
+  <form action="" method="POST" enctype="multipart/form-data" class="space-y-5">
+    {% csrf_token %}
+    
+    <!-- Loan Amount -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="amount">Loan Amount (UGX)</label>
+      <input 
+        type="number" 
+        name="amount" 
+        id="amount" 
+        required
+        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+        placeholder="e.g., 5,000,000"
+      >
+    </div>
+
+    <!-- Loan Type -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="loan_type">Loan Type</label>
+      <select 
+        name="loan_type" 
+        id="loan_type" 
+        required
+        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+      >
+        <option value="">Select Loan Type</option>
+        <option value="personal">Personal Loan</option>
+        <option value="business">Business Loan</option>
+        <option value="emergency">Emergency Loan</option>
+        <option value="education">Education Loan</option>
+      </select>
+    </div>
+
+    <!-- Purpose -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="purpose">Purpose of Loan</label>
+      <input 
+        type="text" 
+        name="purpose" 
+        id="purpose" 
+        required
+        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+        placeholder="e.g., Expand my business"
+      >
+    </div>
+
+    <!-- Repayment Period -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="repayment_period">Repayment Period (Months)</label>
+      <input 
+        type="number" 
+        name="repayment_period" 
+        id="repayment_period" 
+        required
+        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+        placeholder="e.g., 12"
+      >
+    </div>
+
+    <!-- Repayment Frequency -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="repayment_frequency">Repayment Frequency</label>
+      <select 
+        name="repayment_frequency" 
+        id="repayment_frequency" 
+        required
+        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+      >
+        <option value="monthly">Monthly</option>
+        <option value="weekly">Weekly</option>
+        <option value="quarterly">Quarterly</option>
+      </select>
+    </div>
+
+    <!-- Attachments (Optional) -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="document">Attach Document (Optional)</label>
+      <input 
+        type="file" 
+        name="document" 
+        id="document" 
+        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+      >
+      <p class="text-xs text-gray-500 mt-1">e.g., collateral proof, ID, or supporting documents</p>
+    </div>
+
+    <!-- Description (Optional) -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="description">Additional Notes (Optional)</label>
+      <textarea 
+        name="description" 
+        id="description" 
+        rows="3"
+        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+        placeholder="Add any relevant details here..."
+      ></textarea>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="pt-4">
+      <button 
+        type="submit"
+        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+      >
+        Submit Loan Request
+      </button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

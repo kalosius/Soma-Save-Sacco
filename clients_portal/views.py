@@ -6,6 +6,16 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
+# loan request
+@login_required(login_url='login')
+def loanrequest(request):
+    return render(request, 'main/loanrequest.html')
+
+# statement
+@login_required(login_url='login')
+def statement(request):
+    return render(request, 'main/mystatement.html')
+
 # shares
 @login_required(login_url='login')
 def shares(request):

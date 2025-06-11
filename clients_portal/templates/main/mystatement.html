@@ -1,0 +1,92 @@
+{% extends 'clientsbase.html' %}
+{% block content %}
+
+<div class="max-w-6xl mx-auto mt-10 bg-white rounded-lg shadow p-6">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6">My Statement</h2>
+
+  <!-- Filters -->
+  <form action="" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <input 
+      type="date" 
+      name="start_date" 
+      class="border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+      placeholder="Start Date"
+    >
+    <input 
+      type="date" 
+      name="end_date" 
+      class="border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+      placeholder="End Date"
+    >
+    <select 
+      name="transaction_type" 
+      class="border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+    >
+      <option value="">All Transactions</option>
+      <option value="deposit">Deposit</option>
+      <option value="withdrawal">Withdrawal</option>
+      <option value="loan_repayment">Loan Repayment</option>
+      <option value="share_purchase">Share Purchase</option>
+      <option value="charge">Charge/Fee</option>
+    </select>
+    <button 
+      type="submit" 
+      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+    >
+      Filter
+    </button>
+  </form>
+
+  <!-- Download -->
+  <div class="flex justify-end mb-4">
+    <a href="" 
+       class="text-blue-600 hover:text-blue-800 text-sm underline"
+    >
+      Download PDF/CSV
+    </a>
+  </div>
+
+  <!-- Statement Table -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full border border-gray-300 text-sm">
+      <thead class="bg-gray-100 text-gray-700">
+        <tr>
+          <th class="border px-3 py-2 text-left">Date</th>
+          <th class="border px-3 py-2 text-left">Transaction</th>
+          <th class="border px-3 py-2 text-left">Reference</th>
+          <th class="border px-3 py-2 text-left">Amount (UGX)</th>
+          <th class="border px-3 py-2 text-left">Balance (UGX)</th>
+          <th class="border px-3 py-2 text-left">Status</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-800">
+        <tr>
+          <td class="border px-3 py-2">2025-06-10</td>
+          <td class="border px-3 py-2">Deposit</td>
+          <td class="border px-3 py-2">TXN-123456</td>
+          <td class="border px-3 py-2 text-green-600 font-medium">+500,000</td>
+          <td class="border px-3 py-2">3,500,000</td>
+          <td class="border px-3 py-2 text-green-700">Completed</td>
+        </tr>
+        <tr>
+          <td class="border px-3 py-2">2025-05-28</td>
+          <td class="border px-3 py-2">Loan Repayment</td>
+          <td class="border px-3 py-2">LN-938372</td>
+          <td class="border px-3 py-2 text-red-600 font-medium">-150,000</td>
+          <td class="border px-3 py-2">3,000,000</td>
+          <td class="border px-3 py-2 text-green-700">Completed</td>
+        </tr>
+        <tr>
+          <td class="border px-3 py-2">2025-05-15</td>
+          <td class="border px-3 py-2">Share Purchase</td>
+          <td class="border px-3 py-2">SHR-55444</td>
+          <td class="border px-3 py-2 text-red-600 font-medium">-750,000</td>
+          <td class="border px-3 py-2">3,150,000</td>
+          <td class="border px-3 py-2 text-green-700">Completed</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
