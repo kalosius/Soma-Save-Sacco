@@ -9,7 +9,6 @@ from django.contrib.auth.decorators import login_required
 def client_dashboard(request): 
     return render(request, 'main/client_dashboard.html')
 
-
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -17,6 +16,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            messages.success(request, f'Welcome! {user.username} Login successful')
             return redirect('client_dashboard')
         else:
             return render(request, 'auth/login.html', {'error': 'Invalid username or password'})

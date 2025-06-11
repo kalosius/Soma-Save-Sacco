@@ -2,6 +2,17 @@
  {% block content %}
  
  
+ {% if messages %}
+   <div class="alert alert-success">
+     {% for message in messages %}
+       <p>{{ message }}</p>
+     {% endfor %}
+   </div>
+ {% endif %}
+
+   <main class="max-w-4xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+
  <!-- Account Section -->
     <div class="bg-white rounded-lg shadow-md p-6">
       <h2 class="text-xl font-semibold mb-2">ACCOUNT</h2>
@@ -32,5 +43,7 @@
       <p>Total Transactions: <strong>48</strong></p>
       <p>Total Transacted Amount: <strong>UGX 35,665,327</strong></p>
     </div>
+
+  </main>
 
 {% endblock %}
