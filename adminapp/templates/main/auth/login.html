@@ -46,7 +46,24 @@
                 <label for="password" class="form-label">Password</label>
                 <input type="password" name="password" class="form-control" required>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Login</button>
+           <button id="loginBtn" type="submit" class="btn btn-primary w-100">
+  <span id="loginBtnText">Login</span>
+  <span id="spinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+</button>
+
+<script>
+  const form = document.querySelector("form");
+  const loginBtn = document.getElementById("loginBtn");
+  const loginBtnText = document.getElementById("loginBtnText");
+  const spinner = document.getElementById("spinner");
+
+  form.addEventListener("submit", function () {
+    loginBtn.disabled = true;
+    spinner.classList.remove("d-none");
+    loginBtnText.textContent = "Logging in...";
+  });
+</script>
+
         </form>
     </div>
 
