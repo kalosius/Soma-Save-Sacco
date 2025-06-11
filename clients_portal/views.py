@@ -6,6 +6,12 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
+# loans
+@login_required(login_url='login')
+def user_loans(request):
+    return render(request, 'main/user_loans.html')
+
+
 # account
 @login_required(login_url='login')
 def user_account(request):
