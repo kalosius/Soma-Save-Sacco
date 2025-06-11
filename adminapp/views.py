@@ -151,3 +151,23 @@ def reports(request):
 
 
 
+# editing and deleting
+def edit_borrower(request, id):
+    borrower = get_object_or_404(Borrower, id=id)
+    if request.method == 'POST':
+        # Update borrower information
+        borrower.name = request.POST.get('name')
+        borrower.email = request.POST.get('email')
+        borrower.phone = request.POST.get('phone')
+        borrower.address = request.POST.get('address')
+        borrower.save()
+        messages.success(request, 'Borrower updated successfully!')
+        return redirect('borrowers')
+    return render(request, 'edit/edit_borrower.html', {'borrower': borrower})
+
+
+def delete_borrower(request, id):
+    borrower = get_object_or_404(Borrower, id=id)
+    borrower.delete()
+    messages.success(request, 'Borrower deleted successfully!')
+    return redirect('borrowers')

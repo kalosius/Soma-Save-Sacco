@@ -10,4 +10,8 @@ urlpatterns = [
     path('borrowers/', views.borrowers, name='borrowers'),
     path('payments/', views.payments, name='payments'),
     path('reports/', views.reports, name='reports'),
+
+    # editing and deleting
+    path('borrower/edit/<int:id>/', views.edit_borrower, name='edit_borrower'),
+    path('borrower/delete/<int:id>/', views.delete_borrower, name='delete_borrower')
 ]
