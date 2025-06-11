@@ -19,7 +19,7 @@
     <h2 class="text-center text-lg font-semibold text-gray-700 mb-6">CLIENT'S PORTAL</h2>
 
     <!-- Login Form -->
-    <form method="POST" action="" class="space-y-4">
+    <form method="POST" action="" class="space-y-4" onsubmit="handleLoginSubmit(this)">
       {% csrf_token %}
       {% if error %}
         <p class="text-red-600 text-sm">{{ error }}</p>
@@ -36,9 +36,16 @@
         <a href="#" class="text-sm text-blue-600 hover:underline">Forgot Password?</a>
       </div>
       <div>
-        <button type="submit"
-          class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300">LOG IN</button>
-      </div>
+        <button type="submit" id="loginBtn"
+    class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300 flex items-center justify-center relative"
+  >
+    <span class="btn-text">LOG IN</span>
+    <svg class="spinner hidden animate-spin h-5 w-5 ml-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>
+  </button>
+</div>
     </form>
 
     <!-- Footer -->
@@ -46,6 +53,17 @@
       Copyright © 2024 Soma Save Sacco Plus. All Rights Reserved.
     </p>
   </div>
+
+
+
+  <script>
+  function handleLoginSubmit(form) {
+    const btn = form.querySelector("#loginBtn");
+    btn.disabled = true;
+    btn.querySelector(".btn-text").classList.add("hidden");
+    btn.querySelector(".spinner").classList.remove("hidden");
+  }
+</script>
 
 </body>
 </html>
