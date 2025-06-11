@@ -5,6 +5,13 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+
+# userprofile
+def userprofile(request):
+    return render(request, 'main/userprofile.html')
+
+
+# dashboard
 @login_required(login_url='login')
 def client_dashboard(request): 
     return render(request, 'main/client_dashboard.html')
