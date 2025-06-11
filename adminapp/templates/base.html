@@ -106,7 +106,11 @@
                   alt="Soeng Souy"
                 />
                 <div class="user-text">
-                  <h6>Alinda</h6>
+                 {% if request.user.is_authenticated %}
+  <h6>{{ request.user.first_name|default:request.user.username|capfirst }}</h6>
+{% else %}
+  <h6>Guest</h6>
+{% endif %}  
                   <p class="text-muted mb-0">Administrator</p>
                 </div>
               </span>
@@ -121,13 +125,16 @@
                   />
                 </div>
                 <div class="user-text">
-                  <h6>Mark</h6>
-                  <p class="text-muted mb-0">Administrator</p>
+{% if request.user.is_authenticated %}
+  <h6>{{ request.user.first_name|default:request.user.username|capfirst }}</h6>
+{% else %}
+  <h6>Guest</h6>
+{% endif %}                  <p class="text-muted mb-0">Administrator</p>
                 </div>
               </div>
               <a class="dropdown-item" href="profile.html">My Profile</a>
               <a class="dropdown-item" href="inbox.html">Inbox</a>
-              <a class="dropdown-item" href="login.html">Logout</a>
+              <a class="dropdown-item" href="{% url 'admin_logout' %}">Logout</a>
             </div>
           </li>
         </ul>

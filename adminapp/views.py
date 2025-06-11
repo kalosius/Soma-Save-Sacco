@@ -5,9 +5,15 @@ from django.utils import timezone
 from datetime import timedelta
 from datetime import datetime
 from django.db.models import Sum, Count
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
+
 
 
 # Create your views here.
+@login_required(login_url='admin_login')
 def dashboard(request):
     # Card Data
     active_loans_count = Loan.objects.filter(loan_status='Approved').count()
@@ -36,6 +42,7 @@ def dashboard(request):
 
 
 # adding a borrower
+@login_required(login_url='admin_login')
 def add_borrower(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -63,6 +70,7 @@ def add_borrower(request):
     return render(request, 'main/add_borrower.html')
 
 # all borrowers display
+@login_required(login_url='admin_login')
 def borrowers(request):
     all_borrowers = Borrower.objects.all()
     return render(request, 'main/borrowers.html', {'borrowers': all_borrowers})
@@ -70,6 +78,7 @@ def borrowers(request):
 
 
 # adding a loan
+@login_required(login_url='admin_login')
 def add_loan(request):
     borrowers = Borrower.objects.all()
 
@@ -97,15 +106,18 @@ def add_loan(request):
     return render(request, 'main/add_loan.html', {'borrowers': borrowers})
 
 
+@login_required(login_url='admin_login')
 def loans(request):
     loans = Loan.objects.select_related('borrower').all()
     return render(request, 'main/loans.html', {'loans': loans})
 
+@login_required(login_url='admin_login')
 def payments(request):
     return render(request, 'main/payments.html')
 
 
 # making a loan payment
+@login_required(login_url='admin_login')
 def add_payment(request):
     if request.method == 'POST':
         loan_code = request.POST.get('loan_code')
@@ -145,6 +157,9 @@ def add_payment(request):
 
     return render(request, 'main/add_payment.html')
 
+
+
+@login_required(login_url='admin_login')
 def reports(request):
     return render(request, 'main/reports.html')
 
@@ -152,6 +167,7 @@ def reports(request):
 
 
 # editing and deleting
+@login_required(login_url='admin_login')
 def edit_borrower(request, id):
     borrower = get_object_or_404(Borrower, id=id)
     if request.method == 'POST':
@@ -166,6 +182,7 @@ def edit_borrower(request, id):
     return render(request, 'edit/edit_borrower.html', {'borrower': borrower})
 
 
+@login_required(login_url='admin_login')
 def delete_borrower(request, id):
     borrower = get_object_or_404(Borrower, id=id)
     borrower.delete()
@@ -174,6 +191,7 @@ def delete_borrower(request, id):
 
 
 # editing and deleting loans
+@login_required(login_url='admin_login')
 def edit_loan(request, id):
     loan = get_object_or_404(Loan, id=id)
     
@@ -193,8 +211,38 @@ def edit_loan(request, id):
 
 
 # Delete Loan View
+@login_required(login_url='admin_login')
 def delete_loan(request, id):
     loan = get_object_or_404(Loan, id=id)
     loan.delete()
     messages.success(request, 'Loan deleted successfully.')
     return redirect('loans')
+
+
+
+
+
+
+# admin only form
+
+def admin_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None and (user.is_staff or user.is_superuser):
+            login(request, user)
+            messages.success(request, f'Welcome back, {user.username.capitalize()}!')
+            return redirect('dashboard')  # Change this to your desired admin landing page
+        else:
+            messages.error(request, 'Invalid credentials or not authorized as admin.')
+            return redirect('admin_login')
+    return render(request, 'main/auth/login.html')
+
+
+@login_required(login_url='admin_login')
+def admin_logout(request):
+    logout(request)
+    messages.info(request, "You have been logged out.")
+    return redirect('admin_login')

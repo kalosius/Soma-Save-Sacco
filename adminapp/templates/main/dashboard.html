@@ -10,7 +10,16 @@
             <div class="row">
               <div class="col-sm-12">
                 <div class="page-sub-header">
-                  <h3 class="page-title">Welcome Alinda!</h3>
+                   {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+                  <h3 class="page-title">Hi {{ request.user.first_name|default:request.user.username|capfirst }}!</h3>
+
                 </div>
               </div>
             </div>

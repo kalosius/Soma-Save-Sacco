@@ -16,4 +16,8 @@ urlpatterns = [
     path('borrower/delete/<int:id>/', views.delete_borrower, name='delete_borrower'),
     path('loan/edit/<int:id>/', views.edit_loan, name='edit_loan'),
     path('loan/delete/<int:id>/', views.delete_loan, name='delete_loan'),
+
+    # adminforms
+    path('admin-login/', views.admin_login, name='admin_login'),
+    path('admin-logout/', views.admin_logout, name='admin_logout'),
 ]
