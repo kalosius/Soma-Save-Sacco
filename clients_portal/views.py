@@ -126,7 +126,7 @@ def logout_view(request):
 
 
 
-# editing User Profile
+# editing User Profile and updating all details....................................
 @login_required
 def edit_profile(request):
     borrower = request.user.borrower_profile  # related_name in Borrower model
@@ -160,10 +160,25 @@ def edit_profile(request):
         borrower.save()
 
         messages.success(request, "Profile updated successfully.")
-        return redirect('edit_profile')  # or your actual profile url name
+        return redirect('userprofile')  # or your actual profile url name
 
     context = {
         'borrower': borrower,
         'user': request.user,
     }
     return render(request, 'edit/editprofile.html', context)
+
+
+# uploading profile image
+@login_required
+def upload_photo(request):
+    if request.method == 'POST' and request.FILES.get('photo'):
+        photo = request.FILES['photo']
+        borrower = request.user.borrower_profile
+        borrower.photo = photo  # assuming your Borrower model has a ImageField named 'photo'
+        borrower.save()
+        messages.success(request, "Profile photo updated successfully.")
+        return redirect('userprofile')  # or your profile page url name
+
+    return render(request, 'edit/upload_photo.html')
+

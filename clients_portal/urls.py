@@ -15,7 +15,9 @@ urlpatterns = [
     path('withdrawal/', views.withdrawal, name='withdrawal'),
     path('transactions/', views.transactions, name='transactions'),
 
-    # editing profile
+    # updating profile
     path('profile/edit/', views.edit_profile, name='edit_profile'),
+    path('profile/upload-photo/', views.upload_photo, name='upload_photo'),
+
 
 ]
