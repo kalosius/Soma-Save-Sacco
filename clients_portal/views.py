@@ -105,18 +105,40 @@ def client_dashboard(request):
 
 
 
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.shortcuts import render, redirect
+
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
+        identifier = request.POST.get('username')  # could be username or email
         password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
+
+        # Try to find a user by email if input looks like an email
+        if '@' in identifier:
+            try:
+                user_obj = User.objects.get(email=identifier)
+                username = user_obj.username
+            except User.DoesNotExist:
+                username = None
+        else:
+            username = identifier
+
+        if username:
+            user = authenticate(request, username=username, password=password)
+        else:
+            user = None
+
         if user is not None:
             login(request, user)
             messages.success(request, f'Welcome! {user.username} Login successful')
             return redirect('client_dashboard')
         else:
-            return render(request, 'auth/login.html', {'error': 'Invalid username or password'})
+            return render(request, 'auth/login.html', {'error': 'Invalid username/email or password'})
+    
     return render(request, 'auth/login.html')
+
 
 
 User = get_user_model()
