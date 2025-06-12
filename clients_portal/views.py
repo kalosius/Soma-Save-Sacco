@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from .models import ShareTransaction
 from django.contrib.auth.models import User
-from adminapp.models import Loan, Payment, Borrower
+from adminapp.models import Loan, Payment, Borrower, RepaymentSchedule
 from django.db.models import Sum
 
 
@@ -83,7 +83,16 @@ def shares(request):
 # User loans
 @login_required(login_url='login')
 def user_loans(request):
-    borrower = get_object_or_404(Borrower, user=request.user)
+    try:
+        borrower = Borrower.objects.get(user=request.user)
+    except Borrower.DoesNotExist:
+        # Optional: redirect to borrower registration form
+        # return redirect('add_borrower')
+
+        # OR: Show a template with a message
+        return render(request, 'main/user_loans.html', {
+            'message': 'You have not applied for any loans yet.',
+        })
 
     loans = Loan.objects.filter(borrower=borrower)
     active_loans = loans.filter(loan_status='Approved')
@@ -93,14 +102,27 @@ def user_loans(request):
     total_repaid = payments.aggregate(Sum('amount'))['amount__sum'] or 0
     outstanding_balance = total_borrowed - total_repaid
 
+    # Prepare repayment schedules per loan
+  # Flattened structure for template looping
+    loan_schedule_data = []
+
+    for loan in loans:
+        loan_schedules = RepaymentSchedule.objects.filter(loan=loan).order_by('due_date')
+        loan_schedule_data.append({
+            'loan': loan,
+            'schedules': loan_schedules
+        })
+
     context = {
         'active_loans': active_loans,
-        'loans': loans,
-        'total_borrowed': total_borrowed,
-        'total_repaid': total_repaid,
-        'outstanding_balance': outstanding_balance,
+    'loans': loans,
+    'total_borrowed': total_borrowed,
+    'total_repaid': total_repaid,
+    'outstanding_balance': outstanding_balance,
+    'loan_schedule_data': loan_schedule_data,
     }
     return render(request, 'main/user_loans.html', context)
+
 
 # account
 @login_required(login_url='login')

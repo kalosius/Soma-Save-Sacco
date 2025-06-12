@@ -70,3 +70,19 @@ class Report(models.Model):
 
     def __str__(self):
         return f"Report for {self.borrower} on {self.report_date.strftime('%Y-%m-%d')}"
+
+
+# Repayment schedule
+class RepaymentSchedule(models.Model):
+    loan = models.ForeignKey(Loan, on_delete=models.CASCADE)
+    installment_number = models.IntegerField()
+    due_date = models.DateField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=20, choices=[
+        ('Paid', 'Paid'),
+        ('Upcoming', 'Upcoming'),
+        ('Overdue', 'Overdue')
+    ])
+
+    def __str__(self):
+        return f"Loan {self.loan.id} - Installment {self.installment_number}"
