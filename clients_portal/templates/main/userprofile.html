@@ -12,8 +12,10 @@
         class="w-32 h-32 rounded-md object-cover"
       >
       <div class="mt-4 space-y-2 w-full text-center">
-        <button class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Change Password</button>
+        <button class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Change Password</button><br>
+      <a href="{% url 'edit_profile' %}">
         <button class="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 text-sm">Edit Profile</button>
+      </a>
         <button class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">Upload New Photo</button>
       </div>
     </div>

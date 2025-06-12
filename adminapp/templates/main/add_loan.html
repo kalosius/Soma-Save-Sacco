@@ -57,7 +57,7 @@
                           <label for="borrower_id">Select Borrower</label>
                           <select id="borrower_id" name="borrower_id" class="form-control">
     {% for borrower in borrowers %}
-      <option value="{{ borrower.id }}">{{ borrower.name }}</option>
+      <option value="{{ borrower.id }}">{{ borrower.user.get_full_name }}</option>
     {% endfor %}
   </select>
                         </div>

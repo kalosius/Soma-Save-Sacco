@@ -122,3 +122,48 @@ def register_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+
+
+
+# editing User Profile
+@login_required
+def edit_profile(request):
+    borrower = request.user.borrower_profile  # related_name in Borrower model
+
+    if request.method == "POST":
+        # Get form data
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        email = request.POST.get('email', '').strip()
+        date_of_birth = request.POST.get('date_of_birth', '').strip()
+        gender = request.POST.get('gender', '').strip()
+        next_of_kin = request.POST.get('next_of_kin', '').strip()
+        address = request.POST.get('address', '').strip()
+        national_id = request.POST.get('national_id', '').strip()
+
+        # Update user fields
+        user = request.user
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+        user.date_of_birth = date_of_birth if date_of_birth else None
+        user.gender = gender
+        user.next_of_kin = next_of_kin
+        user.national_id = national_id
+        user.phone_number = phone  # update phone_number on user, NOT borrower.phone (which is a property)
+        user.save()
+
+        # Update borrower fields
+        borrower.address = address
+        borrower.save()
+
+        messages.success(request, "Profile updated successfully.")
+        return redirect('edit_profile')  # or your actual profile url name
+
+    context = {
+        'borrower': borrower,
+        'user': request.user,
+    }
+    return render(request, 'edit/editprofile.html', context)

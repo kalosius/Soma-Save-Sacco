@@ -13,5 +13,9 @@ urlpatterns = [
     path('mystatement/', views.statement, name='statement'),
     path('loanrequest/', views.loanrequest, name='loanrequest'),
     path('withdrawal/', views.withdrawal, name='withdrawal'),
-    path('transactions/', views.transactions, name='transactions')
+    path('transactions/', views.transactions, name='transactions'),
+
+    # editing profile
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
+
 ]
