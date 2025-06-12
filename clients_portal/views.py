@@ -3,8 +3,13 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
-from adminapp.models import Borrower
 from .models import ShareTransaction
+from django.contrib.auth.models import User
+from adminapp.models import Loan, Payment, Borrower
+from django.db.models import Sum
+
+
+
 
 # Create your views here.
 
@@ -75,11 +80,27 @@ def shares(request):
     return render(request, 'main/shares.html', context)
 
 
-# loans
+# User loans
 @login_required(login_url='login')
 def user_loans(request):
-    return render(request, 'main/user_loans.html')
+    borrower = get_object_or_404(Borrower, user=request.user)
 
+    loans = Loan.objects.filter(borrower=borrower)
+    active_loans = loans.filter(loan_status='Approved')
+    payments = Payment.objects.filter(borrower=borrower)
+
+    total_borrowed = loans.aggregate(Sum('amount'))['amount__sum'] or 0
+    total_repaid = payments.aggregate(Sum('amount'))['amount__sum'] or 0
+    outstanding_balance = total_borrowed - total_repaid
+
+    context = {
+        'active_loans': active_loans,
+        'loans': loans,
+        'total_borrowed': total_borrowed,
+        'total_repaid': total_repaid,
+        'outstanding_balance': outstanding_balance,
+    }
+    return render(request, 'main/user_loans.html', context)
 
 # account
 @login_required(login_url='login')
@@ -105,10 +126,7 @@ def client_dashboard(request):
 
 
 
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
-from django.contrib import messages
-from django.shortcuts import render, redirect
+
 
 def login_view(request):
     if request.method == 'POST':
