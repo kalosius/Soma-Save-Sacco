@@ -4,17 +4,53 @@ from .models import Borrower, Loan, Payment, Report
 from django.utils import timezone
 from datetime import timedelta
 from datetime import datetime
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, F, Value, CharField
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.db.models.functions import Concat
+from django.contrib.auth import get_user_model
+from django.utils.crypto import get_random_string
+
 
 
 
 
 # Create your views here.
+
 @login_required(login_url='admin_login')
 def dashboard(request):
+    active_loans_count = Loan.objects.filter(loan_status='Approved').count()
+    repaid_loans_count = Payment.objects.values('loan').distinct().count()
+    loan_applications_count = Loan.objects.count()
+    total_revenue = Payment.objects.aggregate(total=Sum('amount'))['total'] or 0
+
+    # Top Borrowers with related user fields
+    top_borrowers = (
+        Loan.objects.select_related('borrower__user')
+        .annotate(
+            borrower_name=Concat(
+                F('borrower__user__first_name'),
+                Value(' '),
+                F('borrower__user__last_name'),
+                output_field=CharField()
+            )
+        )
+        .order_by('-amount')[:5]
+    )
+
+    recent_activities = Payment.objects.select_related('borrower__user', 'loan').order_by('-payment_date')[:5]
+
+    return render(request, 'main/dashboard.html', {
+        'active_loans': active_loans_count,
+        'repaid_loans': repaid_loans_count,
+        'loan_applications': loan_applications_count,
+        'total_revenue': total_revenue,
+        'top_borrowers': top_borrowers,
+        'recent_activities': recent_activities,
+    })
+
     # Card Data
     active_loans_count = Loan.objects.filter(loan_status='Approved').count()
     repaid_loans_count = Payment.objects.values('loan').distinct().count()
@@ -41,33 +77,38 @@ def dashboard(request):
     })
 
 
+
 # adding a borrower
+User = get_user_model()
 @login_required(login_url='admin_login')
 def add_borrower(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
+        user_id = request.POST.get('user_id')
         address = request.POST.get('address')
 
-        if name and email and phone and address:
-            # Add uniqueness check for email or phone
-            if Borrower.objects.filter(email=email).exists():
-                messages.error(request, 'Email already exists.')
-            elif Borrower.objects.filter(phone=phone).exists():
-                messages.error(request, 'Phone number already exists.')
-            else:
-                Borrower.objects.create(
-                    name=name,
-                    email=email,
-                    phone=phone,
-                    address=address
-                )
-                messages.success(request, 'Borrower added successfully!')
-                return redirect('borrowers') 
-        else:
+        if not user_id or not address:
             messages.error(request, 'All fields are required.')
-    return render(request, 'main/add_borrower.html')
+            return redirect('add_borrower')
+
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            messages.error(request, 'Selected user does not exist.')
+            return redirect('add_borrower')
+
+        if Borrower.objects.filter(user=user).exists():
+            messages.error(request, 'This user is already registered as a borrower.')
+        else:
+            Borrower.objects.create(user=user, address=address)
+            messages.success(request, 'Borrower added successfully!')
+            return redirect('borrowers')
+
+    # Get users who are NOT already borrowers
+    borrower_user_ids = Borrower.objects.values_list('user_id', flat=True)
+    available_users = User.objects.exclude(id__in=borrower_user_ids)
+
+    return render(request, 'main/add_borrower.html', {'users': available_users})
+
 
 # all borrowers display
 @login_required(login_url='admin_login')
@@ -165,23 +206,44 @@ def reports(request):
 
 
 
-
-# editing and deleting
+# editing borrower
 @login_required(login_url='admin_login')
 def edit_borrower(request, id):
     borrower = get_object_or_404(Borrower, id=id)
+    user = borrower.user
+
     if request.method == 'POST':
-        # Update borrower information
-        borrower.name = request.POST.get('name')
-        borrower.email = request.POST.get('email')
-        borrower.phone = request.POST.get('phone')
-        borrower.address = request.POST.get('address')
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone_number = request.POST.get('phone')
+        address = request.POST.get('address')
+
+        # Check if email already exists for another user
+        if User.objects.filter(email=email).exclude(id=user.id).exists():
+            messages.error(request, 'Email already exists.')
+            return render(request, 'edit/edit_borrower.html', {'borrower': borrower})
+
+        # Check if phone number already exists for another user
+        if User.objects.filter(phone_number=phone_number).exclude(id=user.id).exists():
+            messages.error(request, 'Phone number already exists.')
+            return render(request, 'edit/edit_borrower.html', {'borrower': borrower})
+
+        # Update User fields
+        user.first_name = name
+        user.email = email
+        user.phone_number = phone_number
+        user.save()
+
+        # Update Borrower fields
+        borrower.address = address
         borrower.save()
+
         messages.success(request, 'Borrower updated successfully!')
         return redirect('borrowers')
+
     return render(request, 'edit/edit_borrower.html', {'borrower': borrower})
 
-
+# deleting borrower
 @login_required(login_url='admin_login')
 def delete_borrower(request, id):
     borrower = get_object_or_404(Borrower, id=id)

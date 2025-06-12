@@ -1,15 +1,17 @@
 from django.contrib import admin
-from . models import Borrower, Loan, Payment, Report
-# Register your models here.
-admin.site.site_header = "SomaSave SACCO Admin"
-admin.site.site_title = "SomaSave SACCO Admin Portal"
-admin.site.index_title = "Welcome to SomaSave SACCO Admin Portal"
-
-
+from .models import Borrower, Loan, Payment, Report
 
 @admin.register(Borrower)
 class BorrowerAdmin(admin.ModelAdmin):
-    list_display = ['name', 'email']  # customize fields here
+    list_display = ['get_name', 'get_email', 'address', 'date_joined']
+
+    def get_name(self, obj):
+        return obj.user.get_full_name()
+    get_name.short_description = 'Name'
+
+    def get_email(self, obj):
+        return obj.user.email
+    get_email.short_description = 'Email'
 
 @admin.register(Loan)
 class LoanAdmin(admin.ModelAdmin):

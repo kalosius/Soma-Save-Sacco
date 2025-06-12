@@ -2,193 +2,170 @@
 {% load static %}
 {% load humanize %}
 
-
 {% block content %}
 <div class="page-wrapper">
-        <div class="content container-fluid">
-          <div class="page-header">
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="page-sub-header">
-                   {% if messages %}
-            {% for message in messages %}
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="page-sub-header">
+            {% if messages %}
+              {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            {% endfor %}
-        {% endif %}
-                  <h3 class="page-title">Hi {{ request.user.first_name|default:request.user.username|capfirst }}!</h3>
-
-                </div>
-              </div>
-            </div>
+              {% endfor %}
+            {% endif %}
+            <h3 class="page-title">Hi {{ request.user.first_name|default:request.user.username|capfirst }}!</h3>
           </div>
+        </div>
+      </div>
+    </div>
 
-          <div class="row">
-            <!-- Active Loans Card -->
-            <div class="col-xl-3 col-sm-6 col-12 d-flex">
-              <div class="card bg-comman w-100">
-                <div class="card-body">
-                  <div
-                    class="db-widgets d-flex justify-content-between align-items-center"
-                  >
-                    <div class="db-info">
-                      <h6>Active Loans</h6>
-                      <h3>{{ active_loans }}</h3>
-                    </div>
-                    <div class="custom-icon">
-                      <i class="fa fa-credit-card" aria-hidden="true"></i>
-                      <!-- Active Loans Icon -->
-                    </div>
-                  </div>
-                </div>
+    <div class="row">
+      <!-- Active Loans Card -->
+      <div class="col-xl-3 col-sm-6 col-12 d-flex">
+        <div class="card bg-comman w-100">
+          <div class="card-body">
+            <div class="db-widgets d-flex justify-content-between align-items-center">
+              <div class="db-info">
+                <h6>Active Loans</h6>
+                <h3>{{ active_loans }}</h3>
               </div>
-            </div>
-            <!-- Repaid Loans Card -->
-            <div class="col-xl-3 col-sm-6 col-12 d-flex">
-              <div class="card bg-comman w-100">
-                <div class="card-body">
-                  <div
-                    class="db-widgets d-flex justify-content-between align-items-center"
-                  >
-                    <div class="db-info">
-                      <h6>Repaid Loans</h6>
-                      <h3>{{ repaid_loans }}</h3>
-                    </div>
-                    <div class="custom-icon">
-                      <i class="fa fa-check-circle" aria-hidden="true"></i>
-                      <!-- Repaid Loans Icon -->
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- Loan Applications Card -->
-            <div class="col-xl-3 col-sm-6 col-12 d-flex">
-              <div class="card bg-comman w-100">
-                <div class="card-body">
-                  <div
-                    class="db-widgets d-flex justify-content-between align-items-center"
-                  >
-                    <div class="db-info">
-                      <h6>Loan Applications</h6>
-                      <h3>{{ loan_applications }}</h3>
-                    </div>
-                    <div class="custom-icon">
-                      <i class="fa fa-clipboard-list" aria-hidden="true"></i>
-                      <!-- Alternative Loan Applications Icon -->
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Total Revenue Card -->
-            <div class="col-xl-3 col-sm-6 col-12 d-flex">
-              <div class="card bg-comman w-100">
-                <div class="card-body">
-                  <div
-                    class="db-widgets d-flex justify-content-between align-items-center"
-                  >
-                    <div class="db-info">
-                      <h6>Total Revenue</h6>
-                      <h3>UGX {{ total_revenue|floatformat:0 }}</h3>
-                    </div>
-                    <div class="custom-icon">
-                      <i class="fa fa-dollar-sign" aria-hidden="true"></i>
-                      <!-- Alternative Revenue Icon -->
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <!-- Top Borrowers Card -->
-            <div class="col-xl-6 d-flex">
-              <div class="card flex-fill loan-space comman-shadow">
-                <div class="card-header d-flex align-items-center">
-                  <h5 class="card-title">Top Borrowers</h5>
-                  <ul class="chart-list-out loan-ellips">
-                    <li class="loan-menus">
-                      <a href="javascript:void(0);"
-                        ><i class="fas fa-ellipsis-v"></i
-                      ></a>
-                    </li>
-                  </ul>
-                </div>
-                <div class="card-body">
-                  <div class="table-responsive">
-                    <table
-                      class="table top-borrowers table-hover table-center table-borderless table-striped"
-                    >
-                      <thead class="thead-light">
-                        <tr>
-                          <th>Loan ID</th>
-                          <th>Borrower Name</th>
-                          <th class="text-center">Loan Amount</th>
-                          <th class="text-center">Interest Rate</th>
-                          <th class="text-end">Loan Year</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for loan in top_borrowers %}
-<tr>
-  <td class="text-nowrap">{{ loan.loan_code }}</td>
-  <td class="text-nowrap">
-    <a href="#">{{ loan.borrower__name }}</a>
-  </td>
-  <td class="text-center">Ugx {{ loan.amount }}</td>
-  <td class="text-center">{{ loan.interest_rate }}%</td>
-  <td class="text-end">{{ loan.start_date.year }}</td>
-</tr>
-{% endfor %}
-
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Recent Loan Activities Card -->
-            <div class="col-xl-6 d-flex">
-              <div class="card flex-fill comman-shadow">
-                <div class="card-header d-flex align-items-center">
-                  <h5 class="card-title">Recent Loan Activities</h5>
-                  <ul class="chart-list-out loan-ellips">
-                    <li class="loan-menus">
-                      <a href="javascript:void(0);"
-                        ><i class="fas fa-ellipsis-v"></i
-                      ></a>
-                    </li>
-                  </ul>
-                </div>
-                <div class="card-body">
-                  <div class="activity-groups">
-                    {% for activity in recent_activities %}
-<div class="activity-awards">
-  <div class="award-list-outs">
-    <h4>Payment Received</h4>
-    <h5>{{ activity.borrower.name }} made a payment of UGX {{ activity.amount }}</h5>
-  </div>
-  <div class="award-time-list">
-    <span>{{ activity.payment_date|timesince }} ago</span>
-  </div>
-</div>
-{% endfor %}
-
-                  </div>
-                </div>
+              <div class="custom-icon">
+                <i class="fa fa-credit-card" aria-hidden="true"></i>
               </div>
             </div>
           </div>
         </div>
-        
       </div>
 
+      <!-- Repaid Loans Card -->
+      <div class="col-xl-3 col-sm-6 col-12 d-flex">
+        <div class="card bg-comman w-100">
+          <div class="card-body">
+            <div class="db-widgets d-flex justify-content-between align-items-center">
+              <div class="db-info">
+                <h6>Repaid Loans</h6>
+                <h3>{{ repaid_loans }}</h3>
+              </div>
+              <div class="custom-icon">
+                <i class="fa fa-check-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <!-- Loan Applications Card -->
+      <div class="col-xl-3 col-sm-6 col-12 d-flex">
+        <div class="card bg-comman w-100">
+          <div class="card-body">
+            <div class="db-widgets d-flex justify-content-between align-items-center">
+              <div class="db-info">
+                <h6>Loan Applications</h6>
+                <h3>{{ loan_applications }}</h3>
+              </div>
+              <div class="custom-icon">
+                <i class="fa fa-clipboard-list" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Revenue Card -->
+      <div class="col-xl-3 col-sm-6 col-12 d-flex">
+        <div class="card bg-comman w-100">
+          <div class="card-body">
+            <div class="db-widgets d-flex justify-content-between align-items-center">
+              <div class="db-info">
+                <h6>Total Revenue</h6>
+                <h3>UGX {{ total_revenue|floatformat:0 }}</h3>
+              </div>
+              <div class="custom-icon">
+                <i class="fa fa-dollar-sign" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Top Borrowers Card -->
+      <div class="col-xl-6 d-flex">
+        <div class="card flex-fill loan-space comman-shadow">
+          <div class="card-header d-flex align-items-center">
+            <h5 class="card-title">Top Borrowers</h5>
+            <ul class="chart-list-out loan-ellips">
+              <li class="loan-menus">
+                <a href="javascript:void(0);"><i class="fas fa-ellipsis-v"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table top-borrowers table-hover table-center table-borderless table-striped">
+                <thead class="thead-light">
+                  <tr>
+                    <th>Loan ID</th>
+                    <th>Borrower Name</th>
+                    <th class="text-center">Loan Amount</th>
+                    <th class="text-center">Interest Rate</th>
+                    <th class="text-end">Loan Year</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for loan in top_borrowers %}
+                  <tr>
+                    <td class="text-nowrap">{{ loan.loan_code }}</td>
+                    <td class="text-nowrap">
+                      <a href="#">{{ loan.borrower_name }}</a>
+                    </td>
+                    <td class="text-center">UGX {{ loan.amount }}</td>
+                    <td class="text-center">{{ loan.interest_rate }}%</td>
+                    <td class="text-end">{{ loan.start_date.year }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Loan Activities Card -->
+      <div class="col-xl-6 d-flex">
+        <div class="card flex-fill comman-shadow">
+          <div class="card-header d-flex align-items-center">
+            <h5 class="card-title">Recent Loan Activities</h5>
+            <ul class="chart-list-out loan-ellips">
+              <li class="loan-menus">
+                <a href="javascript:void(0);"><i class="fas fa-ellipsis-v"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="card-body">
+            <div class="activity-groups">
+              {% for activity in recent_activities %}
+              <div class="activity-awards">
+                <div class="award-list-outs">
+                  <h4>Payment Received</h4>
+                  <h5>{{ activity.borrower.user.get_full_name }} made a payment of UGX {{ activity.amount }}</h5>
+                </div>
+                <div class="award-time-list">
+                  <span>{{ activity.payment_date|timesince }} ago</span>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 {% endblock %}
-

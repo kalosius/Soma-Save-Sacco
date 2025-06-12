@@ -57,7 +57,7 @@
               <tbody>
                 {% for borrower in borrowers %}
                 <tr>
-                  <td>{{ borrower.name }}</td>
+                  <td>{{ borrower.user.get_full_name }}</td>
                   <td>{{ borrower.email }}</td>
                   <td>{{ borrower.phone }}</td>
                   <td>{{ borrower.address }}</td>

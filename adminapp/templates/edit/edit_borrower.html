@@ -22,7 +22,7 @@
           {% csrf_token %}
           <div class="form-group">
             <label for="name">Name:</label>
-            <input type="text" name="name" id="name" class="form-control" value="{{ borrower.name }}" required>
+            <input type="text" name="name" id="name" class="form-control" value="{{ borrower.user.get_full_name }}" required>
           </div>
 
           <div class="form-group">
@@ -31,8 +31,8 @@
           </div>
 
           <div class="form-group">
-            <label for="phone">Phone Number:</label>
-            <input type="text" name="phone" id="phone" class="form-control" value="{{ borrower.phone }}" required>
+            <label for="phone_number">Phone Number:</label>
+<input type="text" name="phone" id="phone" class="form-control" value="{{ borrower.user.phone_number }}" required>
           </div>
 
           <div class="form-group">

@@ -1,8 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
+from adminapp.models import Borrower
+
 
 # Create your views here.
 
@@ -52,13 +54,21 @@ def user_account(request):
 # userprofile
 @login_required(login_url='login')
 def userprofile(request):
-    return render(request, 'main/userprofile.html')
+    try:
+        borrower = request.user.borrower_profile  # Uses related_name
+    except Borrower.DoesNotExist:
+        # Optional: Redirect or create profile
+        return render(request, 'main/userprofile.html', {'message': 'You don’t have a borrower profile yet.'})
+
+    return render(request, 'main/userprofile.html',{'borrower': borrower})
 
 
 # dashboard
 @login_required(login_url='login')
 def client_dashboard(request): 
     return render(request, 'main/client_dashboard.html')
+
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -107,6 +117,8 @@ def register_view(request):
 
 
 # logout
+
+@login_required(login_url='login')
 def logout_view(request):
     logout(request)
     return redirect('login')

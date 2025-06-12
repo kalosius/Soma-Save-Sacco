@@ -1,21 +1,26 @@
 from django.db import models
-import random
 from django.utils import timezone
-from clients_portal.models import CustomUser
+import random
+from clients_portal.models import CustomUser  # Reference from accounts app
 
 
-# Create your models here.
 class Borrower(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='borrower_profile',null=True, blank=True)
-    name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=15, unique=True)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='borrower_profile')
     address = models.CharField(max_length=255)
     date_joined = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.username
-    
+        return f"{self.user.get_full_name()} (User: {self.user.username})"
+
+    @property
+    def email(self):
+        return self.user.email
+
+    @property
+    def phone(self):
+        return self.user.phone_number
+
+
 class Loan(models.Model):
     borrower = models.ForeignKey(Borrower, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -41,20 +46,20 @@ class Loan(models.Model):
                 return code
 
     def __str__(self):
-        return f"Loan for {self.borrower.name} - Amount: {self.amount}"
-    
+        return f"Loan #{self.loan_code} for {self.borrower}"
+
 
 class Payment(models.Model):
     borrower = models.ForeignKey(Borrower, on_delete=models.CASCADE)
     loan = models.ForeignKey(Loan, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    # payment_date = models.DateField()  # Changed from DateTimeField to DateField, no auto_now_add
     payment_date = models.DateTimeField(default=timezone.now)
     payment_status = models.CharField(max_length=20)
 
     def __str__(self):
-        return f"Payment of {self.amount} by {self.borrower.name} for Loan ID: {self.loan.id}"
-    
+        return f"Payment {self.amount} by {self.borrower}"
+
+
 class Report(models.Model):
     borrower = models.ForeignKey(Borrower, on_delete=models.CASCADE)
     total_loans = models.DecimalField(max_digits=10, decimal_places=2)
@@ -62,5 +67,4 @@ class Report(models.Model):
     report_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Report for {self.borrower.name} - Total Loans: {self.total_loans}, Total Payments: {self.total_payments}"
-    
+        return f"Report for {self.borrower} on {self.report_date.strftime('%Y-%m-%d')}"
