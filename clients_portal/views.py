@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from adminapp.models import Borrower
-
+from .models import ShareTransaction
 
 # Create your views here.
 
@@ -34,10 +34,45 @@ def loanrequest(request):
 def statement(request):
     return render(request, 'main/mystatement.html')
 
+
+
+
+
 # shares
+SHARE_VALUE = 25000  # Current share value in UGX
+
 @login_required(login_url='login')
 def shares(request):
-    return render(request, 'main/shares.html')
+    user = request.user
+    transactions = ShareTransaction.objects.filter(user=user).order_by('-timestamp')
+
+    total_shares = sum(t.number_of_shares for t in transactions)
+    estimated_value = total_shares * SHARE_VALUE
+
+    if request.method == 'POST':
+        try:
+            num_shares = int(request.POST.get('number_of_shares'))
+            if num_shares < 1:
+                raise ValueError("Must be a positive number")
+
+            total_amount = num_shares * SHARE_VALUE
+            ShareTransaction.objects.create(
+                user=user,
+                number_of_shares=num_shares,
+                amount=total_amount
+            )
+            messages.success(request, f'Successfully purchased {num_shares} shares.')
+            return redirect('shares')
+        except ValueError:
+            messages.error(request, 'Invalid number of shares.')
+
+    context = {
+        'total_shares': total_shares,
+        'current_share_value': SHARE_VALUE,
+        'estimated_value': estimated_value,
+        'transactions': transactions
+    }
+    return render(request, 'main/shares.html', context)
 
 
 # loans
