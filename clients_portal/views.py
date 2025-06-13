@@ -207,6 +207,8 @@ def register_view(request):
             national_id=national_id,
             password=make_password(password)  # Hash password manually
         )
+        # Automatically create Borrower for this user
+        Borrower.objects.create(user=user)
         messages.success(request, 'Account created successfully. You can now log in.')
         return redirect('login')
         
