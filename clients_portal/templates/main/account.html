@@ -3,7 +3,7 @@
 
 <div class="max-w-6xl mx-auto mt-8 p-4 sm:p-6 lg:p-8 bg-white rounded-lg shadow-md">
   <h2 class="text-2xl font-bold text-gray-800 mb-6">Account Overview</h2>
-  
+
 <!-- Account Info -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
   <div class="border rounded-lg p-4 bg-gray-50">
@@ -147,7 +147,7 @@
 
     <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Withdraw Funds</button>
     <button class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Send Funds</button>
-    <button class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900">Apply for Loan</button>
+    <a href="{% url 'loanrequest' %}"><button class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900">Apply for Loan</button></a>
   </div>
 
  <!-- Recent Transactions -->
