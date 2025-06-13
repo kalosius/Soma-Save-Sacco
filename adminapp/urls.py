@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-   path('', views.dashboard, name='dashboard'),
+    path('', views.dashboard, name='dashboard'),
     path('add_borrower/', views.add_borrower, name='add_borrower'),
     path('add_payment/', views.add_payment, name='add_payment'),
     path('add_loan/', views.add_loan, name='add_loan'),
@@ -20,4 +20,6 @@ urlpatterns = [
     # adminforms
     path('admin-login/', views.admin_login, name='admin_login'),
     path('admin-logout/', views.admin_logout, name='admin_logout'),
+    path('not-authorized/', views.not_authorized, name='not_authorized'),
+
 ]

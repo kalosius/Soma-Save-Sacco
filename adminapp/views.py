@@ -14,12 +14,20 @@ from django.contrib.auth import get_user_model
 from django.utils.crypto import get_random_string
 
 
+# redirecting to login if not superuser
+def superuser_required(view_func):
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return redirect('not_authorized')  # Change to any URL or view you prefer
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
 
 
 
 # Create your views here.
 
-@login_required(login_url='admin_login')
+@superuser_required
 def dashboard(request):
     active_loans_count = Loan.objects.filter(loan_status='Approved').count()
     repaid_loans_count = Payment.objects.values('loan').distinct().count()
@@ -80,7 +88,7 @@ def dashboard(request):
 
 # adding a borrower
 User = get_user_model()
-@login_required(login_url='admin_login')
+@superuser_required
 def add_borrower(request):
     if request.method == 'POST':
         user_id = request.POST.get('user_id')
@@ -111,7 +119,7 @@ def add_borrower(request):
 
 
 # all borrowers display
-@login_required(login_url='admin_login')
+@superuser_required
 def borrowers(request):
     all_borrowers = Borrower.objects.all()
     return render(request, 'main/borrowers.html', {'borrowers': all_borrowers})
@@ -119,7 +127,7 @@ def borrowers(request):
 
 
 # adding a loan
-@login_required(login_url='admin_login')
+@superuser_required
 def add_loan(request):
     borrowers = Borrower.objects.all()
 
@@ -147,18 +155,18 @@ def add_loan(request):
     return render(request, 'main/add_loan.html', {'borrowers': borrowers})
 
 
-@login_required(login_url='admin_login')
+@superuser_required
 def loans(request):
     loans = Loan.objects.select_related('borrower').all()
     return render(request, 'main/loans.html', {'loans': loans})
 
-@login_required(login_url='admin_login')
+@superuser_required
 def payments(request):
     return render(request, 'main/payments.html')
 
 
 # making a loan payment
-@login_required(login_url='admin_login')
+@superuser_required
 def add_payment(request):
     if request.method == 'POST':
         loan_code = request.POST.get('loan_code')
@@ -200,14 +208,13 @@ def add_payment(request):
 
 
 
-@login_required(login_url='admin_login')
+@superuser_required
 def reports(request):
     return render(request, 'main/reports.html')
 
 
-
 # editing borrower
-@login_required(login_url='admin_login')
+@superuser_required
 def edit_borrower(request, id):
     borrower = get_object_or_404(Borrower, id=id)
     user = borrower.user
@@ -244,7 +251,7 @@ def edit_borrower(request, id):
     return render(request, 'edit/edit_borrower.html', {'borrower': borrower})
 
 # deleting borrower
-@login_required(login_url='admin_login')
+@superuser_required
 def delete_borrower(request, id):
     borrower = get_object_or_404(Borrower, id=id)
     borrower.delete()
@@ -253,7 +260,7 @@ def delete_borrower(request, id):
 
 
 # editing and deleting loans
-@login_required(login_url='admin_login')
+@superuser_required
 def edit_loan(request, id):
     loan = get_object_or_404(Loan, id=id)
     
@@ -273,7 +280,7 @@ def edit_loan(request, id):
 
 
 # Delete Loan View
-@login_required(login_url='admin_login')
+@superuser_required
 def delete_loan(request, id):
     loan = get_object_or_404(Loan, id=id)
     loan.delete()
@@ -308,3 +315,8 @@ def admin_logout(request):
     logout(request)
     messages.info(request, "You have been logged out.")
     return redirect('admin_login')
+
+
+# views.py
+def not_authorized(request):
+    return render(request, 'main/auth/not_authorized.html')
