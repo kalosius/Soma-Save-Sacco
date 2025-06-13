@@ -24,3 +24,9 @@ class PaymentAdmin(admin.ModelAdmin):
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin):
     list_display = ['borrower', 'total_loans', 'total_payments', 'report_date']
+
+
+
+admin.site.site_header = "Soma-Save SACCO Admin"
+admin.site.site_title = "Soma-Save Admin Portal"
+admin.site.index_title = "Welcome to Soma-Save SACCO Admin"
