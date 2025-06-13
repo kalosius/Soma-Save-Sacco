@@ -144,8 +144,40 @@ def userprofile(request):
 # dashboard
 @login_required(login_url='login')
 def client_dashboard(request): 
-    return render(request, 'main/client_dashboard.html')
+    user = request.user
 
+    # Shares data
+    shares = ShareTransaction.objects.filter(user=user, status='Completed')
+    total_shares = shares.aggregate(total=Sum('number_of_shares'))['total'] or 0
+    total_share_value = shares.aggregate(value=Sum('amount'))['value'] or 0
+
+    # Borrower profile
+    borrower = getattr(user, 'borrower_profile', None)
+
+    # Loan data
+    loans = Loan.objects.filter(borrower=borrower) if borrower else Loan.objects.none()
+    loan_requests = loans.count()
+    approved_loans = loans.filter(loan_status='Approved').count()
+    total_requested_amount = loans.aggregate(total=Sum('amount'))['total'] or 0
+    processed_amount = loans.filter(loan_status='Approved').aggregate(total=Sum('amount'))['total'] or 0
+
+    # Transactions (Payments) data
+    payments = Payment.objects.filter(borrower=borrower) if borrower else Payment.objects.none()
+    total_transactions = payments.count()
+    total_transacted_amount = payments.aggregate(total=Sum('amount'))['total'] or 0
+
+    context = {
+        'total_shares': total_shares,
+        'total_share_value': total_share_value,
+        'loan_requests': loan_requests,
+        'approved_loans': approved_loans,
+        'total_requested_amount': total_requested_amount,
+        'processed_amount': processed_amount,
+        'total_transactions': total_transactions,
+        'total_transacted_amount': total_transacted_amount,
+    }
+
+    return render(request, 'main/client_dashboard.html', context)
 
 
 

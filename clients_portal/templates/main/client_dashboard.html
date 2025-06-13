@@ -27,36 +27,37 @@
    <main class="max-w-4xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-6">
 
 
- <!-- Account Section -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-xl font-semibold mb-2">ACCOUNT</h2>
-      <p>A/C No: <strong>0100800201478</strong></p>
-      <p>A/C Type: <strong>Daily Savings</strong></p>
-      <p>A/C Balance: <strong>UGX 92,000</strong></p>
-    </div>
+<!-- ACCOUNT Section -->
+<div class="bg-white rounded-lg shadow-md p-6">
+  <h2 class="text-xl font-semibold mb-2">ACCOUNT</h2>
+  <p>A/C No: <strong>{{ user.username }}</strong></p>
+  <p>A/C Type: <strong>Daily Savings</strong></p>
+  <p>A/C Balance: <strong>UGX {{ total_share_value|floatformat:0 }}</strong></p>
+</div>
 
-    <!-- Shares Section -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-xl font-semibold mb-2">SHARES</h2>
-      <p>No. of Shares: <strong>92</strong></p>
-      <p>Total Share Value: <strong>UGX 92,000</strong></p>
-    </div>
+<!-- SHARES Section -->
+<div class="bg-white rounded-lg shadow-md p-6">
+  <h2 class="text-xl font-semibold mb-2">SHARES</h2>
+  <p>No. of Shares: <strong>{{ total_shares }}</strong></p>
+  <p>Total Share Value: <strong>UGX {{ total_share_value|floatformat:0 }}</strong></p>
+</div>
 
-    <!-- Loans Section -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-xl font-semibold mb-2">LOANS</h2>
-      <p>Loan Requests: <strong>0</strong></p>
-      <p>Approved Loans: <strong>0</strong></p>
-      <p>Total Requested Amount: <strong>N/A</strong></p>
-      <p>Total Processed Amount: <strong>N/A</strong></p>
-    </div>
+<!-- LOANS Section -->
+<div class="bg-white rounded-lg shadow-md p-6">
+  <h2 class="text-xl font-semibold mb-2">LOANS</h2>
+  <p>Loan Requests: <strong>{{ loan_requests }}</strong></p>
+  <p>Approved Loans: <strong>{{ approved_loans }}</strong></p>
+  <p>Total Requested Amount: <strong>{% if total_requested_amount %}UGX {{ total_requested_amount|floatformat:0 }}{% else %}N/A{% endif %}</strong></p>
+  <p>Total Processed Amount: <strong>{% if processed_amount %}UGX {{ processed_amount|floatformat:0 }}{% else %}N/A{% endif %}</strong></p>
+</div>
 
-    <!-- Transactions Section -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-xl font-semibold mb-2">TRANSACTIONS</h2>
-      <p>Total Transactions: <strong>48</strong></p>
-      <p>Total Transacted Amount: <strong>UGX 35,665,327</strong></p>
-    </div>
+<!-- TRANSACTIONS Section -->
+<div class="bg-white rounded-lg shadow-md p-6">
+  <h2 class="text-xl font-semibold mb-2">TRANSACTIONS</h2>
+  <p>Total Transactions: <strong>{{ total_transactions }}</strong></p>
+  <p>Total Transacted Amount: <strong>UGX {{ total_transacted_amount|floatformat:0 }}</strong></p>
+</div>
+
 
   </main>
 
