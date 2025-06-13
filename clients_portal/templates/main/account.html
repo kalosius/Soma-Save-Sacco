@@ -3,42 +3,42 @@
 
 <div class="max-w-6xl mx-auto mt-8 p-4 sm:p-6 lg:p-8 bg-white rounded-lg shadow-md">
   <h2 class="text-2xl font-bold text-gray-800 mb-6">Account Overview</h2>
-
-  <!-- General Account Info -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-    <div class="border rounded-lg p-4 bg-gray-50">
-      <div class="text-gray-500 text-sm">Account Number</div>
-      <div class="font-medium text-gray-900 text-lg">SACCO12345678</div>
-    </div>
-    <div class="border rounded-lg p-4 bg-gray-50">
-      <div class="text-gray-500 text-sm">Account Type</div>
-      <div class="font-medium text-gray-900 text-lg">Savings Account</div>
-    </div>
-    <div class="border rounded-lg p-4 bg-gray-50">
-      <div class="text-gray-500 text-sm">Member Since</div>
-      <div class="font-medium text-gray-900 text-lg">January 2021</div>
-    </div>
+  
+<!-- Account Info -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+  <div class="border rounded-lg p-4 bg-gray-50">
+    <div class="text-gray-500 text-sm">Account Number</div>
+    <div class="font-medium text-gray-900 text-lg">{{ account_number }}</div>
   </div>
-
-  <!-- Balances Section -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-    <div class="p-4 rounded-lg bg-blue-600 text-white shadow">
-      <div class="text-sm opacity-80">Total Savings</div>
-      <div class="text-2xl font-bold">UGX 2,500,000</div>
-    </div>
-    <div class="p-4 rounded-lg bg-green-600 text-white shadow">
-      <div class="text-sm opacity-80">Share Capital</div>
-      <div class="text-2xl font-bold">UGX 1,000,000</div>
-    </div>
-    <div class="p-4 rounded-lg bg-red-600 text-white shadow">
-      <div class="text-sm opacity-80">Outstanding Loan</div>
-      <div class="text-2xl font-bold">UGX 800,000</div>
-    </div>
-    <div class="p-4 rounded-lg bg-yellow-500 text-white shadow">
-      <div class="text-sm opacity-80">Dividends Earned</div>
-      <div class="text-2xl font-bold">UGX 150,000</div>
-    </div>
+  <div class="border rounded-lg p-4 bg-gray-50">
+    <div class="text-gray-500 text-sm">Account Type</div>
+    <div class="font-medium text-gray-900 text-lg">{{ account_type }}</div>
   </div>
+  <div class="border rounded-lg p-4 bg-gray-50">
+    <div class="text-gray-500 text-sm">Member Since</div>
+    <div class="font-medium text-gray-900 text-lg">{{ member_since }}</div>
+  </div>
+</div>
+
+<!-- Balances Section -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+  <div class="p-4 rounded-lg bg-blue-600 text-white shadow">
+    <div class="text-sm opacity-80">Total Savings</div>
+    <div class="text-2xl font-bold">UGX {{ total_savings|floatformat:0 }}</div>
+  </div>
+  <div class="p-4 rounded-lg bg-green-600 text-white shadow">
+    <div class="text-sm opacity-80">Share Capital</div>
+    <div class="text-2xl font-bold">UGX {{ share_capital|floatformat:0 }}</div>
+  </div>
+  <div class="p-4 rounded-lg bg-red-600 text-white shadow">
+    <div class="text-sm opacity-80">Outstanding Loan</div>
+    <div class="text-2xl font-bold">UGX {{ outstanding_loan|floatformat:0 }}</div>
+  </div>
+  <div class="p-4 rounded-lg bg-yellow-500 text-white shadow">
+    <div class="text-sm opacity-80">Dividends Earned</div>
+    <div class="text-2xl font-bold">UGX {{ dividends_earned|floatformat:0 }}</div>
+  </div>
+</div>
 
   <!-- Action Buttons -->
   <div class="flex flex-wrap gap-3 mb-8">
@@ -150,40 +150,36 @@
     <button class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900">Apply for Loan</button>
   </div>
 
-  <!-- Recent Transactions -->
-  <h3 class="text-xl font-semibold text-gray-700 mb-4">Recent Transactions</h3>
-  <div class="overflow-x-auto">
-    <table class="min-w-full border border-gray-200 text-sm">
-      <thead class="bg-gray-100">
+ <!-- Recent Transactions -->
+<h3 class="text-xl font-semibold text-gray-700 mb-4">Recent Transactions</h3>
+<div class="overflow-x-auto">
+  <table class="min-w-full border border-gray-200 text-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="border px-4 py-2 text-left text-gray-600 font-medium">Date</th>
+        <th class="border px-4 py-2 text-left text-gray-600 font-medium">Type</th>
+        <th class="border px-4 py-2 text-left text-gray-600 font-medium">Amount (UGX)</th>
+        <th class="border px-4 py-2 text-left text-gray-600 font-medium">Status</th>
+      </tr>
+    </thead>
+    <tbody class="text-gray-800">
+      {% for tx in recent_transactions %}
         <tr>
-          <th class="border px-4 py-2 text-left text-gray-600 font-medium">Date</th>
-          <th class="border px-4 py-2 text-left text-gray-600 font-medium">Type</th>
-          <th class="border px-4 py-2 text-left text-gray-600 font-medium">Amount (UGX)</th>
-          <th class="border px-4 py-2 text-left text-gray-600 font-medium">Status</th>
+          <td class="border px-4 py-2">{{ tx.date|date:"Y-m-d" }}</td>
+          <td class="border px-4 py-2">{{ tx.type }}</td>
+          <td class="border px-4 py-2">{{ tx.amount|floatformat:0 }}</td>
+          <td class="border px-4 py-2 {% if 'Complete' in tx.status %}text-green-600{% elif 'Pending' in tx.status %}text-yellow-600{% else %}text-red-600{% endif %} font-medium">
+            {{ tx.status }}
+          </td>
         </tr>
-      </thead>
-      <tbody class="text-gray-800">
+      {% empty %}
         <tr>
-          <td class="border px-4 py-2">2025-06-10</td>
-          <td class="border px-4 py-2">Deposit</td>
-          <td class="border px-4 py-2">500,000</td>
-          <td class="border px-4 py-2 text-green-600 font-medium">Completed</td>
+          <td colspan="4" class="text-center py-4 text-gray-500">No recent transactions</td>
         </tr>
-        <tr>
-          <td class="border px-4 py-2">2025-06-05</td>
-          <td class="border px-4 py-2">Loan Repayment</td>
-          <td class="border px-4 py-2">100,000</td>
-          <td class="border px-4 py-2 text-green-600 font-medium">Completed</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2">2025-05-28</td>
-          <td class="border px-4 py-2">Withdrawal</td>
-          <td class="border px-4 py-2">200,000</td>
-          <td class="border px-4 py-2 text-red-600 font-medium">Pending</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
 </div>
 

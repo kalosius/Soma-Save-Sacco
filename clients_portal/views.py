@@ -10,6 +10,7 @@ from django.db.models import Sum
 from datetime import timedelta
 import random
 from django.utils import timezone
+from decimal import Decimal
 
 
 
@@ -172,7 +173,46 @@ def user_loans(request):
 # account
 @login_required(login_url='login')
 def user_account(request):
-    return render(request, 'main/account.html')
+    user = request.user
+    borrower = Borrower.objects.get(user=user)
+
+    # Balances
+    total_savings = Decimal('2500000.00')  # Replace with real query if you have savings model
+    share_capital = ShareTransaction.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
+    outstanding_loan = Loan.objects.filter(borrower=borrower, loan_status='Approved').aggregate(
+        total=Sum('amount'))['total'] or 0
+    dividends_earned = Decimal('150000.00')  # Placeholder - depends on how you calculate dividends
+
+    # Recent transactions (dummy mix of share transactions + loan payments)
+    transactions = list(ShareTransaction.objects.filter(user=user).values('timestamp', 'transaction_type', 'amount', 'status')) + \
+                   list(Payment.objects.filter(borrower=borrower).values('payment_date', 'amount', 'payment_status'))
+
+    # Normalize all transactions into a common format
+    normalized_transactions = []
+    for tx in transactions:
+        normalized_transactions.append({
+            'date': tx.get('timestamp') or tx.get('payment_date'),
+            'type': tx.get('transaction_type') or 'Loan Repayment',
+            'amount': tx['amount'],
+            'status': tx.get('status') or tx.get('payment_status'),
+        })
+
+    normalized_transactions.sort(key=lambda x: x['date'], reverse=True)
+
+    context = {
+        'account_number': f"SACCO{user.id:08}",  # e.g., SACCO00000012
+        'account_type': "Savings Account",
+        'member_since': borrower.date_joined.strftime('%B %Y'),
+        'total_savings': total_savings,
+        'share_capital': share_capital,
+        'outstanding_loan': outstanding_loan,
+        'dividends_earned': dividends_earned,
+        'recent_transactions': normalized_transactions[:5],  # Show only latest 5
+    }
+
+    return render(request, 'main/account.html', context)
+
+
 
 # userprofile
 @login_required(login_url='login')
