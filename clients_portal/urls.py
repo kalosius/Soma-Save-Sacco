@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views
+
 
 urlpatterns = [
     path('', views.client_dashboard, name='client_dashboard'),
@@ -18,6 +20,28 @@ urlpatterns = [
     # updating profile
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('profile/upload-photo/', views.upload_photo, name='upload_photo'),
+
+
+
+    # Password reset request form
+    path('reset-password/', auth_views.PasswordResetView.as_view(
+        template_name='auth/password_reset_form.html'
+    ), name='password_reset'),
+
+    # Password reset done (email sent confirmation)
+    path('reset-password/done/', auth_views.PasswordResetDoneView.as_view(
+        template_name='auth/password_reset_done.html'
+    ), name='password_reset_done'),
+
+   path('reset-password-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+    template_name='auth/password_reset_confirm.html',
+    success_url='/client/reset-password-complete/'  # Note the leading slash!
+), name='password_reset_confirm'),
+
+    # Password reset complete (password changed successfully)
+    path('reset-password-complete/', auth_views.PasswordResetCompleteView.as_view(
+        template_name='auth/password_reset_complete.html'
+    ), name='password_reset_complete'),
 
 
 ]

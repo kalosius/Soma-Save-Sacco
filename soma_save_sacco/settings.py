@@ -136,4 +136,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For testing only
+DEFAULT_FROM_EMAIL = 'no-reply@somasave.com'
 
