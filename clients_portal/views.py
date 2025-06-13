@@ -7,6 +7,9 @@ from .models import ShareTransaction
 from django.contrib.auth.models import User
 from adminapp.models import Loan, Payment, Borrower, RepaymentSchedule
 from django.db.models import Sum
+from datetime import timedelta
+import random
+from django.utils import timezone
 
 
 
@@ -32,7 +35,49 @@ def withdrawal(request):
 # loan request
 @login_required(login_url='login')
 def loanrequest(request):
+    user = request.user
+    try:
+        borrower = user.borrower_profile
+    except Borrower.DoesNotExist:
+        messages.error(request, "You must be registered as a borrower to request a loan.")
+        return redirect('client_dashboard')
+
+    if request.method == 'POST':
+        amount = request.POST.get('amount')
+        interest_rate = request.POST.get('interest_rate')
+
+        if not amount or not interest_rate:
+            messages.error(request, "All fields are required.")
+            return redirect('loanrequest')
+
+        try:
+            loan = Loan.objects.create(
+                borrower=borrower,
+                amount=amount,
+                interest_rate=interest_rate,
+                loan_status='Pending',
+                start_date=timezone.now(),
+                due_date=timezone.now() + timedelta(days=90),
+                loan_code=generate_unique_loan_code()
+            )
+            messages.success(request, "Loan request submitted successfully.")
+            return redirect('client_dashboard')
+        except Exception as e:
+            messages.error(request, f"An error occurred: {e}")
+            return redirect('loanrequest')
+
     return render(request, 'main/loanrequest.html')
+
+def generate_unique_loan_code():
+    from adminapp.models import Loan
+    while True:
+        code = str(random.randint(1000000, 9999999))  # 7-digit code
+        if not Loan.objects.filter(loan_code=code).exists():
+            return code
+
+
+
+
 
 # statement
 @login_required(login_url='login')
