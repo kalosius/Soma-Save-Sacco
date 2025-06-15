@@ -309,13 +309,14 @@ def register_view(request):
         username = request.POST.get('username')
         email = request.POST.get('email')
         phone_number = request.POST.get('phone_number')
-        national_id = request.POST.get('national_id')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
 
         if password != confirm_password:
             return render(request, 'auth/register.html', {'error': 'Passwords do not match'})
-        
+
         if User.objects.filter(username=username).exists():
             return render(request, 'auth/register.html', {'error': 'Username already taken'})
 
@@ -326,16 +327,17 @@ def register_view(request):
             username=username,
             email=email,
             phone_number=phone_number,
-            national_id=national_id,
-            password=make_password(password)  # Hash password manually
+            first_name=first_name,
+            last_name=last_name,
+            password=make_password(password)
         )
-        # Automatically create Borrower for this user
+
         Borrower.objects.create(user=user)
+
         messages.success(request, 'Account created successfully. You can now log in.')
         return redirect('login')
-        
-    return render(request, 'auth/register.html')
 
+    return render(request, 'auth/register.html')
 
 # logout
 

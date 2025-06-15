@@ -5,7 +5,7 @@ from django.conf import settings  # This is key to support custom user models
 
 class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=15, unique=True)
-    national_id = models.CharField(max_length=20, unique=True)
+    national_id = models.CharField(max_length=20, unique=True, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
 
     GENDER_CHOICES = [
