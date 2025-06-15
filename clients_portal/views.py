@@ -92,7 +92,6 @@ def statement(request):
 
 # shares
 SHARE_VALUE = 25000  # Current share value in UGX
-
 @login_required(login_url='login')
 def shares(request):
     user = request.user
@@ -203,7 +202,7 @@ def user_account(request):
     context = {
         'account_number': f"SACCO{user.id:08}",  # e.g., SACCO00000012
         'account_type': "Savings Account",
-        'member_since': borrower.date_joined.strftime('%B %Y'),
+        'member_since': borrower.date_joined.strftime('%A, %B %d, %Y'),  # Format date as "Monday, January 01, 2023"
         'total_savings': total_savings,
         'share_capital': share_capital,
         'outstanding_loan': outstanding_loan,
@@ -340,7 +339,6 @@ def register_view(request):
     return render(request, 'auth/register.html')
 
 # logout
-
 @login_required(login_url='login')
 def logout_view(request):
     logout(request)
