@@ -1,57 +1,86 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-      <div class="page-wrapper">
-        <div class="content container-fluid">
-          <div class="page-header">
-            <div class="row align-items-center">
-              <div class="col">
-                <h3 class="page-title">Loan Payments</h3>
-                <ul class="breadcrumb">
-                  <li class="breadcrumb-item">
-                    <a href="{% url 'payments' %}">Loan Payments</a>
-                  </li>
-                  <li class="breadcrumb-item active">Loan Payment Details</li>
-                </ul>
-              </div>
-            </div>
-          </div>
 
-          <div class="row">
-            <div class="col-sm-12">
-              <div class="card">
-                <div class="card-body">
-                  <!-- Loan Payments Table -->
-                  <table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th>Payment Date</th>
-                        <th>Amount Paid</th>
-                        <th>Payment Status</th>
-                        <th>Loan ID</th>
-                        <th>Actions</th>
-                        <!-- Added Actions column -->
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>2024-11-25</td>
-                        <td>Ugx 500</td>
-                        <td>Paid</td>
-                        <td>12345</td>
-                        <td>
-                          <!-- Edit Button -->
-                          <button class="btn btn-primary btn-sm">Edit</button>
-                          <!-- Delete Button -->
-                          <button class="btn btn-danger btn-sm">Delete</button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+{% if messages %}
+  <div>
+    {% for message in messages %}
+      <div style="
+        padding: 12px;
+        margin-bottom: 16px;
+        border-radius: 6px;
+        font-weight: bold;
+        color: #fff !important;
+        background-color: {% if message.tags == 'success' %}#28a745
+                         {% elif message.tags == 'error' or message.tags == 'danger' %}#dc3545
+                         {% elif message.tags == 'warning' %}#ffc107
+                         {% elif message.tags == 'info' %}#17a2b8
+                         {% else %}#6c757d{% endif %} !important;
+        z-index: 9999;
+        position: relative;
+      ">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col">
+          <h3 class="page-title">Loan Payments</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'payments' %}">Loan Payments</a></li>
+            <li class="breadcrumb-item active">Loan Payment Details</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <!-- Loan Payments Table -->
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Payment Date</th>
+                  <th>Amount Paid</th>
+                  <th>Payment Status</th>
+                  <th>Loan ID</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if payments %}
+                  {% for payment in payments %}
+                    <tr>
+                      <td>{{ payment.payment_date }}</td>
+                      <td>UGX {{ payment.amount|floatformat:0 }}</td>
+                      <td>{{ payment.payment_status }}</td>
+                      <td>{{ payment.loan.loan_code }}</td>
+                      <td>
+                        <!-- You can later make these buttons functional -->
+                        <button class="btn btn-primary btn-sm">Edit</button>
+                        <button class="btn btn-danger btn-sm">Delete</button>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td colspan="5" class="text-center text-muted">No loan payments found.</td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

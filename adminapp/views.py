@@ -162,7 +162,8 @@ def loans(request):
 
 @superuser_required
 def payments(request):
-    return render(request, 'main/payments.html')
+    all_payments = Payment.objects.select_related('loan').all().order_by('-payment_date')
+    return render(request, 'main/payments.html', {'payments': all_payments})
 
 
 # making a loan payment
