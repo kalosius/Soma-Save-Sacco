@@ -64,10 +64,12 @@
           <td class="border px-4 py-2">--</td> <!-- Replace with actual tenure if available -->
           <td class="border px-4 py-2">--</td> <!-- Replace with actual outstanding if available -->
           <td class="border px-4 py-2 font-medium 
-            {% if loan.loan_status == 'Approved' %}
+            {% if loan.loan_status == 'Pending' %}
               text-yellow-600
-            {% else %}
+            {% elif loan.loan_status == 'Approved' %}
               text-green-600
+            {% else %}
+              text-red-600
             {% endif %}
           ">
             {{ loan.loan_status }}
