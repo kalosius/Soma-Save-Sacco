@@ -23,7 +23,14 @@
 <main class="max-w-7xl mx-auto px-4 py-10">
   <!-- Welcome Section -->
   <div class="mb-10 text-center">
-    <h1 class="text-3xl font-bold text-gray-800">Welcome, {{ user.get_full_name|default:user.username }}</h1>
+    <h1 class="text-3xl font-bold text-gray-800"> {% if current_hour < 12 %}
+    Good morning,
+  {% elif current_hour < 18 %}
+    Good afternoon,
+  {% else %}
+    Good evening,
+  {% endif %}
+  {{ user.get_full_name|default:user.username|capfirst }}</h1>
     <p class="text-gray-500 mt-2">Here’s a snapshot of your financial overview.</p>
   </div>
 

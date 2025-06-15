@@ -11,6 +11,7 @@ from datetime import timedelta
 import random
 from django.utils import timezone
 from decimal import Decimal
+from datetime import datetime
 
 
 
@@ -251,6 +252,9 @@ def client_dashboard(request):
     total_transactions = payments.count()
     total_transacted_amount = payments.aggregate(total=Sum('amount'))['total'] or 0
 
+    # greeting message based on time of day
+    current_hour = datetime.now().hour
+
     context = {
         'total_shares': total_shares,
         'total_share_value': total_share_value,
@@ -260,6 +264,7 @@ def client_dashboard(request):
         'processed_amount': processed_amount,
         'total_transactions': total_transactions,
         'total_transacted_amount': total_transacted_amount,
+        'current_hour': current_hour,
     }
 
     return render(request, 'main/client_dashboard.html', context)
