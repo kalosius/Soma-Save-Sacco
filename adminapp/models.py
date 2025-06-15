@@ -30,7 +30,8 @@ class Loan(models.Model):
     loan_status = models.CharField(max_length=20, choices=[
         ('Pending', 'Pending'),
         ('Approved', 'Approved'),
-        ('Rejected', 'Rejected')
+        ('Rejected', 'Rejected'),
+        ('Cleared', 'Cleared')
     ])
     start_date = models.DateTimeField(auto_now_add=True)
     due_date = models.DateTimeField()
@@ -52,12 +53,17 @@ class Loan(models.Model):
 
 
 class Payment(models.Model):
+    PAYMENT_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed'),
+        ('refunded', 'Refunded'),
+    ]
     borrower = models.ForeignKey(Borrower, on_delete=models.CASCADE)
     loan = models.ForeignKey(Loan, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField(default=timezone.now)
-    payment_status = models.CharField(max_length=20)
-
+    payment_status = models.CharField(max_length=20,choices=PAYMENT_STATUS_CHOICES,default='pending')
     def __str__(self):
         return f"Payment {self.amount} by {self.borrower}"
 

@@ -40,7 +40,7 @@
                     <td>{{ loan.interest_rate }}%</td>
                     <td>{{ loan.start_date|date:"M d, Y" }}</td>
                     <td>{{ loan.due_date|date:"M d, Y" }}</td>
-                    <td>{{ loan.borrower.name }}</td>
+                    <td>{{ loan.borrower.user.get_full_name }}</td>
                     <td>
                       <a href="{% url 'edit_loan' loan.id %}" class="btn btn-primary btn-sm">Edit</a>
 
