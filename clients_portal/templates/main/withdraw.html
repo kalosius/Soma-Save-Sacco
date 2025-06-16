@@ -1,81 +1,98 @@
 {% extends 'clientsbase.html' %}
 {% block content %}
 
-<div class="max-w-xl mx-auto mt-10 bg-white rounded-lg shadow p-6">
-  <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Withdraw Funds</h2>
+<div class="max-w-xl mx-auto mt-10 bg-white rounded-lg shadow-lg p-8">
+  <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Withdraw Funds</h2>
 
-  <form action="" method="POST" enctype="multipart/form-data" class="space-y-5">
+  <form action="" method="POST" enctype="multipart/form-data" class="space-y-6">
     {% csrf_token %}
 
-    <!-- Withdrawal Amount -->
+    <!-- Amount -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1" for="amount">Amount (UGX)</label>
-      <input 
-        type="number" 
-        name="amount" 
-        id="amount" 
+      <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Amount (UGX)</label>
+      <input
+        type="number"
+        name="amount"
+        id="amount"
         required
-        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+        class="w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
         placeholder="e.g., 1,000,000"
       >
     </div>
 
-    <!-- Withdrawal Method -->
+    <!-- Method -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1" for="method">Withdrawal Method</label>
-      <select 
-        name="method" 
-        id="method" 
+      <label for="method" class="block text-sm font-medium text-gray-700 mb-1">Withdrawal Method</label>
+      <select
+        name="method"
+        id="method"
         required
-        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+        class="w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        onchange="toggleLogos()"
       >
         <option value="">Select Method</option>
         <option value="mobile_money">Mobile Money</option>
         <option value="bank_transfer">Bank Transfer</option>
       </select>
+
+      <!-- Logos for Mobile Money -->
+      <div id="mobile-logos" class="flex justify-center gap-6 mt-4 hidden">
+        <!-- MTN Logo -->
+        <img src="https://www.pngfind.com/pngs/m/16-163563_mm-logo-mtn-mobile-money-ghana-logo-hd.png" alt="MTN" class="h-10">
+        <!-- Airtel Logo -->
+        <img src="https://www.logo.wine/a/logo/Airtel_Uganda/Airtel_Uganda-Logo.wine.svg" alt="Airtel" class="h-10">
+      </div>
     </div>
 
-    <!-- Destination Account -->
+    <!-- Destination -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1" for="destination">Destination Account</label>
-      <input 
-        type="text" 
-        name="destination" 
-        id="destination" 
+      <label for="destination" class="block text-sm font-medium text-gray-700 mb-1">Destination Account</label>
+      <input
+        type="text"
+        name="destination"
+        id="destination"
         required
-        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+        class="w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
         placeholder="Phone number or Bank Account"
       >
     </div>
 
-    <!-- Reason for Withdrawal -->
+    <!-- Reason -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1" for="reason">Reason (Optional)</label>
-      <input 
-        type="text" 
-        name="reason" 
-        id="reason" 
-        class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+      <label for="reason" class="block text-sm font-medium text-gray-700 mb-1">Reason (Optional)</label>
+      <input
+        type="text"
+        name="reason"
+        id="reason"
+        class="w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
         placeholder="e.g., School Fees"
       >
     </div>
 
-    <!-- Withdrawal Fee Information (Optional Static Display) -->
-    <div class="bg-blue-50 text-blue-700 text-sm p-2 rounded border border-blue-300">
-      <strong>Note:</strong> Withdrawal fee of <span class="font-semibold">UGX 2,500</span> applies.
+    <!-- Info Box -->
+    <div class="bg-blue-50 text-blue-700 text-sm p-3 rounded-md border border-blue-200">
+      <strong>Note:</strong> A withdrawal fee of <span class="font-semibold">UGX 2,500</span> applies.
     </div>
 
-    <!-- Submit Button -->
-    <div class="pt-4">
-      <button 
-        type="submit" 
-        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+    <!-- Submit -->
+    <div>
+      <button
+        type="submit"
+        class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition"
       >
         Submit Withdrawal Request
       </button>
     </div>
-
   </form>
 </div>
+
+<!-- JavaScript -->
+<script>
+  function toggleLogos() {
+    const method = document.getElementById('method').value;
+    const logos = document.getElementById('mobile-logos');
+    logos.classList.toggle('hidden', method !== 'mobile_money');
+  }
+</script>
 
 {% endblock %}
