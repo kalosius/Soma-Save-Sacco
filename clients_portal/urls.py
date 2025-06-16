@@ -22,6 +22,12 @@ urlpatterns = [
     path('profile/upload-photo/', views.upload_photo, name='upload_photo'),
 
 
+    # CVC and pdf
+    path('mystatement/', views.statement, name='statement'),
+    path('mystatement/download/<str:format>/', views.download_statement, name='download_statement'),
+
+
+
 
     # Password reset request form
     path('reset-password/', auth_views.PasswordResetView.as_view(

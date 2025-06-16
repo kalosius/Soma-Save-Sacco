@@ -88,8 +88,6 @@ def generate_unique_loan_code():
 
 
 # statement
-
-
 @login_required(login_url='login')
 def statement(request):
     user = request.user
@@ -439,7 +437,7 @@ def logout_view(request):
 
 
 # editing User Profile and updating all details....................................
-@login_required
+@login_required(login_url='login')
 def edit_profile(request):
     borrower = request.user.borrower_profile  # related_name in Borrower model
 
@@ -482,7 +480,7 @@ def edit_profile(request):
 
 
 # uploading profile image
-@login_required
+@login_required(login_url='login')
 def upload_photo(request):
     if request.method == 'POST' and request.FILES.get('photo'):
         photo = request.FILES['photo']
@@ -494,3 +492,94 @@ def upload_photo(request):
 
     return render(request, 'edit/upload_photo.html')
 
+
+
+
+
+# CVC and pdf download
+import csv
+from io import BytesIO, StringIO
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
+from itertools import chain
+from datetime import datetime
+
+@login_required(login_url='login')
+def download_statement(request, format):
+    user = request.user
+    borrower = getattr(user, 'borrower_profile', None)
+
+    # Similar logic from your statement() view
+    share_txns = ShareTransaction.objects.filter(user=user).values(
+        'timestamp', 'transaction_type', 'amount', 'status'
+    )
+    share_data = [
+        {
+            'date': tx['timestamp'],
+            'type': tx['transaction_type'].replace('_', ' ').title(),
+            'reference': f"SHR-{tx['timestamp'].strftime('%Y%m%d%H%M%S')}",
+            'amount': tx['amount'],
+            'status': tx['status'].title()
+        } for tx in share_txns
+    ]
+
+    payments = Payment.objects.filter(borrower=borrower).select_related('loan').values(
+        'id', 'payment_date', 'amount', 'payment_status', 'loan__loan_code'
+    )
+    payment_data = [
+        {
+            'date': tx['payment_date'],
+            'type': "Loan Repayment",
+            'reference': tx['loan__loan_code'] or f"PAY-{tx['id']}",
+            'amount': -tx['amount'],
+            'status': tx['payment_status'].title()
+        } for tx in payments
+    ]
+
+    transactions = sorted(
+        chain(share_data, payment_data),
+        key=lambda x: x['date'],
+        reverse=True
+    )
+
+    if format == 'csv':
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="statement.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(['Date', 'Transaction', 'Reference', 'Amount (UGX)', 'Status'])
+
+        for tx in transactions:
+            writer.writerow([
+                tx['date'].strftime('%Y-%m-%d %H:%M'),
+                tx['type'],
+                tx['reference'],
+                f"{tx['amount']:,.0f}",
+                tx['status']
+            ])
+        return response
+
+    elif format == 'pdf':
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="statement.pdf"'
+
+        buffer = BytesIO()
+        p = canvas.Canvas(buffer)
+        p.setFont("Helvetica", 12)
+        p.drawString(100, 800, "My Statement")
+
+        y = 780
+        for tx in transactions:
+            line = f"{tx['date'].strftime('%Y-%m-%d %H:%M')} | {tx['type']} | {tx['reference']} | UGX {tx['amount']:,.0f} | {tx['status']}"
+            p.drawString(50, y, line)
+            y -= 20
+            if y < 50:
+                p.showPage()
+                y = 800
+
+        p.save()
+        buffer.seek(0)
+        return HttpResponse(buffer, content_type='application/pdf')
+
+    else:
+        return HttpResponse("Invalid format", status=400)

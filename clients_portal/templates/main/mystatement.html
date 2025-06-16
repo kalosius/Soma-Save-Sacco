@@ -39,13 +39,18 @@
   </form>
 
   <!-- Download -->
-  <div class="flex justify-end mb-4">
-    <a href="" 
-       class="text-blue-600 hover:text-blue-800 text-sm underline"
-    >
-      Download PDF/CSV
-    </a>
-  </div>
+  <!-- Download -->
+<div class="flex justify-end mb-4 space-x-4">
+  <a href="{% url 'download_statement' 'csv' %}"
+     class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">
+    Download CSV
+  </a>
+  <a href="{% url 'download_statement' 'pdf' %}"
+     class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm">
+    PDF
+  </a>
+</div>
+
 
   <!-- Statement Table -->
   <div class="overflow-x-auto">
