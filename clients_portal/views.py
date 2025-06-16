@@ -6,13 +6,19 @@ from django.contrib.auth.decorators import login_required
 from .models import ShareTransaction, Account, generate_unique_account_number
 from django.contrib.auth.models import User
 from adminapp.models import Loan, Payment, Borrower, RepaymentSchedule
-from django.db.models import Sum
+from django.db.models import Sum, F, Value, CharField
 from datetime import timedelta
 import random
 from django.utils import timezone
 from decimal import Decimal
 from datetime import datetime
 from django.views.decorators.http import require_POST
+from django.db.models import Q
+from django.utils.dateparse import parse_date
+from itertools import chain
+
+
+
 
 
 
@@ -82,11 +88,65 @@ def generate_unique_loan_code():
 
 
 # statement
+
+
 @login_required(login_url='login')
 def statement(request):
-    return render(request, 'main/mystatement.html')
+    user = request.user
+    borrower = getattr(user, 'borrower_profile', None)
 
+    # GET filters
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    transaction_type = request.GET.get('transaction_type')
 
+    # Share Transactions
+    share_txns = ShareTransaction.objects.filter(user=user).values(
+        'timestamp', 'transaction_type', 'amount', 'status'
+    )
+    share_data = [
+        {
+            'date': tx['timestamp'],
+            'type': tx['transaction_type'].replace('_', ' ').title(),
+            'reference': f"SHR-{tx['timestamp'].strftime('%Y%m%d%H%M%S')}",
+            'amount': tx['amount'],
+            'status': tx['status'].title()
+        } for tx in share_txns
+    ]
+
+    # Loan Payments
+    payments = Payment.objects.filter(borrower=borrower).select_related('loan').values(
+        'id', 'payment_date', 'amount', 'payment_status', 'loan__loan_code'
+    )
+    payment_data = [
+        {
+            'date': tx['payment_date'],
+            'type': "Loan Repayment",
+            'reference': tx['loan__loan_code'] if tx['loan__loan_code'] else f"PAY-{tx['id']}",
+            'amount': -tx['amount'],  # repayments are outflows
+            'status': tx['payment_status'].title()
+        } for tx in payments
+    ]
+
+    # Combine
+    transactions = sorted(
+        chain(share_data, payment_data),
+        key=lambda x: x['date'],
+        reverse=True
+    )
+
+    # Filters
+    if start_date:
+        transactions = [tx for tx in transactions if tx['date'].date() >= datetime.strptime(start_date, "%Y-%m-%d").date()]
+    if end_date:
+        transactions = [tx for tx in transactions if tx['date'].date() <= datetime.strptime(end_date, "%Y-%m-%d").date()]
+    if transaction_type:
+        transactions = [tx for tx in transactions if tx['type'].lower().replace(" ", "_") == transaction_type]
+
+    context = {
+        'transactions': transactions,
+    }
+    return render(request, 'main/mystatement.html', context)
 
 
 

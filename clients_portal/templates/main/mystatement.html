@@ -1,4 +1,5 @@
 {% extends 'clientsbase.html' %}
+{% load humanize %}
 {% block content %}
 
 <div class="max-w-6xl mx-auto mt-10 bg-white rounded-lg shadow p-6">
@@ -59,32 +60,27 @@
           <th class="border px-3 py-2 text-left">Status</th>
         </tr>
       </thead>
-      <tbody class="text-gray-800">
-        <tr>
-          <td class="border px-3 py-2">2025-06-10</td>
-          <td class="border px-3 py-2">Deposit</td>
-          <td class="border px-3 py-2">TXN-123456</td>
-          <td class="border px-3 py-2 text-green-600 font-medium">+500,000</td>
-          <td class="border px-3 py-2">3,500,000</td>
-          <td class="border px-3 py-2 text-green-700">Completed</td>
-        </tr>
-        <tr>
-          <td class="border px-3 py-2">2025-05-28</td>
-          <td class="border px-3 py-2">Loan Repayment</td>
-          <td class="border px-3 py-2">LN-938372</td>
-          <td class="border px-3 py-2 text-red-600 font-medium">-150,000</td>
-          <td class="border px-3 py-2">3,000,000</td>
-          <td class="border px-3 py-2 text-green-700">Completed</td>
-        </tr>
-        <tr>
-          <td class="border px-3 py-2">2025-05-15</td>
-          <td class="border px-3 py-2">Share Purchase</td>
-          <td class="border px-3 py-2">SHR-55444</td>
-          <td class="border px-3 py-2 text-red-600 font-medium">-750,000</td>
-          <td class="border px-3 py-2">3,150,000</td>
-          <td class="border px-3 py-2 text-green-700">Completed</td>
-        </tr>
-      </tbody>
+    <tbody class="text-gray-800">
+  {% if transactions %}
+    {% for tx in transactions %}
+      <tr>
+        <td class="border px-3 py-2">{{ tx.date|date:"Y-m-d H:i" }}</td>
+        <td class="border px-3 py-2">{{ tx.type }}</td>
+        <td class="border px-3 py-2">{{ tx.reference }}</td>
+        <td class="border px-3 py-2 {% if tx.amount > 0 %}text-green-600{% else %}text-red-600{% endif %} font-medium">
+          {% if tx.amount > 0 %}+{% endif %}{{ tx.amount|floatformat:0|intcomma }}
+        </td>
+        <td class="border px-3 py-2">--</td>  {# You can calculate running balance if needed #}
+        <td class="border px-3 py-2 text-green-700">{{ tx.status }}</td>
+      </tr>
+    {% endfor %}
+  {% else %}
+    <tr>
+      <td colspan="6" class="border px-3 py-2 text-center text-gray-500">No transactions found for the selected filters.</td>
+    </tr>
+  {% endif %}
+</tbody>
+
     </table>
   </div>
 </div>
