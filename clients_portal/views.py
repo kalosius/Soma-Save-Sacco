@@ -91,7 +91,7 @@ def statement(request):
 
 
 # shares
-SHARE_VALUE = 25000  # Current share value in UGX
+SHARE_VALUE = 200000  # Current share value in UGX
 @login_required(login_url='login')
 def shares(request):
     user = request.user

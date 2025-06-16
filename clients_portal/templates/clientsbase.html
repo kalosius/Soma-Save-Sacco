@@ -130,5 +130,46 @@
   }
 </script>
 
+
+
+
+
+<!-- New Feature Modal -->
+<div id="feature-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+  <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md mx-4 relative">
+    <button onclick="closeFeatureModal()" class="absolute top-2 right-2 text-gray-400 hover:text-red-600 text-xl font-bold">&times;</button>
+    <h3 class="text-xl font-bold text-gray-800 mb-3">🎉 What’s New</h3>
+    <ul class="list-disc pl-5 space-y-2 text-gray-700 text-sm">
+      <li>💸 You can now withdraw via MTN and Airtel with logos!</li>
+      <li>📊 Improved dashboard with live financial summary.</li>
+      <li>🕒 Smart greeting messages based on time of day.</li>
+    </ul>
+    <div class="mt-5 text-right">
+      <button onclick="closeFeatureModal()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Got it!</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const FEATURE_VERSION = "v1.2.0"; // Change this on each feature update
+
+  function showFeatureModal() {
+    document.getElementById('feature-modal').classList.remove('hidden');
+  }
+
+  function closeFeatureModal() {
+    document.getElementById('feature-modal').classList.add('hidden');
+    localStorage.setItem('seenFeatureVersion', FEATURE_VERSION);
+  }
+
+  // Show modal if this version hasn't been seen
+  window.addEventListener('DOMContentLoaded', () => {
+    const seenVersion = localStorage.getItem('seenFeatureVersion');
+    if (seenVersion !== FEATURE_VERSION) {
+      showFeatureModal();
+    }
+  });
+</script>
+
 </body>
 </html>

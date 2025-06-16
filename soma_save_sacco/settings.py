@@ -68,18 +68,18 @@ WSGI_APPLICATION = 'soma_save_sacco.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
-
 # DATABASES = {
-#     'default': dj_database_url.parse(
-#     'postgresql://SomaSaveDB_owner:npg_d14SieVJGwph@ep-dark-wildflower-a8ehnq08-pooler.eastus2.azure.neon.tech/SomaSaveDB?sslmode=require'    )
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
 # }
+
+
+DATABASES = {
+    'default': dj_database_url.parse(
+    'postgresql://SomaSaveDB_owner:npg_d14SieVJGwph@ep-dark-wildflower-a8ehnq08-pooler.eastus2.azure.neon.tech/SomaSaveDB?sslmode=require'    )
+}
 
 
 
