@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings  # This is key to support custom user models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class CustomUser(AbstractUser):
@@ -33,3 +35,36 @@ class ShareTransaction(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.number_of_shares} shares"
+
+
+
+
+# accounts model for users
+class Account(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    account_number = models.CharField(max_length=20, unique=True, editable=False)
+    account_type = models.CharField(max_length=50, default="Savings Account")
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)  # Default balance is 0.00
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.account_number} - {self.user.username}"
+
+
+def generate_unique_account_number():
+    prefix = "SACCO-0100"
+    from random import randint
+    from .models import Account
+
+    while True:
+        random_digits = f"{randint(10000000, 99999999)}"
+        account_number = f"{prefix}{random_digits}"
+        if not Account.objects.filter(account_number=account_number).exists():
+            return account_number
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_account_for_user(sender, instance, created, **kwargs):
+    if created:
+        from .models import Account
+        Account.objects.create(user=instance, account_number=generate_unique_account_number())

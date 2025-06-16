@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
-from .models import ShareTransaction
+from .models import ShareTransaction, Account, generate_unique_account_number
 from django.contrib.auth.models import User
 from adminapp.models import Loan, Payment, Borrower, RepaymentSchedule
 from django.db.models import Sum
@@ -12,7 +12,7 @@ import random
 from django.utils import timezone
 from decimal import Decimal
 from datetime import datetime
-
+from django.views.decorators.http import require_POST
 
 
 
@@ -174,44 +174,68 @@ def user_loans(request):
 @login_required(login_url='login')
 def user_account(request):
     user = request.user
-    borrower = Borrower.objects.get(user=user)
 
-    # Balances
-    total_savings = Decimal('2500000.00')  # Replace with real query if you have savings model
+    try:
+        borrower = Borrower.objects.get(user=user)
+    except Borrower.DoesNotExist:
+        return render(request, 'main/account.html', {
+            'message': 'No borrower profile found for this user.'
+        })
+
+    # Account activation logic
+    if request.method == "POST" and request.POST.get("activate_account") == "1":
+        if not hasattr(user, 'account'):
+            Account.objects.create(
+                user=user,
+                account_number=generate_unique_account_number()
+            )
+            messages.success(request, "Account activated successfully.")
+        return redirect('account')  
+
+    # If account doesn't exist yet, show modal
+    if not hasattr(user, 'account'):
+        return render(request, 'main/account.html', {
+            'show_activation_modal': True,
+        })
+
+    account = user.account
+
+    # Financial data
+    total_savings = Decimal('2500000.00')  # Replace with actual logic
     share_capital = ShareTransaction.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
     outstanding_loan = Loan.objects.filter(borrower=borrower, loan_status='Approved').aggregate(
         total=Sum('amount'))['total'] or 0
-    dividends_earned = Decimal('150000.00')  # Placeholder - depends on how you calculate dividends
+    dividends_earned = Decimal('150000.00')  # Replace with logic
 
-    # Recent transactions (dummy mix of share transactions + loan payments)
-    transactions = list(ShareTransaction.objects.filter(user=user).values('timestamp', 'transaction_type', 'amount', 'status')) + \
-                   list(Payment.objects.filter(borrower=borrower).values('payment_date', 'amount', 'payment_status'))
+    # Transactions
+    transactions = list(ShareTransaction.objects.filter(user=user).values(
+        'timestamp', 'transaction_type', 'amount', 'status')) + \
+        list(Payment.objects.filter(borrower=borrower).values(
+            'payment_date', 'amount', 'payment_status'))
 
-    # Normalize all transactions into a common format
-    normalized_transactions = []
-    for tx in transactions:
-        normalized_transactions.append({
+    normalized_transactions = [
+        {
             'date': tx.get('timestamp') or tx.get('payment_date'),
             'type': tx.get('transaction_type') or 'Loan Repayment',
             'amount': tx['amount'],
             'status': tx.get('status') or tx.get('payment_status'),
-        })
-
+        }
+        for tx in transactions
+    ]
     normalized_transactions.sort(key=lambda x: x['date'], reverse=True)
 
     context = {
-        'account_number': f"SACCO{user.id:08}",  # e.g., SACCO00000012
+        'account_number': account.account_number,
         'account_type': "Savings Account",
-        'member_since': borrower.date_joined.strftime('%A, %B %d, %Y'),  # Format date as "Monday, January 01, 2023"
+        'member_since': borrower.date_joined.strftime('%A, %B %d, %Y'),
         'total_savings': total_savings,
         'share_capital': share_capital,
         'outstanding_loan': outstanding_loan,
         'dividends_earned': dividends_earned,
-        'recent_transactions': normalized_transactions[:5],  # Show only latest 5
+        'account_balance': account.balance,
+        'recent_transactions': normalized_transactions[:5],
     }
-
     return render(request, 'main/account.html', context)
-
 
 
 # userprofile
@@ -239,6 +263,11 @@ def client_dashboard(request):
     # Borrower profile
     borrower = getattr(user, 'borrower_profile', None)
 
+    # Account info (adjust depending on your Account model)
+    account = Account.objects.filter(user=user).first()
+    account_number = account.account_number if account else "N/A"
+    account_balance = account.balance if account else 0
+
     # Loan data
     loans = Loan.objects.filter(borrower=borrower) if borrower else Loan.objects.none()
     loan_requests = loans.count()
@@ -264,6 +293,8 @@ def client_dashboard(request):
         'total_transactions': total_transactions,
         'total_transacted_amount': total_transacted_amount,
         'current_hour': current_hour,
+        'account_number': account_number,
+        'account_balance': account_balance,
     }
 
     return render(request, 'main/client_dashboard.html', context)
