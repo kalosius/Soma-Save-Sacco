@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'adminapp',
     'django.contrib.humanize',
     'clients_portal',
+    'pwa',
 
 ]
 
@@ -140,3 +141,24 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For testing only
 DEFAULT_FROM_EMAIL = 'no-reply@somasave.com'
 
+
+
+
+
+
+# Progressive web application settings
+
+PWA_APP_NAME = 'SomaSave SACCO'
+PWA_APP_DESCRIPTION = "Your personal SACCO dashboard"
+PWA_APP_THEME_COLOR = '#0d6efd'
+PWA_APP_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_START_URL = '/'
+PWA_APP_ICONS = [
+    {
+        'src': '/static/images/icons/icon-512x512.png',
+        'sizes': '512x512'
+    }
+]
+PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js/sw.js')

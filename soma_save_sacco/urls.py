@@ -8,7 +8,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('client-admin/', include('adminapp.urls')),
     path('', include('clients_portal.urls')),
-    
+    path('pwa/', include('pwa.urls')),
+
 ]
 
 if settings.DEBUG:

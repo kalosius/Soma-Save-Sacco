@@ -1,12 +1,23 @@
 {% load static %}
+{% load pwa %}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard - Soma Save Sacco</title>
-  <link rel="icon" type="image/x-icon" href="{% static 'images/img/logo.png' %}">
+  <title>Dashboard - SomaSave SACCO</title>
+  <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+
+  <!-- pwa -->
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+  <link rel="icon" href="{% static 'icons/icon-192x192.png' %}" type="image/png">
+  <meta name="theme-color" content="#0d6efd">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <script src="{% static 'js/sw.js' %}"></script>
+
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     function toggleMenu() {
@@ -23,7 +34,7 @@
         <!-- Logo -->
         <div class="flex items-center space-x-2">
           <img src="{% static 'images/img/logo.png' %}" alt="Logo" class="w-8 h-8" />
-          <span class="font-bold text-lg">Soma Save Sacco</span>
+          <span class="font-bold text-lg">SomaSave SACCO</span>
         </div>
 
         <!-- Desktop Menu -->
@@ -141,6 +152,7 @@
     <button onclick="closeFeatureModal()" class="absolute top-2 right-2 text-gray-400 hover:text-red-600 text-xl font-bold">&times;</button>
     <h3 class="text-xl font-bold text-gray-800 mb-3">🎉 What’s New</h3>
     <ul class="list-disc pl-5 space-y-2 text-gray-700 text-sm">
+      <li>📦 You can now Install the Android and IOS app</li>
       <li>💸 You can now withdraw via MTN and Airtel with logos!</li>
       <li>📊 Improved dashboard with live financial summary.</li>
       <li>🕒 Smart greeting messages based on time of day.</li>
@@ -153,7 +165,7 @@
 </div>
 
 <script>
-  const FEATURE_VERSION = "v1.2.0"; // Change this on each feature update
+  const FEATURE_VERSION = "v1.3.0"; // Change this on each feature update
 
   function showFeatureModal() {
     document.getElementById('feature-modal').classList.remove('hidden');
@@ -171,6 +183,32 @@
       showFeatureModal();
     }
   });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- PWA -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register("{% static 'js/sw.js' %}")
+        .then(function (registration) {
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch(function (error) {
+          console.error('Service Worker registration failed:', error);
+        });
+    });
+  }
 </script>
 
 </body>
