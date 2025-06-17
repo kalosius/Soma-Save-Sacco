@@ -376,6 +376,10 @@ def client_dashboard(request):
     # greeting message based on time of day
     current_hour = datetime.now().hour
 
+
+    logs = LoginActivity.objects.filter(user=request.user).order_by('-login_time')[:10]  # latest 10
+
+
     context = {
         'total_shares': total_shares,
         'total_share_value': total_share_value,
@@ -388,6 +392,7 @@ def client_dashboard(request):
         'current_hour': current_hour,
         'account_number': account_number,
         'account_balance': account_balance,
+        'logs': logs,
     }
 
     return render(request, 'main/client_dashboard.html', context)
