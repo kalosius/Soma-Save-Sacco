@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser, ShareTransaction, Account
+from .models import CustomUser, ShareTransaction, Account, LoginActivity
 
 
 @admin.register(CustomUser)
@@ -17,3 +17,12 @@ class ShareTransactionAdmin(admin.ModelAdmin):
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
     list_display = ('account_number', 'user', 'account_type', 'date_created')
+
+
+
+
+@admin.register(LoginActivity)
+class LoginActivityAdmin(admin.ModelAdmin):
+    list_display = ('user', 'ip_address', 'location', 'device', 'login_time', 'logout_time')
+    list_filter = ('login_time', 'location')
+    search_fields = ('user__username', 'ip_address', 'location', 'device')

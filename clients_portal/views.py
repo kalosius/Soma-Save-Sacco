@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
-from .models import ShareTransaction, Account, generate_unique_account_number
+from .models import ShareTransaction, Account, generate_unique_account_number, LoginActivity
 from django.contrib.auth.models import User
 from adminapp.models import Loan, Payment, Borrower, RepaymentSchedule
 from django.db.models import Sum, F, Value, CharField
@@ -26,6 +26,8 @@ from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 from itertools import chain
 from datetime import datetime
+
+
 
 
 # getting the ip address
@@ -433,6 +435,16 @@ def login_view(request):
             browser = f"{user_agent.browser.family} {user_agent.browser.version_string}"
             os = f"{user_agent.os.family} {user_agent.os.version_string}"
 
+            # Save login activity
+            activity = LoginActivity.objects.create(
+            user=user,
+            ip_address=ip,
+            location=location,
+            device=device_type
+            )
+            request.session['login_activity_id'] = activity.id  # Save log ID for logout tracking
+
+
             # Send login alert email
             send_mail(
                 subject='Login Alert - SomaSave SACCO',
@@ -524,7 +536,19 @@ def register_view(request):
 # logout
 @login_required(login_url='login')
 def logout_view(request):
+    activity_id = request.session.get('login_activity_id')
+    if activity_id:
+        try:
+            activity = LoginActivity.objects.get(id=activity_id)
+            activity.logout_time = now()
+            activity.save()
+        except LoginActivity.DoesNotExist:
+            pass  # Do nothing if it fails
+
     logout(request)
+    request.session.flush()  # Clear session completely
+
+    messages.success(request, 'You have been logged out successfully.')
     return redirect('login')
 
 
