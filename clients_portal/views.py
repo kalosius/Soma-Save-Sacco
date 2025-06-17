@@ -16,6 +16,39 @@ from django.views.decorators.http import require_POST
 from django.db.models import Q
 from django.utils.dateparse import parse_date
 from itertools import chain
+from django.core.mail import send_mail
+import requests
+from django.utils.timezone import now
+from user_agents import parse as parse_ua
+import csv
+from io import BytesIO, StringIO
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
+from itertools import chain
+from datetime import datetime
+
+
+# getting the ip address
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+def get_location_from_ip(ip):
+    try:
+        response = requests.get(f'https://ipapi.co/{ip}/json/').json()
+        city = response.get('city')
+        country = response.get('country_name')
+        return f"{city}, {country}" if city and country else "Unknown Location"
+    except:
+        return "Unknown Location"
+
+
+
+
 
 
 
@@ -362,10 +395,9 @@ def client_dashboard(request):
 # login
 def login_view(request):
     if request.method == 'POST':
-        identifier = request.POST.get('username')  # could be username or email
+        identifier = request.POST.get('username')
         password = request.POST.get('password')
 
-        # Try to find a user by email if input looks like an email
         if '@' in identifier:
             try:
                 user_obj = User.objects.get(email=identifier)
@@ -383,6 +415,44 @@ def login_view(request):
         if user is not None:
             login(request, user)
             messages.success(request, f'Welcome! {user.username} Login successful')
+
+            # Gather login details
+            ip = get_client_ip(request)
+            location = get_location_from_ip(ip)
+            login_time = now().strftime('%Y-%m-%d %H:%M:%S')
+
+            # Device info
+            user_agent_str = request.META.get('HTTP_USER_AGENT', '')
+            user_agent = parse_ua(user_agent_str)
+            device_type = (
+                "Mobile" if user_agent.is_mobile else
+                "Tablet" if user_agent.is_tablet else
+                "PC" if user_agent.is_pc else
+                "Other"
+            )
+            browser = f"{user_agent.browser.family} {user_agent.browser.version_string}"
+            os = f"{user_agent.os.family} {user_agent.os.version_string}"
+
+            # Send login alert email
+            send_mail(
+                subject='Login Alert - SomaSave SACCO',
+                message=(
+                    f"Hello {user.first_name},\n\n"
+                    f"You have successfully logged into your SomaSave SACCO account.\n\n"
+                    f"Details:\n"
+                    f"Time: {login_time}\n"
+                    f"IP Address: {ip}\n"
+                    f"Location: {location}\n\n"
+                    f"Device: {device_type}\n"
+                    f"Operating System: {os}\n"
+                    f"Browser: {browser}\n\n"
+                    f"If this wasn't you, please change your password immediately."
+                ),
+                from_email='kasozialoisius@gmail.com',  # Or info@somasave.com
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+
             return redirect('client_dashboard')
         else:
             return render(request, 'auth/login.html', {'error': 'Invalid username/email or password'})
@@ -436,6 +506,15 @@ def register_view(request):
         )
 
         Borrower.objects.create(user=user)
+
+        # Send confirmation email
+        send_mail(
+            subject='Welcome to SomaSave SACCO',
+            message=f'Hello {first_name},\n\nYour account has been created successfully. You can now log in and start using our services.\n\nThank you for joining SomaSave!',
+            from_email='kasozialoisius@gmail.com',
+            recipient_list=[email],
+            fail_silently=False,
+        )
 
         messages.success(request, 'Account created successfully. You can now log in.')
         return redirect('login')
@@ -512,13 +591,6 @@ def upload_photo(request):
 
 
 # CVC and pdf download
-import csv
-from io import BytesIO, StringIO
-from reportlab.pdfgen import canvas
-from django.http import HttpResponse
-from itertools import chain
-from datetime import datetime
-
 @login_required(login_url='login')
 def download_statement(request, format):
     user = request.user

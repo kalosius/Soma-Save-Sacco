@@ -1,0 +1,19 @@
+# Ignore .env file
+.env
+
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+env/
+venv/
+
+# VSCode
+.vscode/
+
+# SQLite
+*.sqlite3
+
+# Django migrations
+**/migrations/

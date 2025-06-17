@@ -2,6 +2,8 @@
 from pathlib import Path
 import os
 import dj_database_url
+from decouple import config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -69,18 +71,18 @@ WSGI_APPLICATION = 'soma_save_sacco.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
-
 DATABASES = {
-    'default': dj_database_url.parse(
-    'postgresql://SomaSaveDB_owner:npg_d14SieVJGwph@ep-dark-wildflower-a8ehnq08-pooler.eastus2.azure.neon.tech/SomaSaveDB?sslmode=require'    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
+
+
+# DATABASES = {
+#     'default': dj_database_url.parse(
+#     'postgresql://SomaSaveDB_owner:npg_d14SieVJGwph@ep-dark-wildflower-a8ehnq08-pooler.eastus2.azure.neon.tech/SomaSaveDB?sslmode=require'    )
+# }
 
 
 
@@ -138,8 +140,18 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Email
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For testing only
-DEFAULT_FROM_EMAIL = 'no-reply@somasave.com'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For testing only
+# DEFAULT_FROM_EMAIL = 'no-reply@somasave.com'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD') # Not your Gmail login password
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 
 
 
