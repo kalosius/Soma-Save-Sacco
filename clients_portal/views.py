@@ -359,7 +359,7 @@ def client_dashboard(request):
 
 
 
-
+# login
 def login_view(request):
     if request.method == 'POST':
         identifier = request.POST.get('username')  # could be username or email
@@ -390,7 +390,7 @@ def login_view(request):
     return render(request, 'auth/login.html')
 
 
-
+# register
 User = get_user_model()
 def register_view(request):
     if request.method == 'POST':
@@ -402,14 +402,29 @@ def register_view(request):
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
 
+        context = {
+            'username': username,
+            'email': email,
+            'phone_number': phone_number,
+            'first_name': first_name,
+            'last_name': last_name,
+        }
+
         if password != confirm_password:
-            return render(request, 'auth/register.html', {'error': 'Passwords do not match'})
+            context['error'] = 'Passwords do not match'
+            return render(request, 'auth/register.html', context)
 
         if User.objects.filter(username=username).exists():
-            return render(request, 'auth/register.html', {'error': 'Username already taken'})
+            context['error'] = 'Username already taken'
+            return render(request, 'auth/register.html', context)
 
         if User.objects.filter(email=email).exists():
-            return render(request, 'auth/register.html', {'error': 'Email already in use'})
+            context['error'] = 'Email already in use'
+            return render(request, 'auth/register.html', context)
+        
+        if User.objects.filter(phone_number=phone_number).exists():
+            context['error'] = 'Phone number already in use'
+            return render(request, 'auth/register.html', context)
 
         user = User.objects.create(
             username=username,
