@@ -16,7 +16,7 @@ def initiate_momo_payment(amount, phone, email, name):
         "email": email,
         "phone_number": phone,
         "fullname": name,  # This is the key Flutterwave expects, not 'name'
-        "redirect_url": "http://localhost:8000/payment/callback/",
+        "redirect_url": "https://soma-save-sacco.onrender.com/payment/callback/",
         "customizations": {
             "title": "SomaSave Payments",
             "description": "Loan Repayment"
