@@ -80,10 +80,8 @@ WSGI_APPLICATION = 'soma_save_sacco.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.parse(
-    'postgresql://SomaSaveDB_owner:npg_d14SieVJGwph@ep-dark-wildflower-a8ehnq08-pooler.eastus2.azure.neon.tech/SomaSaveDB?sslmode=require'    )
+    'default': dj_database_url.parse(config('DATABASE_URL'))
 }
-
 
 
 
@@ -174,3 +172,11 @@ PWA_APP_ICONS = [
     }
 ]
 PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js/sw.js')
+
+
+
+# flutterwave 
+# settings.py
+FLW_PUBLIC_KEY = config("FLW_PUBLIC_KEY")
+FLW_SECRET_KEY = config("FLW_SECRET_KEY")
+FLW_BASE_URL = config("FLW_BASE_URL")

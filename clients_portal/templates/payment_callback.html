@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Callback</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded shadow w-full max-w-md">
+        <h2 class="text-2xl font-bold text-green-600 mb-4">Payment {{ status|title }}</h2>
+        <p><strong>Transaction Ref:</strong> {{ tx_ref }}</p>
+        <p><strong>Amount:</strong> UGX {{ amount }}</p>
+        <p><strong>Message:</strong> {{ message }}</p>
+            <a href="{% url 'client_dashboard' %}" class="block text-center text-blue-500 hover:underline mt-4">Return to Dashboard</a>
+
+    </div>
+</body>
+</html>

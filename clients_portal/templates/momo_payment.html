@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mobile Money Payment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <form method="post" action="{% url 'momo_payment_initiate' %}" class="bg-white p-6 rounded-lg shadow-lg space-y-4 w-96">
+        {% csrf_token %}
+        <h2 class="text-2xl font-semibold mb-4">Pay with Mobile Money</h2>
+        <input name="name" type="text" placeholder="Your Name" required class="w-full border p-2 rounded">
+        <input name="email" type="email" placeholder="Your Email" required class="w-full border p-2 rounded">
+        <input name="phone" type="text" placeholder="Phone e.g 2567XXXXXXXX" required class="w-full border p-2 rounded">
+        <input name="amount" type="number" placeholder="Amount (UGX)" required class="w-full border p-2 rounded">
+        <button type="submit" class="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700">Pay Now</button>
+    </form>
+</body>
+</html>

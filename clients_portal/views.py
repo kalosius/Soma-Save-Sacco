@@ -1,3 +1,5 @@
+import json
+import uuid
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib import messages
@@ -26,6 +28,104 @@ from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 from itertools import chain
 from datetime import datetime
+from django.conf import settings
+from urllib.parse import unquote
+from django.http import JsonResponse
+from .flutterwave import initiate_momo_payment
+
+def momo_payment_form(request):
+    return render(request, "momo_payment.html")
+
+
+def momo_payment_initiate(request):
+    if request.method == "POST":
+        full_name = request.POST.get("name")
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+        amount = request.POST.get("amount")
+
+        print("🟢 Received payment form values:")
+        print(f"Name: {full_name}, Email: {email}, Phone: {phone}, Amount: {amount}")
+
+        tx_ref = str(uuid.uuid4())
+        redirect_url = "http://localhost:8000/payment/callback/"
+
+        payload = {
+            "tx_ref": tx_ref,
+            "amount": str(amount),
+            "currency": "UGX",
+            "email": email,
+            "phone_number": phone,
+            "fullname": full_name,
+            "redirect_url": redirect_url,
+            "customizations": {
+                "title": "SomaSave Payments",
+                "description": "Loan Repayment",
+            }
+        }
+
+        print("📦 FINAL Payload to Flutterwave:")
+        print(payload)
+
+        # Replace with your Flutterwave secret key
+        secret_key = settings.FLW_SECRET_KEY
+        headers = {
+            "Authorization": f"Bearer {secret_key}",
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post(
+            "https://api.flutterwave.com/v3/charges?type=mobile_money_uganda",
+            json=payload,
+            headers=headers
+        )
+
+        flutter_response = response.json()
+        print("📤 Flutterwave response:", flutter_response)
+
+        # Try to get the redirect URL safely
+        redirect_url = flutter_response.get("meta", {}).get("authorization", {}).get("redirect")
+
+        if redirect_url:
+            return redirect(redirect_url)
+        else:
+            print("❌ Flutterwave response missing expected keys:", flutter_response)
+            messages.error(request, "Payment could not be initiated. Please try again.")
+            return redirect("momo_payment_form")  # Replace with your payment form view name
+
+    # If GET or other
+    return redirect("momo_payment_form")
+
+
+
+
+
+
+
+def flutterwave_callback(request):
+    """
+    Handles redirect from Flutterwave after payment.
+    """
+    raw_resp = request.GET.get("resp")
+
+    if raw_resp:
+        try:
+            decoded = json.loads(unquote(raw_resp))
+            payment_data = decoded.get("data", {})
+            status = payment_data.get("status")
+            tx_ref = payment_data.get("txRef")
+
+            return render(request, "payment_callback.html", {
+                "status": status,
+                "tx_ref": tx_ref,
+                "amount": payment_data.get("amount"),
+                "message": payment_data.get("chargeResponseMessage"),
+            })
+
+        except Exception as e:
+            return JsonResponse({"error": "Failed to parse response", "details": str(e)}, status=400)
+
+    return JsonResponse({"error": "No response received from Flutterwave"}, status=400)
 
 
 
@@ -53,11 +153,6 @@ def get_location_from_ip(ip):
 
 
 
-
-
-
-
-# Create your views here.
 
 # transactions
 @login_required(login_url='login')
@@ -699,3 +794,4 @@ def download_statement(request, format):
 
     else:
         return HttpResponse("Invalid format", status=400)
+

@@ -84,82 +84,15 @@
     <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 z-50" @click.stop>
       <h2 class="text-xl font-semibold mb-4 text-center text-gray-800">Deposit Funds</h2>
 
-      <form method="POST" action="" class="space-y-4">
+       <form method="post" action="{% url 'momo_payment_initiate' %}" class="bg-white p-6 rounded-lg shadow-lg space-y-4 w-96">
         {% csrf_token %}
-        
-        <!-- Amount -->
-        <div>
-          <label class="block text-gray-700 font-medium mb-1" for="amount">Amount (UGX)</label>
-          <input type="number" name="amount" id="amount" required min="1000"
-            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300" placeholder="Enter amount">
-        </div>
-
-        <!-- Payment Method -->
-        <div>
-          <label class="block text-gray-700 font-medium mb-1" for="method">Payment Method</label>
-          <select name="method" id="method" required
-            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-            x-model="method"
-          >
-            <option value="">-- Select Method --</option>
-            <option value="mobile_money">Mobile Money</option>
-            <option value="bank_transfer">Bank Transfer (Card)</option>
-          </select>
-        </div>
-
-        <!-- Conditional: Mobile Money Fields -->
-        <div x-show="method === 'mobile_money'" x-transition class="space-y-3">
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="network">Select Network</label>
-            <select name="network" id="network" class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300" required>
-              <option value="">-- Select Network --</option>
-              <option value="mtn">MTN</option>
-              <option value="airtel">Airtel</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="phone">Mobile Money Number</label>
-            <input type="tel" name="phone" id="phone"
-              class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-              placeholder="e.g. 077XXXXXXX" required>
-          </div>
-        </div>
-
-        <!-- Conditional: Bank Transfer (Card) Fields -->
-        <div x-show="method === 'bank_transfer'" x-transition class="space-y-3">
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="card_number">Debit Card Number</label>
-            <input type="text" name="card_number" id="card_number"
-              class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-              placeholder="e.g. 4242 4242 4242 4242" required>
-          </div>
-          <div class="flex space-x-2">
-            <div class="w-1/2">
-              <label class="block text-gray-700 font-medium mb-1" for="expiry">Expiry (MM/YY)</label>
-              <input type="text" name="expiry" id="expiry"
-                class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-                placeholder="MM/YY" required>
-            </div>
-            <div class="w-1/2">
-              <label class="block text-gray-700 font-medium mb-1" for="cvc">CVC</label>
-              <input type="text" name="cvc" id="cvc"
-                class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-                placeholder="e.g. 123" required>
-            </div>
-          </div>
-        </div>
-
-
-        <!-- Action Buttons -->
-        <div class="flex justify-end space-x-2 pt-2">
-          <button type="button" @click="open = false" class="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-800">
-            Cancel
-          </button>
-          <button type="submit" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
-            Submit
-          </button>
-        </div>
-      </form>
+        <h2 class="text-2xl font-semibold mb-4">Pay with Mobile Money</h2>
+        <input name="name" type="text" placeholder="Your Name" required class="w-full border p-2 rounded">
+        <input name="email" type="email" placeholder="Your Email" required class="w-full border p-2 rounded">
+        <input name="phone" type="text" placeholder="Phone e.g 2567XXXXXXXX" required class="w-full border p-2 rounded">
+        <input name="amount" type="number" placeholder="Amount (UGX)" required class="w-full border p-2 rounded">
+        <button type="submit" class="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700">Pay Now</button>
+    </form>
     </div>
   </div>
 </div>

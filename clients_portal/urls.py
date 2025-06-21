@@ -50,4 +50,13 @@ urlpatterns = [
     ), name='password_reset_complete'),
 
 
+
+
+# fluuterwave payment integration
+    path("payment/momo/", views.momo_payment_form, name="momo_payment_form"),
+    path("payment/initiate/", views.momo_payment_initiate, name="momo_payment_initiate"),
+    path('payment/callback/', views.flutterwave_callback, name='flutterwave_callback'),
+
+
+
 ]
