@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
-from .models import ShareTransaction, Account, generate_unique_account_number, LoginActivity
+from .models import ShareTransaction, Account, generate_unique_account_number, LoginActivity, Deposit
 from django.contrib.auth.models import User
 from adminapp.models import Loan, Payment, Borrower, RepaymentSchedule
 from django.db.models import Sum, F, Value, CharField
@@ -32,6 +32,9 @@ from django.conf import settings
 from urllib.parse import unquote
 from django.http import JsonResponse
 from .flutterwave import initiate_momo_payment
+from django.db import transaction
+import re
+
 
 def momo_payment_form(request):
     return render(request, "momo_payment.html")
@@ -48,8 +51,8 @@ def momo_payment_initiate(request):
         print(f"Name: {full_name}, Email: {email}, Phone: {phone}, Amount: {amount}")
 
         tx_ref = str(uuid.uuid4())
-        # redirect_url = "http://localhost:8000/payment/callback/"
-        redirect_url = "https://soma-save-sacco.onrender.com/payment/callback/"
+        redirect_url = "http://localhost:8000/payment/callback/"
+        # redirect_url = "https://soma-save-sacco.onrender.com/payment/callback/"
 
         payload = {
             "tx_ref": tx_ref,
@@ -99,14 +102,62 @@ def momo_payment_initiate(request):
 
 
 
+# User = get_user_model()
+# def flutterwave_callback(request):
+#     raw_resp = request.GET.get("resp")
+
+#     if raw_resp:
+#         try:
+#             decoded = json.loads(unquote(raw_resp))
+#             payment_data = decoded.get("data", {})
+#             status = payment_data.get("status")
+#             tx_ref = payment_data.get("txRef")
+#             amount = payment_data.get("amount")
+#             email = payment_data.get("customer", {}).get("email")
+
+#             user = User.objects.filter(email=email).first()
+
+#             if user and status == "successful":
+#                 # Use a transaction to prevent race conditions
+#                 with transaction.atomic():
+#                     deposit, created = Deposit.objects.get_or_create(
+#                         tx_ref=tx_ref,
+#                         defaults={
+#                             "user": user,
+#                             "amount": amount,
+#                             "status": status,
+#                         }
+#                     )
+
+#                     if created:
+#                         # Update user's account balance
+#                         account, _ = Account.objects.get_or_create(user=user)
+#                         account.balance += Decimal(str(amount))  # or Decimal(amount)
+#                         account.save()
+
+#             return render(request, "payment_callback.html", {
+#                 "status": status,
+#                 "tx_ref": tx_ref,
+#                 "amount": amount,
+#                 "message": payment_data.get("chargeResponseMessage"),
+#             })
+
+#         except Exception as e:
+#             return render(request, "payment_callback.html", {
+#                 "status": "error",
+#                 "message": f"Callback error: {str(e)}"
+#             })
+
+#     return render(request, "payment_callback.html", {
+#         "status": "error",
+#         "message": "No response received."
+#     })
 
 
 
 
+User = get_user_model()
 def flutterwave_callback(request):
-    """
-    Handles redirect from Flutterwave after payment.
-    """
     raw_resp = request.GET.get("resp")
 
     if raw_resp:
@@ -115,19 +166,68 @@ def flutterwave_callback(request):
             payment_data = decoded.get("data", {})
             status = payment_data.get("status")
             tx_ref = payment_data.get("txRef")
+            amount = payment_data.get("amount")
+            raw_email = payment_data.get("customer", {}).get("email", "")
+            phone = payment_data.get("customer", {}).get("phone")
+
+            # Clean the email from ravesb_..._actual@gmail.com
+            email_match = re.search(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', raw_email)
+            clean_email = email_match.group(0) if email_match else None
+
+            print("🧾 FULL CALLBACK PAYLOAD:")
+            print(json.dumps(payment_data, indent=2))
+
+            print(f"📨 Callback from Flutterwave for: {clean_email} | UGX {amount}")
+
+            user = None
+            if clean_email:
+                user = User.objects.filter(email=clean_email).first()
+                print(f"🔍 Matched user by email: {user}")
+
+            if not user and phone:
+                user = User.objects.filter(phone_number=phone).first()
+                print(f"📱 Matched user by phone: {user}")
+
+            if user and status == "successful":
+                try:
+                    with transaction.atomic():
+                        deposit, created = Deposit.objects.update_or_create(
+                            tx_ref=tx_ref,
+                            defaults={
+                                "user": user,
+                                "amount": amount,
+                                "status": status,
+                            }
+                        )
+                        print(f"💾 Deposit created: {created}")
+
+                        account, _ = Account.objects.get_or_create(user=user)
+                        account.balance += Decimal(str(amount))
+                        account.save()
+
+                        print(f"✅ Account updated. New balance: UGX {account.balance}")
+
+                except Exception as e:
+                    print(f"❌ Failed DB transaction: {e}")
 
             return render(request, "payment_callback.html", {
                 "status": status,
                 "tx_ref": tx_ref,
-                "amount": payment_data.get("amount"),
-                "message": payment_data.get("chargeResponseMessage"),
+                "amount": amount,
+                "message": payment_data.get("chargeResponseMessage", "No message"),
             })
 
         except Exception as e:
-            return JsonResponse({"error": "Failed to parse response", "details": str(e)}, status=400)
+            print(f"❗ Callback error: {e}")
+            return render(request, "payment_callback.html", {
+                "status": "error",
+                "message": f"Callback error: {str(e)}"
+            })
 
-    return JsonResponse({"error": "No response received from Flutterwave"}, status=400)
-
+    return render(request, "payment_callback.html", {
+        "status": "error",
+        "message": "No response received."
+    })
 
 
 

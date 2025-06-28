@@ -27,6 +27,6 @@ class ReportAdmin(admin.ModelAdmin):
 
 
 
-admin.site.site_header = "Soma-Save SACCO Admin"
-admin.site.site_title = "Soma-Save Admin Portal"
-admin.site.index_title = "Welcome to Soma-Save SACCO Admin"
+admin.site.site_header = "SomaSave SACCO Admin"
+admin.site.site_title = "SomaSave Admin Portal"
+admin.site.index_title = "Welcome to SomaSave SACCO Admin"
