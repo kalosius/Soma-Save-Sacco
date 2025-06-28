@@ -13,7 +13,7 @@
     </div>
   {% endif %}
 
-  <form method="POST" class="space-y-6">
+  <form method="POST" class="space-y-6" id="myForm" onsubmit="showSpinner(event)">
     {% csrf_token %}
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -68,7 +68,32 @@
       </div>
     </div>
 
-    <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm mt-6">Save Changes</button>
+<button id="saveBtn" type="submit" 
+    class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm mt-6 flex justify-center items-center space-x-2">
+    <span id="btnText">Save Changes</span>
+    <svg id="btnSpinner" class="animate-spin h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>
+  </button>
   </form>
 </div>
+
+
+<script>
+function showSpinner(event) {
+  const btn = document.getElementById('saveBtn');
+  const spinner = document.getElementById('btnSpinner');
+  const text = document.getElementById('btnText');
+
+  // Show spinner, hide text
+  spinner.classList.remove('hidden');
+  text.classList.add('hidden');
+
+  // Disable the button to prevent multiple submits
+  btn.disabled = true;
+
+  // Let the form submit normally (remove event.preventDefault())
+}
+</script>
 {% endblock %}

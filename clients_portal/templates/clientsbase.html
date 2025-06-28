@@ -88,24 +88,42 @@
       </div>
     </div>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="md:hidden hidden px-4 pb-4 text-sm">
-      <ul class="space-y-2">
-        <li><a href="{% url 'client_dashboard' %}" class="block">Dashboard</a></li>
-        <li><a href="{% url 'userprofile' %}" class="block">My Profile</a></li>
-        <li><a href="{% url 'account' %}" class="block">Accounts</a></li>
-        <li><a href="{% url 'user_loans' %}" class="block">Loans</a></li>
-        <li><a href="{% url 'shares' %}" class="block">Shares</a></li>
-        <li><a href="{% url 'statement' %}" class="block">My Statement</a></li>
-        <li><a href="{% url 'loanrequest' %}" class="block">Loan Requests</a></li>
-        <li><a href="{% url 'withdrawal' %}" class="block">Withdraw Requests</a></li>
-        <li><a href="{% url 'transactions' %}" class="block">Transactions</a></li>
-        <li>
-          <a href="#" onclick="showLogoutCard(event)" class="block text-red-500">Log Out</a>
-        </li>
+    <!-- mobile menu -->
+<div id="mobile-menu" class="md:hidden hidden px-4 pb-4 text-sm">
+  <ul class="space-y-3"> <!-- increased vertical space between li's -->
+    <li><a href="{% url 'client_dashboard' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">Dashboard</a></li>
+    <li><a href="{% url 'userprofile' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">My Profile</a></li>
+    <li><a href="{% url 'account' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">Accounts</a></li>
+    <li><a href="{% url 'user_loans' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">Loans</a></li>
+    <li><a href="{% url 'shares' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">Shares</a></li>
+    <li><a href="{% url 'statement' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">My Statement</a></li>
+    <li><a href="{% url 'loanrequest' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">Loan Requests</a></li>
+    <li><a href="{% url 'withdrawal' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">Withdraw Requests</a></li>
+    <li><a href="{% url 'transactions' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">Transactions</a></li>
+    <li>
+      <a href="#" onclick="showLogoutCard(event)" class="block px-3 py-2 rounded text-red-500 hover:bg-red-200">Log Out</a>
+    </li>
+  </ul>
+</div>
 
-      </ul>
-    </div>
+
+<script>
+  // Wait for DOM content loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuLinks = document.querySelectorAll('#mobile-menu a.menu-item');
+    
+    menuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        // Remove bg-green-600 from all
+        menuLinks.forEach(l => l.classList.remove('bg-green-100', 'text-white'));
+        
+        // Add bg-green-600 and white text to clicked link
+        link.classList.add('bg-green-600', 'text-white');
+      });
+    });
+  });
+</script>
+
   </header>
 
   <!-- Main Content -->

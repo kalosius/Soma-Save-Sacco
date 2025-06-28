@@ -1,13 +1,54 @@
 {% extends 'clientsbase.html' %}
 
 {% block content %}
-<h2 class="text-xl font-semibold mb-4">Upload New Profile Photo</h2>
+<div class="max-w-md mx-auto mt-10 bg-white p-6 rounded-lg shadow">
+    
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Upload New Profile Photo</h2>
 
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="photo" accept="image/*" required class="mb-4">
-    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Upload</button>
-</form>
+    <form method="POST" enctype="multipart/form-data" class="space-y-4" id="uploadForm">
+        {% csrf_token %}
+        
+        <div>
+            <label class="block mb-2 text-gray-700 font-medium">Select Photo</label>
+            <input type="file" name="photo" accept="image/*" required 
+                class="block w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+        </div>
 
-<a href="{% url 'userprofile' %}" class="mt-4 inline-block text-blue-600 hover:underline">Cancel</a>
+        <div class="flex justify-between items-center">
+            <button type="submit" id="uploadBtn"
+            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center min-w-[140px]">
+            Upload
+            </button>
+
+            <a href="{% url 'userprofile' %}" 
+               class="text-blue-600 hover:underline hover:text-blue-800 transition">
+               Cancel
+            </a>
+        </div>
+    </form>
+
+</div>
+
+<script>
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    const btn = document.getElementById('uploadBtn');
+    btn.disabled = true;
+    
+    let dots = 0;
+    btn.textContent = "Uploading";
+    
+    const interval = setInterval(() => {
+        dots = (dots + 1) % 4;
+        btn.textContent = "Uploading" + '.'.repeat(dots);
+    }, 500);
+
+    // Allow normal form submission
+    // Stop dots after short timeout (for testing)
+    // Remove this part in production if form redirects normally
+    // setTimeout(() => {
+    //     clearInterval(interval);
+    //     btn.textContent = "Uploaded";
+    // }, 5000);
+});
+</script>
 {% endblock %}

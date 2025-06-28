@@ -1,13 +1,13 @@
 {% extends 'clientsbase.html' %}
 {% block content %}
-
+<br>
  {% if messages %}
-    <div class="mb-4">
+    <div class="mb-4 text-center">
       {% for message in messages %}
         <p class="text-green-600">{{ message }}</p>
       {% endfor %}
     </div>
-  {% endif %}
+{% endif %}
 
 <div class="max-w-5xl mx-auto mt-8 bg-white rounded-lg shadow-lg p-6">
   <div class="flex flex-col lg:flex-row lg:items-start gap-8">
@@ -23,14 +23,41 @@
 
 
       <div class="mt-4 space-y-2 w-full text-center">
-        <button class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Change Password</button><br>
-      <a href="{% url 'edit_profile' %}">
-        <button class="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 text-sm">Edit Profile</button>
-      </a>
-      <a href="{% url 'upload_photo' %}" class="w-full block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm text-center">
-        Upload New Photo
-      </a>
-      </div>
+
+    <!-- Change Password Button -->
+    <button id="changePasswordBtn" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm flex justify-center items-center">
+        <span class="btn-text">Change Password</span>
+        <svg class="spinner hidden ml-2 w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
+    </button>
+
+    <!-- Edit Profile Button -->
+    <a href="{% url 'edit_profile' %}">
+        <button id="editProfileBtn" class="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 text-sm flex justify-center items-center">
+            <span class="btn-text">Edit Profile</span>
+            <svg class="spinner hidden ml-2 w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+        </button>
+    </a>
+
+    <!-- Upload New Photo Button -->
+    <button id="uploadBtn" type="button"
+    class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm flex justify-center items-center space-x-2"
+    onclick="showSpinner()">
+    <span id="btnText">Upload New Photo</span>
+    <svg id="spinner" class="animate-spin h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>
+</button>
+
+
+</div>
+
     </div>
 
     <!-- Right: Bio Data -->
@@ -99,5 +126,46 @@
 
   </div>
 </div>
+
+
+<script>
+document.getElementById('changePasswordBtn').addEventListener('click', function() {
+    const btn = this;
+    btn.querySelector('.btn-text').textContent = "Processing";
+    btn.querySelector('.spinner').classList.remove('hidden');
+    btn.disabled = true;
+});
+
+document.getElementById('editProfileBtn').addEventListener('click', function() {
+    const btn = this;
+    btn.querySelector('.btn-text').textContent = "Loading";
+    btn.querySelector('.spinner').classList.remove('hidden');
+    btn.disabled = true;
+});
+
+
+
+function showSpinner() {
+    const btn = document.getElementById('uploadBtn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btnText');
+
+    // Show spinner, hide text
+    spinner.classList.remove('hidden');
+    btnText.classList.add('hidden');
+
+    // Disable button to prevent multiple clicks
+    btn.disabled = true;
+
+    // Optionally, redirect after some delay or submit form
+    // For example, redirect immediately:
+    window.location.href = "{% url 'upload_photo' %}";
+}
+</script>
+
+
+
+
+
 
 {% endblock %}
