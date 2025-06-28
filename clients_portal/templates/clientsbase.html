@@ -90,21 +90,101 @@
 
     <!-- mobile menu -->
 <div id="mobile-menu" class="md:hidden hidden px-4 pb-4 text-sm">
-  <ul class="space-y-3"> <!-- increased vertical space between li's -->
-    <li><a href="{% url 'client_dashboard' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">Dashboard</a></li>
-    <li><a href="{% url 'userprofile' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">My Profile</a></li>
-    <li><a href="{% url 'account' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">Accounts</a></li>
-    <li><a href="{% url 'user_loans' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">Loans</a></li>
-    <li><a href="{% url 'shares' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">Shares</a></li>
-    <li><a href="{% url 'statement' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">My Statement</a></li>
-    <li><a href="{% url 'loanrequest' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">Loan Requests</a></li>
-    <li><a href="{% url 'withdrawal' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">Withdraw Requests</a></li>
-    <li><a href="{% url 'transactions' %}" class="block menu-item px-3 py-2 rounded hover:bg-green-200">Transactions</a></li>
+  <ul class="space-y-3">
+    
     <li>
-      <a href="#" onclick="showLogoutCard(event)" class="block px-3 py-2 rounded text-red-500 hover:bg-red-200">Log Out</a>
+      <a href="{% url 'client_dashboard' %}" class="flex items-center space-x-2 menu-item px-3 py-2 rounded hover:bg-green-200">
+        <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4"></path>
+        </svg>
+        <span>Dashboard</span>
+      </a>
     </li>
+
+    <li>
+      <a href="{% url 'userprofile' %}" class="flex items-center space-x-2 menu-item px-3 py-2 rounded hover:bg-green-200">
+        <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A7 7 0 0112 15a7 7 0 016.879 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        <span>My Profile</span>
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'account' %}" class="flex items-center space-x-2 menu-item px-3 py-2 rounded hover:bg-green-200">
+        <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M4 6h16M4 14h16M4 18h16"></path>
+        </svg>
+        <span>Accounts</span>
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'user_loans' %}" class="flex items-center space-x-2 menu-item px-3 py-2 rounded hover:bg-green-200">
+        <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 1.567-3 3.5S10.343 15 12 15s3-1.567 3-3.5S13.657 8 12 8zM12 3v2m0 14v2m9-9h-2m-14 0H3"></path>
+        </svg>
+        <span>Loans</span>
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'shares' %}" class="flex items-center space-x-2 menu-item px-3 py-2 rounded hover:bg-green-200">
+        <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <span>Shares</span>
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'statement' %}" class="flex items-center space-x-2 menu-item px-3 py-2 rounded hover:bg-green-200">
+        <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2a4 4 0 00-4-4H3m6 6h6a4 4 0 014 4v2m0-2h2a2 2 0 002-2v-4a2 2 0 00-2-2h-2M7 9h10"></path>
+        </svg>
+        <span>My Statement</span>
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'loanrequest' %}" class="flex items-center space-x-2 menu-item px-3 py-2 rounded hover:bg-green-200">
+        <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+        </svg>
+        <span>Loan Requests</span>
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'withdrawal' %}" class="flex items-center space-x-2 menu-item px-3 py-2 rounded hover:bg-green-200">
+        <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a4 4 0 00-8 0v2m1 4h6m2 0a2 2 0 11-4 0 2 2 0 114 0z"></path>
+        </svg>
+        <span>Withdraw Requests</span>
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'transactions' %}" class="flex items-center space-x-2 menu-item px-3 py-2 rounded hover:bg-green-200">
+        <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M4 6h16M4 14h16M4 18h16"></path>
+        </svg>
+        <span>Transactions</span>
+      </a>
+    </li>
+
+    <li>
+      <a href="#" onclick="showLogoutCard(event)" class="flex items-center space-x-2 px-3 py-2 rounded text-red-500 hover:bg-red-200">
+        <svg class="h-5 w-5 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 11-4 0v-1m0-8V7a2 2 0 114 0v1"></path>
+        </svg>
+        <span>Log Out</span>
+      </a>
+    </li>
+
   </ul>
 </div>
+
 
 
 <script>
