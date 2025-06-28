@@ -96,42 +96,45 @@
 
   <br><br>
 
-<div class="max-w-4xl mx-auto mt-10 bg-white rounded-lg shadow p-6">
+<div class="max-w-4xl mx-auto mt-10 bg-white rounded-lg shadow p-6 overflow-x-auto">
   <h2 class="text-2xl font-bold mb-4">Recent Login Activity</h2>
 
   {% if logs %}
-    <table class="min-w-full table-auto text-sm">
-      <thead class="bg-gray-100">
-        <tr>
-          <th class="px-4 py-2 text-left">Login Time</th>
-          <th class="px-4 py-2 text-left">Logout Time</th>
-          <th class="px-4 py-2 text-left">IP Address</th>
-          <th class="px-4 py-2 text-left">Location</th>
-          <th class="px-4 py-2 text-left">Device</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for log in logs %}
-        <tr class="border-t">
-          <td class="px-4 py-2">{{ log.login_time|date:"Y-m-d H:i:s" }}</td>
-          <td class="px-4 py-2">
-            {% if log.logout_time %}
-              {{ log.logout_time|date:"Y-m-d H:i:s" }}
-            {% else %}
-              <span class="text-gray-500">Still logged in</span>
-            {% endif %}
-          </td>
-          <td class="px-4 py-2">{{ log.ip_address }}</td>
-          <td class="px-4 py-2">{{ log.location }}</td>
-          <td class="px-4 py-2">{{ log.device }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="w-full overflow-x-auto">
+      <table class="min-w-full table-auto text-sm">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="px-4 py-2 text-left">Login Time</th>
+            <th class="px-4 py-2 text-left">Logout Time</th>
+            <th class="px-4 py-2 text-left">IP Address</th>
+            <th class="px-4 py-2 text-left">Location</th>
+            <th class="px-4 py-2 text-left">Device</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+          <tr class="border-t">
+            <td class="px-4 py-2">{{ log.login_time|date:"Y-m-d H:i:s" }}</td>
+            <td class="px-4 py-2">
+              {% if log.logout_time %}
+                {{ log.logout_time|date:"Y-m-d H:i:s" }}
+              {% else %}
+                <span class="text-gray-500">Still logged in</span>
+              {% endif %}
+            </td>
+            <td class="px-4 py-2">{{ log.ip_address }}</td>
+            <td class="px-4 py-2">{{ log.location }}</td>
+            <td class="px-4 py-2">{{ log.device }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% else %}
     <p>No login activity found.</p>
   {% endif %}
 </div>
+
 
 </main>
 
