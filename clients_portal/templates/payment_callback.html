@@ -1,17 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Payment Callback</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-6 rounded shadow w-full max-w-md">
-        <h2 class="text-2xl font-bold text-green-600 mb-4">Payment {{ status|title }}</h2>
-        <p><strong>Transaction Ref:</strong> {{ tx_ref }}</p>
-        <p><strong>Amount:</strong> UGX {{ amount }}</p>
-        <p><strong>Message:</strong> {{ message }}</p>
-            <a href="{% url 'client_dashboard' %}" class="block text-center text-blue-500 hover:underline mt-4">Return to Dashboard</a>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen px-4">
+    <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
+        <div class="flex items-center justify-center mb-6">
+            {% if status == "success" %}
+                <svg class="w-16 h-16 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+            {% else %}
+                <svg class="w-16 h-16 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            {% endif %}
+        </div>
 
+        <h2 class="text-2xl font-semibold text-center text-gray-800 mb-4">
+            Payment {{ status|title }}
+        </h2>
+
+        <div class="space-y-2 text-gray-700 text-sm">
+            <p><span class="font-semibold">Transaction Ref:</span> {{ tx_ref }}</p>
+            <p><span class="font-semibold">Amount:</span> UGX {{ amount }}</p>
+            <p><span class="font-semibold">Message:</span> {{ message }}</p>
+        </div>
+
+        <div class="mt-6">
+            <form method="get" action="{% url 'client_dashboard' %}">
+  <button
+    type="submit"
+    onclick="showSpinner(this)"
+    class="relative block w-full text-center bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition flex items-center justify-center"
+  >
+    <span class="btn-text">Return to Dashboard</span>
+    <svg class="spinner hidden ml-2 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+    </svg>
+  </button>
+</form>
+
+<script>
+  function showSpinner(button) {
+    const text = button.querySelector('.btn-text');
+    const spinner = button.querySelector('.spinner');
+    text.textContent = 'Redirecting...';
+    spinner.classList.remove('hidden');
+  }
+</script>
+
+        </div>
     </div>
 </body>
 </html>
