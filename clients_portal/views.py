@@ -102,60 +102,6 @@ def momo_payment_initiate(request):
 
 
 
-# User = get_user_model()
-# def flutterwave_callback(request):
-#     raw_resp = request.GET.get("resp")
-
-#     if raw_resp:
-#         try:
-#             decoded = json.loads(unquote(raw_resp))
-#             payment_data = decoded.get("data", {})
-#             status = payment_data.get("status")
-#             tx_ref = payment_data.get("txRef")
-#             amount = payment_data.get("amount")
-#             email = payment_data.get("customer", {}).get("email")
-
-#             user = User.objects.filter(email=email).first()
-
-#             if user and status == "successful":
-#                 # Use a transaction to prevent race conditions
-#                 with transaction.atomic():
-#                     deposit, created = Deposit.objects.get_or_create(
-#                         tx_ref=tx_ref,
-#                         defaults={
-#                             "user": user,
-#                             "amount": amount,
-#                             "status": status,
-#                         }
-#                     )
-
-#                     if created:
-#                         # Update user's account balance
-#                         account, _ = Account.objects.get_or_create(user=user)
-#                         account.balance += Decimal(str(amount))  # or Decimal(amount)
-#                         account.save()
-
-#             return render(request, "payment_callback.html", {
-#                 "status": status,
-#                 "tx_ref": tx_ref,
-#                 "amount": amount,
-#                 "message": payment_data.get("chargeResponseMessage"),
-#             })
-
-#         except Exception as e:
-#             return render(request, "payment_callback.html", {
-#                 "status": "error",
-#                 "message": f"Callback error: {str(e)}"
-#             })
-
-#     return render(request, "payment_callback.html", {
-#         "status": "error",
-#         "message": "No response received."
-#     })
-
-
-
-
 User = get_user_model()
 def flutterwave_callback(request):
     raw_resp = request.GET.get("resp")

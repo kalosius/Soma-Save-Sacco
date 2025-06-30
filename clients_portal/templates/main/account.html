@@ -76,15 +76,48 @@
       <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 z-50" @click.stop>
         <h2 class="text-xl font-semibold mb-4 text-center text-gray-800">Deposit Funds</h2>
 
-        <form method="post" action="{% url 'momo_payment_initiate' %}" class="space-y-4 w-96" onsubmit="handlePayment(this)">
+  <form method="post" action="{% url 'momo_payment_initiate' %}" class="space-y-4 w-96" onsubmit="handlePayment(this)">
   {% csrf_token %}
   <h2 class="text-2xl font-semibold mb-4">Pay with Mobile Money</h2>
-  <input name="name" type="text" placeholder="Your Name" required class="w-full border p-2 rounded">
-  <input name="email" type="email" placeholder="Your Email" required class="w-full border p-2 rounded">
-  <input name="phone" type="text" placeholder="Phone e.g 2567XXXXXXXX" required class="w-full border p-2 rounded">
-  <input name="amount" type="number" placeholder="Amount (UGX)" required class="w-full border p-2 rounded">
-  <button type="submit"
-          class="w-full bg-green-200 hover:bg-green-300 text-gray-800 p-2 rounded flex items-center justify-center relative">
+
+  <input
+    name="name"
+    type="text"
+    placeholder="Your Name"
+    required
+    class="w-full border p-2 rounded"
+    value="{{ user.first_name }} {{ user.last_name }}"
+  >
+
+  <input
+    name="email"
+    type="email"
+    placeholder="Your Email"
+    required
+    class="w-full border p-2 rounded"
+    value="{{ user.email }}"
+  >
+
+  <input
+    name="phone"
+    type="text"
+    placeholder="Phone e.g 2567XXXXXXXX"
+    required
+    class="w-full border p-2 rounded"
+  >
+
+  <input
+    name="amount"
+    type="number"
+    placeholder="Amount (UGX)"
+    required
+    class="w-full border p-2 rounded"
+  >
+
+  <button
+    type="submit"
+    class="w-full bg-green-200 hover:bg-green-300 text-gray-800 p-2 rounded flex items-center justify-center relative"
+  >
     <span class="btn-text">Pay Now</span>
     <svg class="spinner hidden ml-2 h-5 w-5 animate-spin text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -92,6 +125,7 @@
     </svg>
   </button>
 </form>
+
 
 
       </div>
