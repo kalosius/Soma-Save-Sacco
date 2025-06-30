@@ -17,3 +17,5 @@ venv/
 
 # Django migrations
 **/migrations/
+
+/media/
