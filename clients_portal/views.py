@@ -51,8 +51,8 @@ def momo_payment_initiate(request):
         print(f"Name: {full_name}, Email: {email}, Phone: {phone}, Amount: {amount}")
 
         tx_ref = str(uuid.uuid4())
-        redirect_url = "http://localhost:8000/payment/callback/"
-        # redirect_url = "https://soma-save-sacco.onrender.com/payment/callback/"
+        # redirect_url = "http://localhost:8000/payment/callback/"
+        redirect_url = "https://somasave.com/payment/callback/"
 
         payload = {
             "tx_ref": tx_ref,
