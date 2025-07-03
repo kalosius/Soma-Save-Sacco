@@ -39,7 +39,6 @@ import re
 def momo_payment_form(request):
     return render(request, "momo_payment.html")
 
-
 def momo_payment_initiate(request):
     if request.method == "POST":
         full_name = request.POST.get("name")
@@ -102,6 +101,8 @@ def momo_payment_initiate(request):
 
 
 
+
+
 User = get_user_model()
 def flutterwave_callback(request):
     raw_resp = request.GET.get("resp")
@@ -116,13 +117,14 @@ def flutterwave_callback(request):
             raw_email = payment_data.get("customer", {}).get("email", "")
             phone = payment_data.get("customer", {}).get("phone")
 
-            # Clean the email from ravesb_..._actual@gmail.com
-            email_match = re.search(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', raw_email)
-            clean_email = email_match.group(0) if email_match else None
+            # ✅ Properly extract clean email
+            if raw_email.startswith("ravesb_") and "_" in raw_email:
+                clean_email = raw_email.split("_")[-1]
+            else:
+                clean_email = raw_email
 
             print("🧾 FULL CALLBACK PAYLOAD:")
             print(json.dumps(payment_data, indent=2))
-
             print(f"📨 Callback from Flutterwave for: {clean_email} | UGX {amount}")
 
             user = None
@@ -137,21 +139,26 @@ def flutterwave_callback(request):
             if user and status == "successful":
                 try:
                     with transaction.atomic():
+                        deposit_amount = Decimal(str(amount))
+
                         deposit, created = Deposit.objects.update_or_create(
                             tx_ref=tx_ref,
                             defaults={
                                 "user": user,
-                                "amount": amount,
+                                "amount": deposit_amount,
                                 "status": status,
                             }
                         )
                         print(f"💾 Deposit created: {created}")
 
-                        account, _ = Account.objects.get_or_create(user=user)
-                        account.balance += Decimal(str(amount))
+                        account, acc_created = Account.objects.get_or_create(
+                            user=user,
+                            defaults={"account_number": generate_unique_account_number()}
+                        )
+                        account.balance += deposit_amount
                         account.save()
 
-                        print(f"✅ Account updated. New balance: UGX {account.balance}")
+                        print(f"✅ UGX {deposit_amount} added. New balance: UGX {account.balance}")
 
                 except Exception as e:
                     print(f"❌ Failed DB transaction: {e}")
@@ -174,7 +181,6 @@ def flutterwave_callback(request):
         "status": "error",
         "message": "No response received."
     })
-
 
 
 # getting the ip address
@@ -436,11 +442,11 @@ def user_account(request):
     account = user.account
 
     # Financial data
-    total_savings = Decimal('2500000.00')  # Replace with actual logic
+    total_savings = Decimal('0')  # Replace with actual logic
     share_capital = ShareTransaction.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
     outstanding_loan = Loan.objects.filter(borrower=borrower, loan_status='Approved').aggregate(
         total=Sum('amount'))['total'] or 0
-    dividends_earned = Decimal('150000.00')  # Replace with logic
+    dividends_earned = Decimal('0')  # Replace with logic
 
     # Transactions
     transactions = list(ShareTransaction.objects.filter(user=user).values(
