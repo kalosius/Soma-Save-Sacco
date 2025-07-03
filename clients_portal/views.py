@@ -35,7 +35,8 @@ from .flutterwave import initiate_momo_payment
 from django.db import transaction
 import re
 
-
+def startt(request):
+    return render(request, 'index.html')
 def momo_payment_form(request):
     return render(request, "momo_payment.html")
 

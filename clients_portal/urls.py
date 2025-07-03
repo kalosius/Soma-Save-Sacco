@@ -4,7 +4,9 @@ from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
-    path('', views.client_dashboard, name='client_dashboard'),
+    path('', views.startt, name='home'),
+
+    path('client_dashboard', views.client_dashboard, name='client_dashboard'),
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register_view'),
     path('logout/', views.logout_view, name='logout'),
@@ -56,7 +58,6 @@ urlpatterns = [
     path("payment/momo/", views.momo_payment_form, name="momo_payment_form"),
     path("payment/initiate/", views.momo_payment_initiate, name="momo_payment_initiate"),
     path('payment/callback/', views.flutterwave_callback, name='flutterwave_callback'),
-
 
 
 ]

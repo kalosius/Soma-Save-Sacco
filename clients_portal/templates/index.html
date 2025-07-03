@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="description" content="Soma Save SACCO - Uganda's trusted partner for savings, affordable loans, and financial empowerment. Join Soma Save today and take control of your financial future.">
+    <meta name="keywords" content="Soma Save, SACCO, Savings Uganda, Loans Uganda, Financial Services, Uganda SACCO, Affordable Loans, Secure Savings, Financial Empowerment, Uganda Finance">
+    <meta name="author" content="Soma Save SACCO">
+    
+    <meta property="og:title" content="Soma Save SACCO - Secure Your Financial Future">
+    <meta property="og:description" content="Empowering your financial growth through savings and affordable loans. Join Soma Save SACCO in Uganda today.">
+    <meta property="og:image" content="https://somasave.com/static/images/somasave-banner.jpg">
+    <meta property="og:url" content="https://somasave.com">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <title>Soma Save SACCO - Uganda's Trusted Savings and Loans Partner</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="canonical" href="https://somasave.com">
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-4 bg-cover bg-center relative" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');">
+
+    <!-- Dark overlay -->
+    <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+
+    <div class="relative z-10 bg-white bg-opacity-90 backdrop-blur-sm shadow-2xl rounded-3xl p-10 max-w-xl w-full text-center space-y-8 animate-fadeIn">
+        
+        <img src="{% static 'images/img/logo-small.png' %}" alt="Soma Save SACCO Logo" class="mx-auto h-16">
+
+        <h1 class="text-4xl md:text-5xl font-extrabold text-blue-700 leading-tight drop-shadow-lg">
+            Welcome to <span class="text-blue-900 underline decoration-blue-500 decoration-4">Soma Save SACCO</span>
+        </h1>
+        
+        <p class="text-gray-800 text-lg leading-relaxed font-medium">
+            Empowering your financial growth through 
+            <span class="text-blue-600 font-bold">secure savings</span> 
+            and accessible credit solutions.
+            <br>
+            <span class="text-blue-700 font-semibold">Join thousands of Ugandans</span> improving their financial future today.
+        </p>
+        
+        <div class="space-y-4">
+            <a href="{% url 'login' %}" class="block w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 rounded-xl font-semibold shadow-lg transition-transform transform hover:scale-105">
+                Login to Your Account
+            </a>
+
+            <a href="{% url 'register_view' %}" class="block w-full border-2 border-blue-700 text-blue-700 hover:bg-blue-50 py-3 rounded-xl font-semibold transition-transform transform hover:scale-105">
+                Create a New Account
+            </a>
+        </div>
+        
+        <div class="mt-8 text-sm text-gray-500">
+            &copy; 2025 <span class="text-blue-600 font-bold">Soma Save SACCO</span>. All rights reserved.
+        </div>
+    </div>
+
+    <style>
+        .animate-fadeIn {
+            animation: fadeIn 1s ease forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
+</body>
+</html>
