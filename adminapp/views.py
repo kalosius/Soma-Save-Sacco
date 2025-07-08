@@ -14,6 +14,38 @@ from django.contrib.auth import get_user_model
 from django.utils.crypto import get_random_string
 
 
+
+# API's for the admin
+from rest_framework import viewsets
+from .models import Borrower, Loan, Payment, Report, RepaymentSchedule
+from .serializers import BorrowerSerializer, LoanSerializer, PaymentSerializer, ReportSerializer, RepaymentScheduleSerializer
+
+class BorrowerViewSet(viewsets.ModelViewSet):
+    queryset = Borrower.objects.all()
+    serializer_class = BorrowerSerializer
+
+class LoanViewSet(viewsets.ModelViewSet):
+    queryset = Loan.objects.all()
+    serializer_class = LoanSerializer
+
+class PaymentViewSet(viewsets.ModelViewSet):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+
+class ReportViewSet(viewsets.ModelViewSet):
+    queryset = Report.objects.all()
+    serializer_class = ReportSerializer
+
+class RepaymentScheduleViewSet(viewsets.ModelViewSet):
+    queryset = RepaymentSchedule.objects.all()
+    serializer_class = RepaymentScheduleSerializer
+
+
+
+
+
+
+
 # redirecting to login if not superuser
 def superuser_required(view_func):
     def _wrapped_view(request, *args, **kwargs):

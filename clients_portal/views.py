@@ -35,6 +35,49 @@ from .flutterwave import initiate_momo_payment
 from django.db import transaction
 import re
 
+
+
+
+
+
+# APIS from the serializers.py
+from rest_framework import viewsets
+from .models import CustomUser, ShareTransaction, Deposit, Account, LoginActivity
+from .serializers import UserSerializer, ShareTransactionSerializer, DepositSerializer, AccountSerializer, LoginActivitySerializer
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+
+class ShareTransactionViewSet(viewsets.ModelViewSet):
+    queryset = ShareTransaction.objects.all()
+    serializer_class = ShareTransactionSerializer
+
+class DepositViewSet(viewsets.ModelViewSet):
+    queryset = Deposit.objects.all()
+    serializer_class = DepositSerializer
+
+class AccountViewSet(viewsets.ModelViewSet):
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
+
+class LoginActivityViewSet(viewsets.ModelViewSet):
+    queryset = LoginActivity.objects.all()
+    serializer_class = LoginActivitySerializer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def startt(request):
     return render(request, 'index.html')
 def momo_payment_form(request):

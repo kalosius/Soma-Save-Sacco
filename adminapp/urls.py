@@ -1,7 +1,26 @@
 from django.urls import path
 from . import views
 
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import BorrowerViewSet, LoanViewSet, PaymentViewSet, ReportViewSet, RepaymentScheduleViewSet
+
+router = DefaultRouter()
+router.register(r'borrowers', BorrowerViewSet)
+router.register(r'loans', LoanViewSet)
+router.register(r'payments', PaymentViewSet)
+router.register(r'reports', ReportViewSet)
+router.register(r'schedules', RepaymentScheduleViewSet)
+
+
+
 urlpatterns = [
+    # api
+    path('api/admin', include(router.urls)),
+
+
+
+
     path('', views.dashboard, name='dashboard'),
     path('add_borrower/', views.add_borrower, name='add_borrower'),
     path('add_payment/', views.add_payment, name='add_payment'),

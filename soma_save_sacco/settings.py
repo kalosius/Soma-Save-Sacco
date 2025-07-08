@@ -41,8 +41,15 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'clients_portal',
     'pwa',
+    'rest_framework',
 
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # or IsAuthenticated
+    ]
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

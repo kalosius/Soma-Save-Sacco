@@ -1,9 +1,29 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+# API's
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import UserViewSet, ShareTransactionViewSet, DepositViewSet, AccountViewSet, LoginActivityViewSet
+
+router = DefaultRouter()
+router.register(r'users', UserViewSet)
+router.register(r'shares', ShareTransactionViewSet)
+router.register(r'deposits', DepositViewSet)
+router.register(r'accounts', AccountViewSet)
+router.register(r'logins', LoginActivityViewSet)
+
+
 
 
 urlpatterns = [
+
+    # api route
+    path('api/user', include(router.urls)),
+
+
+
+
     path('hometest/', views.startt, name='home'),
 
     path('client_dashboard/', views.client_dashboard, name='client_dashboard'),
