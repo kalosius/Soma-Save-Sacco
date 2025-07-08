@@ -26,6 +26,13 @@ CSRF_TRUSTED_ORIGINS = [
     'https://www.somasave.com',
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # React dev server
+    'https://somasave.com',
+    'https://www.somasave.com',
+]
+
+
 
 
 # Application definition
@@ -42,6 +49,8 @@ INSTALLED_APPS = [
     'clients_portal',
     'pwa',
     'rest_framework',
+    'corsheaders',
+
 
 ]
 
@@ -55,6 +64,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

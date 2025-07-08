@@ -4,6 +4,7 @@ chardet==5.2.0
 charset-normalizer==3.4.2
 dj-database-url==3.0.0
 Django==5.2.2
+django-cors-headers==4.7.0
 django-pwa==2.0.1
 django-redis==6.0.0
 djangorestframework==3.16.0
