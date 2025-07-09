@@ -96,10 +96,10 @@
 
   <br><br>
 
-<div class="max-w-4xl mx-auto mt-10 bg-white rounded-lg shadow p-6 overflow-x-auto">
-  <h2 class="text-2xl font-bold mb-4">Recent Login Activity</h2>
+{% comment %} <div class="max-w-4xl mx-auto mt-10 bg-white rounded-lg shadow p-6 overflow-x-auto">
+  <h2 class="text-2xl font-bold mb-4">Recent Login Activity</h2> {% endcomment %}
 
-  {% if logs %}
+  {% comment %} {% if logs %}
     <div class="w-full overflow-x-auto">
       <table class="min-w-full table-auto text-sm">
         <thead class="bg-gray-100">
@@ -132,8 +132,8 @@
     </div>
   {% else %}
     <p>No login activity found.</p>
-  {% endif %}
-</div>
+  {% endif %} {% endcomment %}
+{% comment %} </div> {% endcomment %}
 
 
 </main>
