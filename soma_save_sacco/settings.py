@@ -93,21 +93,21 @@ WSGI_APPLICATION = 'soma_save_sacco.wsgi.application'
 
 
 # Redis cache
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': config('REDIS_URL', default='redis://somasave.com:6379/1'),
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'SERIALIZER': 'django_redis.serializers.json.JSONSerializer',
-        },
-        'KEY_PREFIX': 'somasave'
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         'LOCATION': config('REDIS_URL', default='redis://somasave.com:6379/1'),
+#         'OPTIONS': {
+#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+#             'SERIALIZER': 'django_redis.serializers.json.JSONSerializer',
+#         },
+#         'KEY_PREFIX': 'somasave'
+#     }
+# }
 
 # Optionally cache sessions too (faster login/auth performance)
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-SESSION_CACHE_ALIAS = "default"
+# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+# SESSION_CACHE_ALIAS = "default"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
