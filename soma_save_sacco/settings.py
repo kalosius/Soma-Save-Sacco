@@ -106,8 +106,8 @@ WSGI_APPLICATION = 'soma_save_sacco.wsgi.application'
 # }
 
 # Optionally cache sessions too (faster login/auth performance)
-# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-# SESSION_CACHE_ALIAS = "default"
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
