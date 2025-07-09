@@ -34,7 +34,6 @@ CORS_ALLOWED_ORIGINS = [
 
 
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -97,7 +96,7 @@ WSGI_APPLICATION = 'soma_save_sacco.wsgi.application'
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': config('REDIS_URL', default='redis://127.0.0.1:6379/1'),
+        'LOCATION': config('REDIS_URL', default='redis://somasave.com:6379/1'),
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
             'SERIALIZER': 'django_redis.serializers.json.JSONSerializer',
