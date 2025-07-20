@@ -145,8 +145,6 @@ def momo_payment_initiate(request):
 
 
 
-
-
 User = get_user_model()
 def flutterwave_callback(request):
     raw_resp = request.GET.get("resp")
@@ -158,10 +156,11 @@ def flutterwave_callback(request):
             status = payment_data.get("status")
             tx_ref = payment_data.get("txRef")
             amount = payment_data.get("amount")
-            raw_email = payment_data.get("customer", {}).get("email", "")
-            phone = payment_data.get("customer", {}).get("phone")
+            raw_email = payment_data.get("customer.email") or payment_data.get("customer", {}).get("email", "")
+            phone = payment_data.get("customer.phone") or payment_data.get("customer", {}).get("phone", "")
 
-            # ✅ Properly extract clean email
+
+            # Clean email if sandbox prefix present
             if raw_email.startswith("ravesb_") and "_" in raw_email:
                 clean_email = raw_email.split("_")[-1]
             else:
@@ -175,7 +174,6 @@ def flutterwave_callback(request):
             if clean_email:
                 user = User.objects.filter(email=clean_email).first()
                 print(f"🔍 Matched user by email: {user}")
-
             if not user and phone:
                 user = User.objects.filter(phone_number=phone).first()
                 print(f"📱 Matched user by phone: {user}")
@@ -185,6 +183,7 @@ def flutterwave_callback(request):
                     with transaction.atomic():
                         deposit_amount = Decimal(str(amount))
 
+                        # Create or update Deposit record
                         deposit, created = Deposit.objects.update_or_create(
                             tx_ref=tx_ref,
                             defaults={
@@ -193,16 +192,9 @@ def flutterwave_callback(request):
                                 "status": status,
                             }
                         )
-                        print(f"💾 Deposit created: {created}")
+                        print(f"💾 Deposit {'created' if created else 'updated'}")
 
-                        account, acc_created = Account.objects.get_or_create(
-                            user=user,
-                            defaults={"account_number": generate_unique_account_number()}
-                        )
-                        account.balance += deposit_amount
-                        account.save()
-
-                        print(f"✅ UGX {deposit_amount} added. New balance: UGX {account.balance}")
+                        # No need to update Account balance here — handled by signal
 
                 except Exception as e:
                     print(f"❌ Failed DB transaction: {e}")
@@ -225,6 +217,86 @@ def flutterwave_callback(request):
         "status": "error",
         "message": "No response received."
     })
+
+
+# User = get_user_model()
+# def flutterwave_callback(request):
+#     raw_resp = request.GET.get("resp")
+
+#     if raw_resp:
+#         try:
+#             decoded = json.loads(unquote(raw_resp))
+#             payment_data = decoded.get("data", {})
+#             status = payment_data.get("status")
+#             tx_ref = payment_data.get("txRef")
+#             amount = payment_data.get("amount")
+#             raw_email = payment_data.get("customer", {}).get("email", "")
+#             phone = payment_data.get("customer", {}).get("phone")
+
+#             # ✅ Properly extract clean email
+#             if raw_email.startswith("ravesb_") and "_" in raw_email:
+#                 clean_email = raw_email.split("_")[-1]
+#             else:
+#                 clean_email = raw_email
+
+#             print("🧾 FULL CALLBACK PAYLOAD:")
+#             print(json.dumps(payment_data, indent=2))
+#             print(f"📨 Callback from Flutterwave for: {clean_email} | UGX {amount}")
+
+#             user = None
+#             if clean_email:
+#                 user = User.objects.filter(email=clean_email).first()
+#                 print(f"🔍 Matched user by email: {user}")
+
+#             if not user and phone:
+#                 user = User.objects.filter(phone_number=phone).first()
+#                 print(f"📱 Matched user by phone: {user}")
+
+#             if user and status == "successful":
+#                 try:
+#                     with transaction.atomic():
+#                         deposit_amount = Decimal(str(amount))
+
+#                         deposit, created = Deposit.objects.update_or_create(
+#                             tx_ref=tx_ref,
+#                             defaults={
+#                                 "user": user,
+#                                 "amount": deposit_amount,
+#                                 "status": status,
+#                             }
+#                         )
+#                         print(f"💾 Deposit created: {created}")
+
+#                         account, acc_created = Account.objects.get_or_create(
+#                             user=user,
+#                             defaults={"account_number": generate_unique_account_number()}
+#                         )
+#                         account.balance += deposit_amount
+#                         account.save()
+
+#                         print(f"✅ UGX {deposit_amount} added. New balance: UGX {account.balance}")
+
+#                 except Exception as e:
+#                     print(f"❌ Failed DB transaction: {e}")
+
+#             return render(request, "payment_callback.html", {
+#                 "status": status,
+#                 "tx_ref": tx_ref,
+#                 "amount": amount,
+#                 "message": payment_data.get("chargeResponseMessage", "No message"),
+#             })
+
+#         except Exception as e:
+#             print(f"❗ Callback error: {e}")
+#             return render(request, "payment_callback.html", {
+#                 "status": "error",
+#                 "message": f"Callback error: {str(e)}"
+#             })
+
+#     return render(request, "payment_callback.html", {
+#         "status": "error",
+#         "message": "No response received."
+#     })
 
 
 # getting the ip address
