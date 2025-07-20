@@ -10,7 +10,6 @@
       &times;
     </button>
   </div>
-
   <script>
     function closeAlert() {
       const alertBox = document.getElementById('alertBox');
@@ -20,63 +19,60 @@
   </script>
 {% endif %}
 
+<!-- Swiper Carousel Styles -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
 
+<!-- AOS Animation Styles -->
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 
 <main class="max-w-7xl mx-auto px-4 py-10">
-  <!-- Welcome Section -->
-  <div class="mb-10 text-center">
-    <h1 class="text-3xl font-bold text-gray-800"> {% if current_hour < 12 %}
-    Good morning,
-  {% elif current_hour < 18 %}
-    Good afternoon,
-  {% else %}
-    Good evening,
-  {% endif %}
-  {{ user.get_full_name|default:user.username|capfirst }}</h1>
+
+  <div data-aos="fade-up" class="mb-10 text-center">
+    <h1 class="text-3xl font-bold text-gray-800">
+      {% if current_hour < 12 %} Good morning,
+      {% elif current_hour < 18 %} Good afternoon,
+      {% else %} Good evening,
+      {% endif %}
+      {{ user.get_full_name|default:user.username|capfirst }}
+    </h1>
     <p class="text-gray-500 mt-2">Here’s a snapshot of your financial overview.</p>
   </div>
 
-  <!-- Dashboard Cards Grid -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  <!-- News/Product Carousel -->
+  <div class="my-10" data-aos="fade-up">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">Latest News & Offers</h2>
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        {% for item in carousel_items %}
+        <div class="swiper-slide bg-white rounded-xl shadow p-4 text-center">
+          <img src="{{ item.image_url }}" alt="Item" class="mx-auto mb-2 rounded-lg h-32 object-cover">
+          <p class="font-semibold">{{ item.title }}</p>
+          <p class="text-gray-500 text-sm">{{ item.description }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
 
-    <!-- ACCOUNT Card -->
+  <!-- Dashboard Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" data-aos="fade-up">
+
     <div class="bg-white shadow rounded-2xl p-6 hover:shadow-md transition">
       <h2 class="text-lg font-semibold text-gray-800 mb-3">Account Summary</h2>
       <p class="text-sm text-gray-500 mb-1">A/C No:</p>
       <p class="font-bold text-gray-700 mb-1">{{ account_number }}</p>
-      <p class="text-sm text-gray-500 mb-1">A/C Type:</p>
-      <p class="font-bold text-gray-700 mb-1">Daily Savings</p>
       <p class="text-sm text-gray-500 mb-1">Balance:</p>
-      <p class="text-xl font-bold text-green-600">UGX {{ account_balance|floatformat:0 }}</p>
+      <p id="account-balance" class="text-xl font-bold text-green-600">UGX {{ account_balance|floatformat:0 }}</p>
     </div>
 
-    <!-- SHARES Card -->
     <div class="bg-white shadow rounded-2xl p-6 hover:shadow-md transition">
       <h2 class="text-lg font-semibold text-gray-800 mb-3">Your Shares</h2>
       <p class="text-sm text-gray-500 mb-1">Number of Shares</p>
-      <p class="font-bold text-gray-700 text-lg">{{ total_shares }}</p>
-      <p class="text-sm text-gray-500 mb-1 mt-2">Total Value</p>
-      <p class="text-xl font-bold text-blue-600">UGX {{ total_share_value|floatformat:0 }}</p>
+      <p id="shares-counter" class="font-bold text-gray-700 text-lg">0</p>
     </div>
 
-    <!-- LOANS Card -->
-    <div class="bg-white shadow rounded-2xl p-6 hover:shadow-md transition">
-      <h2 class="text-lg font-semibold text-gray-800 mb-3">Loans</h2>
-      <p class="text-sm text-gray-500 mb-1">Loan Requests:</p>
-      <p class="font-bold text-gray-700">{{ loan_requests }}</p>
-      <p class="text-sm text-gray-500 mb-1">Approved Loans:</p>
-      <p class="font-bold text-green-600">{{ approved_loans }}</p>
-      <p class="text-sm text-gray-500 mb-1 mt-2">Requested:</p>
-      <p class="text-lg font-bold text-yellow-700">
-        {% if total_requested_amount %}UGX {{ total_requested_amount|floatformat:0 }}{% else %}N/A{% endif %}
-      </p>
-      <p class="text-sm text-gray-500 mb-1">Processed:</p>
-      <p class="text-lg font-bold text-purple-600">
-        {% if processed_amount %}UGX {{ processed_amount|floatformat:0 }}{% else %}N/A{% endif %}
-      </p>
-    </div>
-
-    <!-- TRANSACTIONS Card -->
     <div class="bg-white shadow rounded-2xl p-6 hover:shadow-md transition">
       <h2 class="text-lg font-semibold text-gray-800 mb-3">Transactions</h2>
       <p class="text-sm text-gray-500 mb-1">Total Transactions:</p>
@@ -85,59 +81,66 @@
       <p class="text-xl font-bold text-indigo-600">UGX {{ total_transacted_amount|floatformat:0 }}</p>
     </div>
 
-    <!-- Action Card -->
     <div class="bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
       <div>
         <h2 class="text-xl font-bold mb-2">Need a Loan?</h2>
-        <p class="text-sm mb-4">Request for a new loan directly from your dashboard.</p>
+        <p class="text-sm mb-4">Request a loan directly from your dashboard.</p>
       </div>
       <a href="{% url 'loanrequest' %}" class="inline-block bg-white text-blue-600 font-semibold text-center py-2 px-4 rounded-md hover:bg-gray-200 transition mt-4">Request Loan</a>
     </div>
 
   </div>
 
-  <br><br>
-
-{% comment %} <div class="max-w-4xl mx-auto mt-10 bg-white rounded-lg shadow p-6 overflow-x-auto">
-  <h2 class="text-2xl font-bold mb-4">Recent Login Activity</h2> {% endcomment %}
-
-  {% comment %} {% if logs %}
-    <div class="w-full overflow-x-auto">
-      <table class="min-w-full table-auto text-sm">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="px-4 py-2 text-left">Login Time</th>
-            <th class="px-4 py-2 text-left">Logout Time</th>
-            <th class="px-4 py-2 text-left">IP Address</th>
-            <th class="px-4 py-2 text-left">Location</th>
-            <th class="px-4 py-2 text-left">Device</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for log in logs %}
-          <tr class="border-t">
-            <td class="px-4 py-2">{{ log.login_time|date:"Y-m-d H:i:s" }}</td>
-            <td class="px-4 py-2">
-              {% if log.logout_time %}
-                {{ log.logout_time|date:"Y-m-d H:i:s" }}
-              {% else %}
-                <span class="text-gray-500">Still logged in</span>
-              {% endif %}
-            </td>
-            <td class="px-4 py-2">{{ log.ip_address }}</td>
-            <td class="px-4 py-2">{{ log.location }}</td>
-            <td class="px-4 py-2">{{ log.device }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  {% else %}
-    <p>No login activity found.</p>
-  {% endif %} {% endcomment %}
-{% comment %} </div> {% endcomment %}
-
+  <!-- Quick Action Buttons -->
+  <div class="grid grid-cols-2 gap-4 mt-10" data-aos="fade-up">
+    <a href="{% url 'loanrequest' %}" class="bg-blue-600 text-white font-bold py-2 rounded-lg text-center hover:bg-blue-700">Request Loan</a>
+    <a href="" class="bg-green-600 text-white font-bold py-2 rounded-lg text-center hover:bg-green-700">Top-up Account</a>
+  </div>
 
 </main>
 
+<!-- Scripts -->
+<script>
+  // Swiper Initialization
+  new Swiper('.mySwiper', {
+    slidesPerView: 1.2,
+    spaceBetween: 20,
+    loop: true,
+    autoplay: { delay: 3000 },
+    breakpoints: { 640: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
+  });
+
+  // AOS Animation Init
+  AOS.init();
+
+  // Live Account Balance Update (Polling)
+  function fetchAccountBalance() {
+    fetch("")
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('account-balance').textContent = `UGX ${data.balance.toLocaleString()}`;
+      });
+  }
+  setInterval(fetchAccountBalance, 10000);
+
+  // Animated Counter for Shares
+  function animateValue(id, start, end, duration) {
+    const obj = document.getElementById(id);
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      obj.textContent = Math.floor(progress * (end - start) + start).toLocaleString();
+      if (progress < 1) window.requestAnimationFrame(step);
+    };
+    window.requestAnimationFrame(step);
+  }
+  animateValue("shares-counter", 0, {{ total_shares }}, 1500);
+</script>
+
+
+{% comment %} <iframe src="https://assets.pinterest.com/ext/embed.html?id=305892999718912649" height="233" width="236" frameborder="0" scrolling="no" ></iframe> {% endcomment %}
 {% endblock %}
+
+
+

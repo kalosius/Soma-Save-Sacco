@@ -538,6 +538,26 @@ def userprofile(request):
 # dashboard
 @login_required(login_url='login')
 def client_dashboard(request): 
+
+    # Example carousel items (can fetch from DB instead)
+    carousel_items = [
+        {
+            'title': 'New Savings Plan!',
+            'description': 'Earn up to 10% more on your deposits.',
+            'image_url': '/static/images/dashboard/savings_offer.jpg',  # Replace with your image path
+        },
+        {
+            'title': 'Exclusive Loan Offer!',
+            'description': 'Low-interest loans available now.',
+            'image_url': '/static/images/dashboard/loan.jpg',
+        },
+        {
+            'title': 'Mobile App Launched!',
+            'description': 'Manage your finances on the go.',
+            'image_url': '/static/images/dashboard/mobile_app.jpg',
+        },
+    ]
+
     user = request.user
 
     # Shares data
@@ -573,6 +593,7 @@ def client_dashboard(request):
 
 
     context = {
+        'carousel_items': carousel_items,
         'total_shares': total_shares,
         'total_share_value': total_share_value,
         'loan_requests': loan_requests,
