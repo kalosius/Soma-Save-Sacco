@@ -6,4 +6,4 @@ class ClientsPortalConfig(AppConfig):
 
     def ready(self):
         # Ensure models.py (with signals) is loaded
-        import clients_portal.models
+        import clients_portal.signals 

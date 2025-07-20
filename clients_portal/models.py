@@ -6,6 +6,8 @@ from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from random import randint
 
+from clients_portal.utils import generate_unique_account_number
+
 class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=15, unique=True)
     national_id = models.CharField(max_length=20, unique=True, null=True, blank=True)
@@ -55,13 +57,13 @@ class Account(models.Model):
     def __str__(self):
         return f"{self.account_number} - {self.user.username}"
 
-def generate_unique_account_number():
-    prefix = "SACCO-0100"
-    while True:
-        random_digits = f"{randint(10000000, 99999999)}"
-        account_number = f"{prefix}{random_digits}"
-        if not Account.objects.filter(account_number=account_number).exists():
-            return account_number
+# def generate_unique_account_number():
+#     prefix = "SACCO-0100"
+#     while True:
+#         random_digits = f"{randint(10000000, 99999999)}"
+#         account_number = f"{prefix}{random_digits}"
+#         if not Account.objects.filter(account_number=account_number).exists():
+#             return account_number
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_account_for_user(sender, instance, created, **kwargs):
