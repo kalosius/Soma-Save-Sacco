@@ -2,40 +2,46 @@
 {% load humanize %}
 {% block content %}
 {% if messages %}
-    <div class="mb-4">
-      {% for message in messages %}
-        <p class="text-green-600">{{ message }}</p>
-      {% endfor %}
-    </div>
-  {% endif %}
+  <div class="mb-4">
+    {% for message in messages %}
+      <p class="text-green-600">{{ message }}</p>
+    {% endfor %}
+  </div>
+{% endif %}
 
 <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 bg-white rounded-lg shadow-md mt-8">
   <h2 class="text-2xl font-bold text-gray-800 mb-6">My Loans</h2>
 
   <!-- Loan Summary -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-    <div class="p-4 rounded-lg bg-blue-600 text-white shadow">
+    <div class="p-4 rounded-lg bg-blue-200 text-gray-800 shadow">
       <div class="text-sm opacity-80">Active Loans</div>
       <div class="text-2xl font-bold">{{ active_loans.count }}</div>
     </div>
-    <div class="p-4 rounded-lg bg-green-600 text-white shadow">
+    <div class="p-4 rounded-lg bg-green-200 text-gray-800 shadow">
       <div class="text-sm opacity-80">Total Borrowed</div>
       <div class="text-2xl font-bold">UGX {{ total_borrowed|intcomma }}</div>
     </div>
-    <div class="p-4 rounded-lg bg-yellow-500 text-white shadow">
+    <div class="p-4 rounded-lg bg-yellow-100 text-gray-800 shadow">
       <div class="text-sm opacity-80">Total Repaid</div>
       <div class="text-2xl font-bold">UGX {{ total_repaid|intcomma }}</div>
     </div>
-    <div class="p-4 rounded-lg bg-red-600 text-white shadow">
+    <div class="p-4 rounded-lg bg-red-200 text-gray-800 shadow">
       <div class="text-sm opacity-80">Outstanding Balance</div>
       <div class="text-2xl font-bold">UGX {{ outstanding_balance|intcomma }}</div>
     </div>
   </div>
 
   <!-- Action Buttons -->
-  <div class="flex gap-3 mb-8">
-    <a href="{% url 'loanrequest' %}"><button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Apply for New Loan</button></a>
-    <button class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900">View Repayment Schedule</button>
+  <div class="flex gap-3 mb-8 flex-wrap">
+    <a href="{% url 'loanrequest' %}">
+      <button class="bg-blue-200 text-gray-800 px-4 py-2 rounded hover:bg-blue-300">
+        Apply for New Loan
+      </button>
+    </a>
+    <button class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300">
+      View Repayment Schedule
+    </button>
   </div>
 
   <!-- Active Loans Table -->
@@ -61,8 +67,8 @@
           <td class="border px-4 py-2">{{ loan.get_loan_type_display|default:"N/A" }}</td>
           <td class="border px-4 py-2">{{ loan.amount|intcomma }}</td>
           <td class="border px-4 py-2">{{ loan.interest_rate }}%</td>
-          <td class="border px-4 py-2">--</td> <!-- Replace with actual tenure if available -->
-          <td class="border px-4 py-2">--</td> <!-- Replace with actual outstanding if available -->
+          <td class="border px-4 py-2">--</td>
+          <td class="border px-4 py-2">--</td>
           <td class="border px-4 py-2 font-medium 
             {% if loan.loan_status == 'Pending' %}
               text-yellow-600
@@ -75,7 +81,7 @@
             {{ loan.loan_status }}
           </td>
           <td class="border px-4 py-2">
-            <button class="text-blue-600 underline text-sm">
+            <button class="text-blue-500 underline text-sm">
               {% if loan.loan_status == "Approved" %}Repay{% else %}View{% endif %}
             </button>
           </td>
@@ -89,15 +95,15 @@
     </table>
   </div>
 
-  <!-- Repayment Schedule Section (Sample Only) -->
-{% for item in loan_schedule_data %}
+  <!-- Repayment Schedule -->
+  {% for item in loan_schedule_data %}
   <h3 class="text-xl font-semibold text-gray-700 mt-10 mb-2">
     Repayment Schedule (Loan: LN-{{ item.loan.loan_code }})
   </h3>
 
   {% if item.schedules %}
   <div class="overflow-x-auto">
-    <table class="min-w-full border border-gray-300 text-sm mb-8">
+    <table class="min-w-full border border-gray-200 text-sm mb-8">
       <thead class="bg-gray-100 text-gray-700">
         <tr>
           <th class="border px-4 py-2 text-left font-medium">Installment #</th>
@@ -112,15 +118,14 @@
           <td class="border px-4 py-2">{{ schedule.installment_number }}</td>
           <td class="border px-4 py-2">{{ schedule.due_date }}</td>
           <td class="border px-4 py-2">{{ schedule.amount|intcomma }}</td>
-          <td class="border px-4 py-2 
+          <td class="border px-4 py-2 font-medium 
             {% if schedule.status == "Paid" %}
               text-green-600
             {% elif schedule.status == "Upcoming" %}
-              text-yellow-500
+              text-yellow-600
             {% else %}
               text-red-600
-            {% endif %}
-            font-medium">
+            {% endif %}">
             {{ schedule.status }}
           </td>
         </tr>
@@ -131,9 +136,6 @@
   {% else %}
     <p class="text-sm text-gray-500 mb-6">No repayment schedule found for this loan.</p>
   {% endif %}
-{% endfor %}
-
-
+  {% endfor %}
 </div>
-
 {% endblock %}
