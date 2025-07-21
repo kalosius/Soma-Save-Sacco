@@ -57,29 +57,6 @@ class Account(models.Model):
     def __str__(self):
         return f"{self.account_number} - {self.user.username}"
 
-# def generate_unique_account_number():
-#     prefix = "SACCO-0100"
-#     while True:
-#         random_digits = f"{randint(10000000, 99999999)}"
-#         account_number = f"{prefix}{random_digits}"
-#         if not Account.objects.filter(account_number=account_number).exists():
-#             return account_number
-
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_account_for_user(sender, instance, created, **kwargs):
-    if created:
-        Account.objects.create(user=instance, account_number=generate_unique_account_number())
-
-@receiver(post_save, sender=Deposit)
-def update_account_balance_on_deposit(sender, instance, created, **kwargs):
-    if created and instance.status == "successful":
-        try:
-            account = Account.objects.get(user=instance.user)
-            account.balance += instance.amount
-            account.save()
-            print(f"✅ Account balance updated: UGX {account.balance}")
-        except Account.DoesNotExist:
-            print(f"❌ Account does not exist for user {instance.user}")
 
 class LoginActivity(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='login_logs')
