@@ -11,12 +11,14 @@ User = get_user_model()
 
 from .utils import generate_unique_account_number
 
-
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_account_for_user(sender, instance, created, **kwargs):
-    if created:
-        Account.objects.create(user=instance, account_number=generate_unique_account_number())
-
+    if created and not Account.objects.filter(user=instance).exists():
+        Account.objects.create(
+            user=instance,
+            account_number=generate_unique_account_number()
+        )
+        
 @receiver(post_save, sender=Deposit)
 def update_account_balance_on_deposit(sender, instance, created, **kwargs):
     if created and instance.status == "successful":
