@@ -23,9 +23,11 @@ def create_account_for_user(sender, instance, created, **kwargs):
 def update_account_balance_on_deposit(sender, instance, created, **kwargs):
     if created and instance.status == "successful":
         try:
+            print(f"Deposit ID: {instance.id}, User: {instance.user.username} ({instance.user.id}), Amount: {instance.amount}")
             account = Account.objects.get(user=instance.user)
+            print(f"Before update: Account {account.account_number} balance = {account.balance}")
             account.balance += instance.amount
             account.save()
-            print(f"✅ Account balance updated: UGX {account.balance}")
+            print(f"After update: Account {account.account_number} balance = {account.balance}")
         except Account.DoesNotExist:
             print(f"❌ Account does not exist for user {instance.user}")

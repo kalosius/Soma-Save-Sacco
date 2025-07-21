@@ -83,6 +83,180 @@ def startt(request):
 def momo_payment_form(request):
     return render(request, "momo_payment.html")
 
+# def momo_payment_initiate(request):
+#     if request.method == "POST":
+#         full_name = request.POST.get("name")
+#         email = request.POST.get("email")
+#         phone = request.POST.get("phone")
+#         amount = request.POST.get("amount")
+
+#         print("🟢 Received payment form values:")
+#         print(f"Name: {full_name}, Email: {email}, Phone: {phone}, Amount: {amount}")
+
+#         tx_ref = str(uuid.uuid4())
+#         redirect_url = "http://localhost:8000/payment/callback/"
+#         # redirect_url = "https://somasave.com/payment/callback/"
+
+#         payload = {
+#             "tx_ref": tx_ref,
+#             "amount": str(amount),
+#             "currency": "UGX",
+#             "email": email,
+#             "phone_number": phone,
+#             "fullname": full_name,
+#             "redirect_url": redirect_url,
+#             "customizations": {
+#                 "title": "SomaSave Payments",
+#                 "description": "Loan Repayment",
+#             }
+#         }
+
+#         print("📦 FINAL Payload to Flutterwave:")
+#         print(payload)
+
+#         # Replace with your Flutterwave secret key
+#         secret_key = settings.FLW_SECRET_KEY
+#         headers = {
+#             "Authorization": f"Bearer {secret_key}",
+#             "Content-Type": "application/json"
+#         }
+
+#         response = requests.post(
+#             "https://api.flutterwave.com/v3/charges?type=mobile_money_uganda",
+#             json=payload,
+#             headers=headers
+#         )
+
+#         flutter_response = response.json()
+#         print("📤 Flutterwave response:", flutter_response)
+
+#         # Try to get the redirect URL safely
+#         redirect_url = flutter_response.get("meta", {}).get("authorization", {}).get("redirect")
+
+#         if redirect_url:
+#             return redirect(redirect_url)
+#         else:
+#             print("❌ Flutterwave response missing expected keys:", flutter_response)
+#             messages.error(request, "Payment could not be initiated. Please try again.")
+#             return redirect("momo_payment_form")  # Replace with your payment form view name
+
+#     # If GET or other
+#     return redirect("momo_payment_form")
+
+# def momo_payment_initiate(request):
+#     if request.method == "POST":
+#         full_name = request.POST.get("name")
+#         email = request.POST.get("email")
+#         phone = request.POST.get("phone")
+#         amount = request.POST.get("amount")
+
+#         print("🟢 Received payment form values:")
+#         print(f"Name: {full_name}, Email: {email}, Phone: {phone}, Amount: {amount}")
+
+#         # Embed user ID in tx_ref for reliable callback matching
+#         tx_ref = f"{uuid.uuid4()}_user_{request.user.id}"
+#         redirect_url = "http://localhost:8000/payment/callback/"
+
+#         # redirect_url = "https://somasave.com/payment/callback/"  # Update this to your production callback
+
+#         payload = {
+#             "tx_ref": tx_ref,
+#             "amount": str(amount),
+#             "currency": "UGX",
+#             "email": email,
+#             "phone_number": phone,
+#             "fullname": full_name,
+#             "redirect_url": redirect_url,
+#             "customizations": {
+#                 "title": "SomaSave Payments",
+#                 "description": "Loan Repayment",
+#             }
+#         }
+
+#         print("📦 FINAL Payload to Flutterwave:")
+#         print(payload)
+
+#         secret_key = settings.FLW_SECRET_KEY
+#         headers = {
+#             "Authorization": f"Bearer {secret_key}",
+#             "Content-Type": "application/json"
+#         }
+
+#         response = requests.post(
+#             "https://api.flutterwave.com/v3/charges?type=mobile_money_uganda",
+#             json=payload,
+#             headers=headers
+#         )
+
+#         flutter_response = response.json()
+#         print("📤 Flutterwave response:", flutter_response)
+
+#         redirect_url = flutter_response.get("meta", {}).get("authorization", {}).get("redirect")
+
+#         if redirect_url:
+#             return redirect(redirect_url)
+#         else:
+#             print("❌ Flutterwave response missing expected keys:", flutter_response)
+#             messages.error(request, "Payment could not be initiated. Please try again.")
+#             return redirect("momo_payment_form")
+
+#     return redirect("momo_payment_form")
+
+# def momo_payment_initiate(request):
+#     if request.method == "POST":
+#         full_name = request.POST.get("name")
+#         email = request.POST.get("email")
+#         phone = request.POST.get("phone")
+#         amount = request.POST.get("amount")
+
+#         print("🟢 Received payment form values:")
+#         print(f"Name: {full_name}, Email: {email}, Phone: {phone}, Amount: {amount}")
+
+#         tx_ref = f"{uuid.uuid4()}_user_{request.user.id}"
+#         redirect_url = "http://localhost:8000/payment/callback/"  # Change for production
+
+#         payload = {
+#             "tx_ref": tx_ref,
+#             "amount": str(amount),
+#             "currency": "UGX",
+#             "email": email,
+#             "phone_number": phone,
+#             "fullname": full_name,
+#             "redirect_url": redirect_url,
+#             "customizations": {
+#                 "title": "SomaSave Payments",
+#                 "description": "Loan Repayment",
+#             }
+#         }
+
+#         print("📦 FINAL Payload to Flutterwave:")
+#         print(payload)
+
+#         headers = {
+#             "Authorization": f"Bearer {settings.FLW_SECRET_KEY}",
+#             "Content-Type": "application/json"
+#         }
+
+#         response = requests.post(
+#             "https://api.flutterwave.com/v3/charges?type=mobile_money_uganda",
+#             json=payload,
+#             headers=headers
+#         )
+
+#         flutter_response = response.json()
+#         print("📤 Flutterwave response:", flutter_response)
+
+#         redirect_url = flutter_response.get("meta", {}).get("authorization", {}).get("redirect")
+#         if redirect_url:
+#             return redirect(redirect_url)
+
+#         print("❌ Flutterwave response missing expected redirect")
+#         messages.error(request, "Payment could not be initiated. Please try again.")
+#         return redirect("momo_payment_form")
+
+#     return redirect("momo_payment_form")
+
+
 def momo_payment_initiate(request):
     if request.method == "POST":
         full_name = request.POST.get("name")
@@ -93,9 +267,15 @@ def momo_payment_initiate(request):
         print("🟢 Received payment form values:")
         print(f"Name: {full_name}, Email: {email}, Phone: {phone}, Amount: {amount}")
 
-        tx_ref = str(uuid.uuid4())
-        # redirect_url = "http://localhost:8000/payment/callback/"
-        redirect_url = "https://somasave.com/payment/callback/"
+        if not request.user.is_authenticated:
+            messages.error(request, "You must be logged in to make a payment.")
+            return redirect("login")
+
+        # ✅ Include user_id in tx_ref for reliable matching during callback
+        tx_ref = f"{uuid.uuid4()}_user_{request.user.id}"
+        redirect_url = "https://somasave.com/payment/callback/"  # Update for production
+        # redirect_url = "http://localhost:8000/payment/callback/"  # Change for production
+
 
         payload = {
             "tx_ref": tx_ref,
@@ -114,10 +294,8 @@ def momo_payment_initiate(request):
         print("📦 FINAL Payload to Flutterwave:")
         print(payload)
 
-        # Replace with your Flutterwave secret key
-        secret_key = settings.FLW_SECRET_KEY
         headers = {
-            "Authorization": f"Bearer {secret_key}",
+            "Authorization": f"Bearer {settings.FLW_SECRET_KEY}",
             "Content-Type": "application/json"
         }
 
@@ -130,100 +308,95 @@ def momo_payment_initiate(request):
         flutter_response = response.json()
         print("📤 Flutterwave response:", flutter_response)
 
-        # Try to get the redirect URL safely
         redirect_url = flutter_response.get("meta", {}).get("authorization", {}).get("redirect")
 
         if redirect_url:
             return redirect(redirect_url)
         else:
-            print("❌ Flutterwave response missing expected keys:", flutter_response)
             messages.error(request, "Payment could not be initiated. Please try again.")
-            return redirect("momo_payment_form")  # Replace with your payment form view name
+            return redirect("momo_payment_form")
 
-    # If GET or other
     return redirect("momo_payment_form")
-
-
 
 User = get_user_model()
 def flutterwave_callback(request):
     raw_resp = request.GET.get("resp")
+    if not raw_resp:
+        return render(request, "payment_callback.html", {
+            "status": "error",
+            "message": "Missing payment response."
+        })
 
-    if raw_resp:
-        try:
-            decoded = json.loads(unquote(raw_resp))
-            payment_data = decoded.get("data", {})
-            status = payment_data.get("status")
-            tx_ref = payment_data.get("txRef")
-            amount = payment_data.get("amount")
-            raw_email = payment_data.get("customer.email") or payment_data.get("customer", {}).get("email", "")
-            phone = payment_data.get("customer.phone") or payment_data.get("customer", {}).get("phone", "")
+    try:
+        decoded = json.loads(unquote(raw_resp))
+        payment_data = decoded.get("data", {})
+        status = payment_data.get("status")
+        tx_ref = payment_data.get("txRef")
+        amount = payment_data.get("amount")
 
-            # Clean email if sandbox prefix present
-            if raw_email.startswith("ravesb_") and "_" in raw_email:
-                clean_email = raw_email.split("_")[-1]
-            else:
-                clean_email = raw_email
+        # ✅ Extract user_id from tx_ref like: c3a3..._user_46
+        user_id = None
+        if tx_ref and "_user_" in tx_ref:
+            try:
+                user_id = int(tx_ref.split("_user_")[-1])
+            except ValueError:
+                pass
 
-            print("🧾 FULL CALLBACK PAYLOAD:")
-            print(json.dumps(payment_data, indent=2))
-            print(f"📨 Callback from Flutterwave for: {clean_email} | UGX {amount}")
-
-            user = None
-            if clean_email:
-                user = User.objects.filter(email=clean_email).first()
-                print(f"🔍 Matched user by email: {user}")
-            if not user and phone:
-                user = User.objects.filter(phone_number=phone).first()
-                print(f"📱 Matched user by phone: {user}")
-
-            if user and status == "successful":
-                try:
-                    with transaction.atomic():
-                        deposit_amount = Decimal(str(amount))
-
-                        deposit, created = Deposit.objects.get_or_create(tx_ref=tx_ref)
-
-                        if created:
-                            deposit.user = user
-                            deposit.amount = deposit_amount
-                            deposit.status = status
-                            deposit.save()
-                            print(f"💾 Deposit created for user {user}")
-                        else:
-                            if deposit.user != user:
-                                print(f"⚠️ Deposit tx_ref {tx_ref} exists but linked to different user: {deposit.user} vs {user}")
-                                # Optionally handle this case as needed
-                            else:
-                                deposit.amount = deposit_amount
-                                deposit.status = status
-                                deposit.save()
-                                print(f"💾 Deposit updated for user {user}")
-
-                        # Account balance update handled by signal
-
-                except Exception as e:
-                    print(f"❌ Failed DB transaction: {e}")
-
-            return render(request, "payment_callback.html", {
-                "status": status,
-                "tx_ref": tx_ref,
-                "amount": amount,
-                "message": payment_data.get("chargeResponseMessage", "No message"),
-            })
-
-        except Exception as e:
-            print(f"❗ Callback error: {e}")
+        if not user_id:
             return render(request, "payment_callback.html", {
                 "status": "error",
-                "message": f"Callback error: {str(e)}"
+                "message": "User ID not found in tx_ref."
             })
 
-    return render(request, "payment_callback.html", {
-        "status": "error",
-        "message": "No response received."
-    })
+        user = User.objects.filter(id=user_id).first()
+        if not user:
+            return render(request, "payment_callback.html", {
+                "status": "error",
+                "message": "User not found."
+            })
 
+        print(f"✅ Matched user from tx_ref: {user.username} ({user.email})")
+
+        if status == "successful":
+            try:
+                with transaction.atomic():
+                    deposit_amount = Decimal(str(amount))
+                    deposit, created = Deposit.objects.get_or_create(
+                        tx_ref=tx_ref,
+                        defaults={
+                            "user": user,
+                            "amount": deposit_amount,
+                            "status": status,
+                        }
+                    )
+                    if not created:
+                        deposit.status = status
+                        deposit.amount = deposit_amount
+                        deposit.save()
+
+                    print(f"💾 Deposit {'created' if created else 'updated'} for {user}")
+
+            except Exception as e:
+                print(f"❌ Error saving deposit: {e}")
+                return render(request, "payment_callback.html", {
+                    "status": "error",
+                    "message": "Failed to save deposit"
+                })
+
+        return render(request, "payment_callback.html", {
+            "status": status,
+            "amount": amount,
+            "tx_ref": tx_ref,
+            "message": payment_data.get("chargeResponseMessage", "")
+        })
+
+    except Exception as e:
+        print(f"❌ Callback parsing error: {e}")
+        return render(request, "payment_callback.html", {
+            "status": "error",
+            "message": f"Callback error: {str(e)}"
+        }) 
+    
 # getting the ip address
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
