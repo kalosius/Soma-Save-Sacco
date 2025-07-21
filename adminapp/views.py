@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.db.models.functions import Concat
 from django.contrib.auth import get_user_model
 from django.utils.crypto import get_random_string
+from clients_portal.models import CustomUser
 
 
 
@@ -58,6 +59,13 @@ def superuser_required(view_func):
 
 
 # Create your views here.
+
+def admin_users_list(request):
+    users = CustomUser.objects.all().order_by('-date_joined')
+    return render(request, 'main/users_list.html', {'users': users})
+
+
+
 
 @superuser_required
 def dashboard(request):
