@@ -74,7 +74,7 @@
           <!-- <a href="{% url 'shares' %}" class="hover:text-blue-600">Shares</a> -->
           <a href="{% url 'statement' %}" class="hover:text-blue-600">My Statement</a>
           <!-- <a href="{% url 'loanrequest' %}" class="hover:text-blue-600">Loan Requests</a> -->
-          <a href="{% url 'withdrawal' %}" class="hover:text-blue-600">Withdraw Requests</a>
+          {% comment %} <a href="{% url 'withdrawal' %}" class="hover:text-blue-600">Withdraw Requests</a> {% endcomment %}
           <a href="{% url 'transactions' %}" class="hover:text-blue-600">Transactions</a>
           <a href="#" onclick="showLogoutCard(event)" class="block text-red-500">Log Out</a>
     </nav>
@@ -131,6 +131,7 @@
       </a>
     </li>
 
+    {% if user.is_superuser %}
     <li>
       <a href="{% url 'shares' %}" class="flex items-center space-x-2 menu-item px-3 py-2 rounded hover:bg-green-200">
         <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -139,6 +140,15 @@
         <span>Shares</span>
       </a>
     </li>
+    <li>
+      <a href="{% url 'admin_login' %}" class="flex items-center space-x-2 menu-item px-3 py-2 rounded hover:bg-green-200">
+        <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <span>Admin Portal</span>
+      </a>
+    </li>
+    {% endif %}
 
     <li>
       <a href="{% url 'statement' %}" class="flex items-center space-x-2 menu-item px-3 py-2 rounded hover:bg-green-200">
