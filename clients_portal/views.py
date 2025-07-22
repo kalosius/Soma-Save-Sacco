@@ -738,7 +738,7 @@ def register_view(request):
         send_mail(
             subject='Welcome to SomaSave SACCO',
             message=f'Hello {first_name},\n\nYour account has been created successfully. You can now log in and start using our services.\n\nThank you for joining SomaSave!',
-            from_email='kasozialoisius@gmail.com',
+            from_email='info@somasave.com',
             recipient_list=[email],
             fail_silently=False,
         )
