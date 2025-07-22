@@ -35,6 +35,9 @@ from .flutterwave import initiate_momo_payment
 from django.db import transaction
 import re
 
+from django.core.mail import EmailMultiAlternatives
+from django.utils.html import strip_tags
+
 
 
 
@@ -661,24 +664,51 @@ def login_view(request):
 
 
             # Send login alert email
-            send_mail(
-                subject='Login Alert - SomaSave SACCO',
-                message=(
-                    f"Hello {user.first_name},\n\n"
-                    f"You have successfully logged into your SomaSave SACCO account.\n\n"
-                    f"Details:\n"
-                    f"Time: {login_time}\n"
-                    f"IP Address: {ip}\n"
-                    f"Location: {location}\n\n"
-                    f"Device: {device_type}\n"
-                    f"Operating System: {os}\n"
-                    f"Browser: {browser}\n\n"
-                    f"If this wasn't you, please change your password immediately."
-                ),
-                from_email='info@somasave.com',  # Or info@somasave.com
-                recipient_list=[user.email],
-                fail_silently=False,
+            subject = '🔐 Login Alert - SomaSave SACCO'
+
+            html_content = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <h2 style="color: #1a73e8;">Login Alert - SomaSave SACCO</h2>
+                <p>Hello {user.first_name},</p>
+
+                <p>You have successfully logged into your <strong>SomaSave SACCO</strong> account.</p>
+
+                <h3 style="color: #444;">🔍 Login Details:</h3>
+                <ul style="list-style-type: none; padding: 0;">
+                <li><strong>📅 Time:</strong> {login_time}</li>
+                <li><strong>🌍 IP Address:</strong> {ip}</li>
+                <li><strong>📍 Location:</strong> {location}</li>
+                <li><strong>💻 Device:</strong> {device_type}</li>
+                <li><strong>🖥️ Operating System:</strong> {os}</li>
+                <li><strong>🌐 Browser:</strong> {browser}</li>
+                </ul>
+
+                <p>If this login was made by you, no further action is required.</p>
+                <p style="color: red;">
+                <strong>
+                    If this wasn't you, please 
+                    <a href="https://www.somasave.com/reset-password" style="color: #d93025;">reset your password</a> immediately.
+                </strong>
+                </p>
+
+                <p>Stay safe,<br><strong>The SomaSave SACCO Team</strong></p>
+            </body>
+            </html>
+            """
+
+            # plain text fallback
+            text_content = strip_tags(html_content)
+
+            email = EmailMultiAlternatives(
+                subject=subject,
+                body=text_content,
+                from_email='info@somasave.com',
+                to=[user.email],
             )
+            email.attach_alternative(html_content, "text/html")
+            email.send()
+
 
             return redirect('client_dashboard')
         else:
