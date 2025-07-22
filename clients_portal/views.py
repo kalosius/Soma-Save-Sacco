@@ -675,7 +675,7 @@ def login_view(request):
                     f"Browser: {browser}\n\n"
                     f"If this wasn't you, please change your password immediately."
                 ),
-                from_email='kasozialoisius@gmail.com',  # Or info@somasave.com
+                from_email='info@somasave.com',  # Or info@somasave.com
                 recipient_list=[user.email],
                 fail_silently=False,
             )
