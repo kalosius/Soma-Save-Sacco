@@ -30,7 +30,14 @@ urlpatterns = [
     path('payments/', views.payments, name='payments'),
     path('reports/', views.reports, name='reports'),
 
+    # no APIs available soffer
     path('users/', views.admin_users_list, name='admin_users_list'),
+    path('admin/share-transactions/', views.admin_sharetransactions_list, name='admin_sharetransactions_list'),
+    path('admin/deposits/', views.admin_deposits_list, name='admin_deposits_list'),
+    path('admin/accounts/', views.admin_accounts_list, name='admin_accounts_list'),
+    path('admin/login-activities/', views.admin_loginactivities_list, name='admin_loginactivities_list'),
+    # no APIs available soffer
+
 
 
     # editing and deleting

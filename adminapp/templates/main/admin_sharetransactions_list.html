@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <h3 class="page-title">All Share Transactions</h3>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>User</th>
+                <th>Shares</th>
+                <th>Amount (UGX)</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for txn in share_transactions %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ txn.user.username }}</td>
+                <td>{{ txn.number_of_shares }}</td>
+                <td>{{ txn.amount }}</td>
+                <td>{{ txn.transaction_type }}</td>
+                <td>{{ txn.status }}</td>
+                <td>{{ txn.timestamp }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="7">No transactions found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

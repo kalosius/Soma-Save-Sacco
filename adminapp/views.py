@@ -11,8 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.db.models.functions import Concat
 from django.contrib.auth import get_user_model
-from django.utils.crypto import get_random_string
-from clients_portal.models import CustomUser
+from clients_portal.models import CustomUser,ShareTransaction, Deposit, Account, LoginActivity
 
 
 
@@ -60,6 +59,27 @@ def superuser_required(view_func):
 
 # Create your views here.
 
+@superuser_required
+def admin_sharetransactions_list(request):
+    transactions = ShareTransaction.objects.select_related('user').order_by('-timestamp')
+    return render(request, 'main/admin_sharetransactions_list.html', {'share_transactions': transactions})
+
+@superuser_required
+def admin_deposits_list(request):
+    deposits = Deposit.objects.select_related('user').order_by('-created_at')
+    return render(request, 'main/admin_deposits_list.html', {'deposits': deposits})
+
+@superuser_required
+def admin_accounts_list(request):
+    accounts = Account.objects.select_related('user').order_by('-date_created')
+    return render(request, 'main/admin_accounts_list.html', {'accounts': accounts})
+
+@superuser_required
+def admin_loginactivities_list(request):
+    activities = LoginActivity.objects.select_related('user').order_by('-login_time')
+    return render(request, 'main/admin_loginactivities_list.html', {'login_activities': activities})
+
+
 def admin_users_list(request):
     users = CustomUser.objects.all().order_by('-date_joined')
     return render(request, 'main/users_list.html', {'users': users})
@@ -73,6 +93,16 @@ def dashboard(request):
     repaid_loans_count = Payment.objects.values('loan').distinct().count()
     loan_applications_count = Loan.objects.count()
     total_revenue = Payment.objects.aggregate(total=Sum('amount'))['total'] or 0
+
+    total_users_count = CustomUser.objects.count()
+    total_deposits = Deposit.objects.aggregate(total=Sum('amount'))['total'] or 0
+
+    total_shares_purchased = ShareTransaction.objects.aggregate(total=Sum('number_of_shares'))['total'] or 0
+
+    total_accounts_count = Account.objects.count()  
+
+    total_share_amount = ShareTransaction.objects.aggregate(total=Sum('amount'))['total'] or 0
+
 
     # Top Borrowers with related user fields
     top_borrowers = (
@@ -96,6 +126,11 @@ def dashboard(request):
         'loan_applications': loan_applications_count,
         'total_revenue': total_revenue,
         'top_borrowers': top_borrowers,
+        'total_users': total_users_count,
+        'total_deposits': total_deposits,
+        'total_shares_purchased': total_shares_purchased,
+        'total_accounts': total_accounts_count,
+        'total_share_amount': total_share_amount,
         'recent_activities': recent_activities,
     })
 

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <h3 class="page-title">All Login Activities</h3>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>User</th>
+            <th>IP Address</th>
+            <th>Location</th>
+            <th>Device</th>
+            <th>Login Time</th>
+            <th>Logout Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in login_activities %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ log.user.username }}</td>
+            <td>{{ log.ip_address }}</td>
+            <td>{{ log.location|default:"-" }}</td>
+            <td>{{ log.device|default:"-" }}</td>
+            <td>{{ log.login_time|date:"Y-m-d H:i" }}</td>
+            <td>{{ log.logout_time|default:"-" }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7">No login activities found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
