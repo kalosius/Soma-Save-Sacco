@@ -764,14 +764,43 @@ def register_view(request):
 
         Borrower.objects.create(user=user)
 
-        # Send confirmation email
-        send_mail(
-            subject='Welcome to SomaSave SACCO',
-            message=f'Hello {first_name},\n\nYour account has been created successfully. You can now log in and start using our services.\n\nThank you for joining SomaSave!',
+        subject = '🎉 Welcome to SomaSave SACCO'
+
+        html_content = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+            <div style="max-width: 600px; margin: auto; padding: 20px;">
+            <h2 style="color: #1a73e8;">Welcome to SomaSave SACCO!</h2>
+            <p>Hello {first_name},</p>
+
+            <p>We're excited to have you on board. Your account has been <strong>successfully created</strong>.</p>
+
+            <p>You can now log in and start enjoying the benefits of being part of the SomaSave community.</p>
+
+            <p>
+                <a href="https://www.somasave.com/login" style="display: inline-block; padding: 10px 20px; background-color: #1a73e8; color: white; text-decoration: none; border-radius: 4px;">
+                Log In to Your Account
+                </a>
+            </p>
+
+            <p>Thank you for joining us!</p>
+
+            <p>Warm regards,<br><strong>The SomaSave SACCO Team</strong></p>
+            </div>
+        </body>
+        </html>
+        """
+
+        text_content = strip_tags(html_content)
+
+        email = EmailMultiAlternatives(
+            subject=subject,
+            body=text_content,
             from_email='info@somasave.com',
-            recipient_list=[email],
-            fail_silently=False,
+            to=[email],
         )
+        email.attach_alternative(html_content, "text/html")
+        email.send()
 
         messages.success(request, 'Account created successfully. You can now log in.')
         return redirect('login')
