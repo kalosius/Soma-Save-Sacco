@@ -73,17 +73,25 @@
     <form method="POST" class="space-y-4" onsubmit="handleSubmit(this)">
   {% csrf_token %}
 
-  <input type="text" name="first_name" placeholder="First Name" required
-         value="{{ first_name|default:'' }}"
-         class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+  <input type="text" name="first_name" oninput="allowOnlyLetters(this)"
+        placeholder="First Name" required pattern="[A-Za-z]+"
+        minlength="2" maxlength="30" title="Letters only (2–30 characters)"
+        value="{{ first_name|default:'' }}"
+        class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
 
-  <input type="text" name="last_name" placeholder="Last Name" required
-         value="{{ last_name|default:'' }}"
-         class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+  <input type="text" name="last_name" oninput="allowOnlyLetters(this)"
+        placeholder="Last Name" required pattern="[A-Za-z]+"
+        minlength="2" maxlength="30" title="Letters only (2–30 characters)"
+        value="{{ last_name|default:'' }}"
+        class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
 
-  <input type="text" name="username" placeholder="Username" required
-         value="{{ username|default:'' }}"
-         class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+  <input type="text" name="username" oninput="allowOnlyLetters(this)"
+        placeholder="Username" required pattern="[A-Za-z]+"
+        minlength="4" maxlength="20" title="Letters only (4–20 characters)"
+        value="{{ username|default:'' }}"
+        class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
+
+
 
   <input type="email" name="email" placeholder="Email" required
          value="{{ email|default:'' }}"
@@ -127,7 +135,16 @@
     btn.querySelector(".btn-text").classList.add("hidden");
     btn.querySelector(".spinner").classList.remove("hidden");
   }
+
+
+
+  function allowOnlyLetters(e) {
+      e.value = e.value.replace(/[^a-zA-Z]/g, '');
+  }
 </script>
+
+
+
 
 </body>
 </html>

@@ -1,0 +1,13 @@
+{% extends "clientsbase.html" %}
+
+{% block content %}
+
+
+<h2>Verification Result: {{ obj.status }}</h2>
+<p><strong>Name:</strong> {{ obj.full_name }}</p>
+<p><strong>NIN:</strong> {{ obj.nin }}</p>
+<p><strong>Card Number:</strong> {{ obj.card_number }}</p>
+<p><strong>Date of Birth:</strong> {{ obj.date_of_birth }}</p>
+<p><strong>Sex:</strong> {{ obj.sex }}</p>
+<p><strong>Nationality:</strong> {{ obj.nationality }}</p>
+{% endblock %}

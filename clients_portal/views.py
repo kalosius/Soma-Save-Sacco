@@ -39,7 +39,16 @@ from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 
 
+# id verification view
+import pytesseract
+from PIL import Image
+from django.shortcuts import render, redirect
+from .forms import NationalIDVerificationForm
+from .models import NationalIDVerification
 
+# google text recognition
+# from google.cloud import vision
+import io
 
 
 
@@ -70,7 +79,102 @@ class LoginActivityViewSet(viewsets.ModelViewSet):
 
 
 
+# Not working
+# Initialize Vision API client once globally
+# client = vision.ImageAnnotatorClient()
 
+# def extract_and_verify(file_obj):
+#     # Reset file pointer and read content
+#     file_obj.seek(0)
+#     content = file_obj.read()
+
+#     image = vision.Image(content=content)
+#     response = client.text_detection(image=image)
+
+#     if response.error.message:
+#         return {'status': 'Declined', 'text': '', 'error': response.error.message}
+
+#     annotations = response.text_annotations
+#     if not annotations:
+#         return {'status': 'Declined', 'text': ''}
+
+#     text = annotations[0].description.upper()
+
+#     # Extract fields with regex
+#     nin = re.search(r'[A-Z0-9]{14}', text)
+#     card_number = re.search(r'\b\d{9}\b', text)
+#     dob_match = re.search(r'\d{2}\.\d{2}\.\d{4}', text)
+#     sex = ''
+#     # More precise sex extraction
+#     sex_match = re.search(r'\bSEX\s*[:\-]?\s*(M|F)\b', text)
+#     if sex_match:
+#         sex = sex_match.group(1)
+#     else:
+#         sex = 'F' if 'F' in text else ('M' if 'M' in text else '')
+
+#     nationality = 'UGA' if 'UGA' in text else ''
+
+#     surname_match = re.search(r'SURNAME\s*[:\-]?\s*([A-Z]+)', text)
+#     given_name_match = re.search(r'GIVEN NAME[S]?\s*[:\-]?\s*([A-Z]+)', text)
+
+#     surname = surname_match.group(1) if surname_match else ''
+#     given_name = given_name_match.group(1) if given_name_match else ''
+#     full_name = f"{surname} {given_name}" if surname and given_name else ''
+
+#     dob = None
+#     if dob_match:
+#         try:
+#             dob = datetime.strptime(dob_match.group(), '%d.%m.%Y')
+#         except ValueError:
+#             dob = None
+
+#     result = {
+#         'nin': nin.group() if nin else '',
+#         'card_number': card_number.group() if card_number else '',
+#         'dob': dob,
+#         'nationality': nationality,
+#         'sex': sex,
+#         'full_name': full_name,
+#         'status': 'Accepted' if nin and card_number and dob and full_name else 'Declined',
+#         'text': text
+#     }
+
+#     return result
+
+
+# def verify_id_view(request):
+#     if request.method == 'POST':
+#         form = NationalIDVerificationForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             instance = form.save(commit=False)
+
+#             front_image = request.FILES.get('front_image')
+#             back_image = request.FILES.get('back_image')
+
+#             front_result = extract_and_verify(front_image) if front_image else {'status': 'Declined', 'text': ''}
+#             back_result = extract_and_verify(back_image) if back_image else {'status': 'Declined', 'text': ''}
+
+#             # Merge front and back results
+#             instance.nin = front_result.get('nin') or back_result.get('nin')
+#             instance.card_number = front_result.get('card_number') or back_result.get('card_number')
+#             instance.date_of_birth = front_result.get('dob') or back_result.get('dob')
+#             instance.nationality = front_result.get('nationality') or back_result.get('nationality')
+#             instance.sex = front_result.get('sex') or back_result.get('sex')
+#             instance.full_name = front_result.get('full_name') or back_result.get('full_name')
+#             instance.extracted_text_front = front_result.get('text')
+#             instance.extracted_text_back = back_result.get('text')
+
+#             instance.status = 'Accepted' if all([
+#                 instance.nin, instance.card_number,
+#                 instance.date_of_birth, instance.nationality,
+#                 instance.sex, instance.full_name
+#             ]) else 'Declined'
+
+#             instance.save()
+#             return render(request, 'auth/verify_result.html', {'obj': instance})
+#     else:
+#         form = NationalIDVerificationForm()
+#     return render(request, 'auth/verify_form.html', {'form': form})
 
 
 

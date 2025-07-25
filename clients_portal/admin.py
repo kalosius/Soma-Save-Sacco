@@ -1,6 +1,8 @@
 from django.contrib import admin
-from .models import CustomUser, ShareTransaction, Account, LoginActivity, Deposit
+from .models import CustomUser, ShareTransaction, Account, LoginActivity, Deposit, NationalIDVerification
 
+
+admin.site.register(NationalIDVerification)
 
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):

@@ -68,3 +68,21 @@ class LoginActivity(models.Model):
 
     def __str__(self):
         return f"{self.user.username} logged in at {self.login_time}"
+
+
+
+# National ID Verification Model
+class NationalIDVerification(models.Model):
+    full_name = models.CharField(max_length=100, blank=True)
+    nin = models.CharField(max_length=20, blank=True)
+    card_number = models.CharField(max_length=20, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    nationality = models.CharField(max_length=10, blank=True)
+    sex = models.CharField(max_length=1, blank=True)
+    expiry_date = models.DateField(null=True, blank=True)
+    status = models.CharField(max_length=20, default='Pending')
+    front_image = models.ImageField(upload_to='ids/front/')
+    back_image = models.ImageField(upload_to='ids/back/')
+    extracted_text_front = models.TextField(blank=True)
+    extracted_text_back = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)

@@ -80,4 +80,6 @@ urlpatterns = [
     path('payment/callback/', views.flutterwave_callback, name='flutterwave_callback'),
 
 
+# not working
+#  path('verify-id/', views.verify_id_view, name='verify_id'),
 ]
