@@ -13,12 +13,19 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4loud-b24fayfags4q_-$dh*pi@cni!ye9)4owjg0afz#%ft-v'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback-insecure-dev-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'somasave.com',
+    'www.somasave.com',
+    'soma-save-sacco.onrender.com',
+]
+
 
 
 CSRF_TRUSTED_ORIGINS = [
