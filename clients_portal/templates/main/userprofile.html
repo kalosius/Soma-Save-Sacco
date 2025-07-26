@@ -40,42 +40,38 @@
 
       <div class="mt-4 space-y-2 w-full text-center">
 
-    <!-- Change Password Button -->
-    <button id="changePasswordBtn" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm flex justify-center items-center">
-        <span class="btn-text">Change Password</span>
-        <svg class="spinner hidden ml-2 w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-        </svg>
-    </button>
+             <!-- Upload New Photo Button -->
+            <a href="{% url 'upload_photo' %}" id="uploadBtn"
+              class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm flex justify-center items-center space-x-2"
+              onclick="showSpinner(event)">
+                <span class="btn-text">Profile Image</span>
+                <svg id="spinner" class="animate-spin ml-2 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+            </a>
 
-    <!-- Edit Profile Button -->
-    <a href="{% url 'edit_profile' %}">
-        <button id="editProfileBtn" class="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 text-sm flex justify-center items-center">
-            <span class="btn-text">Edit Profile</span>
-            <svg class="spinner hidden ml-2 w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-            </svg>
-        </button>
-    </a>
+            <!-- Edit Profile Button -->
+            <a href="{% url 'edit_profile' %}">
+                <button id="editProfileBtn" class="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 text-sm flex justify-center items-center">
+                    <span class="btn-text">Edit Profile</span>
+                    <svg class="spinner hidden ml-2 w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                </button>
+            </a>
 
-    <!-- Upload New Photo Button -->
-    
-     <!-- Upload New Photo Button -->
-<a href="{% url 'upload_photo' %}" id="uploadBtn"
-   class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm flex justify-center items-center space-x-2"
-   onclick="showSpinner(event)">
-    <span class="btn-text">Upload New Photo</span>
-    <svg id="spinner" class="animate-spin ml-2 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-    </svg>
-</a>
+            <!-- Change Password Button -->
+            <button id="changePasswordBtn" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm flex justify-center items-center">
+                <span class="btn-text">Change Password</span>
+                <svg class="spinner hidden ml-2 w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+            </button>
 
-
-</div>
-
+        </div>
     </div>
 
     <!-- Right: Bio Data -->
@@ -144,6 +140,7 @@
 
   </div>
 </div>
+<br><br><br>
 
 
 <script>
