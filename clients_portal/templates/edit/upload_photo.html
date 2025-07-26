@@ -26,7 +26,6 @@
             </a>
         </div>
     </form>
-
 </div>
 
 <script>
@@ -36,19 +35,18 @@ document.getElementById('uploadForm').addEventListener('submit', function(e) {
     
     let dots = 0;
     btn.textContent = "Uploading";
-    
+
     const interval = setInterval(() => {
         dots = (dots + 1) % 4;
         btn.textContent = "Uploading" + '.'.repeat(dots);
     }, 500);
 
-    // Allow normal form submission
-    // Stop dots after short timeout (for testing)
-    // Remove this part in production if form redirects normally
-    // setTimeout(() => {
-    //     clearInterval(interval);
-    //     btn.textContent = "Uploaded";
-    // }, 5000);
+    // Just in case something breaks, reset after 10s (optional)
+    setTimeout(() => {
+        clearInterval(interval);
+        btn.disabled = false;
+        btn.textContent = "Upload";
+    }, 10000);
 });
 </script>
 {% endblock %}
