@@ -2,11 +2,27 @@
 {% block content %}
 <br>
  {% if messages %}
-    <div class="mb-4 text-center">
+    <div id="messages-container" class="mb-4 text-center">
       {% for message in messages %}
         <p class="text-green-600">{{ message }}</p>
       {% endfor %}
     </div>
+
+    <script>
+    // Hide messages after 3 seconds (3000 milliseconds)
+    setTimeout(() => {
+      const msgContainer = document.getElementById('messages-container');
+      if (msgContainer) {
+        // You can either hide it or remove it
+        // Option 1: Hide smoothly with fade-out effect
+        msgContainer.style.transition = "opacity 0.5s ease";
+        msgContainer.style.opacity = '0';
+        setTimeout(() => {
+          msgContainer.style.display = 'none';
+        }, 500); // wait for fade out
+      }
+    }, 3000);
+  </script>
 {% endif %}
 
 <div class="max-w-5xl mx-auto mt-8 bg-white rounded-lg shadow-lg p-6">
