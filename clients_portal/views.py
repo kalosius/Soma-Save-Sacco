@@ -690,7 +690,7 @@ def client_dashboard(request):
     total_transacted_amount = payments.aggregate(total=Sum('amount'))['total'] or 0
 
     # greeting message based on time of day
-    current_hour = datetime.now().hour
+    current_hour = timezone.localtime().hour
 
 
     logs = LoginActivity.objects.filter(user=request.user).order_by('-login_time')[:10]  # latest 10
