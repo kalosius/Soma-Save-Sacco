@@ -65,6 +65,7 @@
           <span class="font-bold text-lg">SomaSave SACCO</span>
         </div>
 
+        {% if user.is_authenticated %}
         <!-- Desktop Menu -->
         <nav class="hidden md:flex space-x-6 text-sm font-medium">
           <a href="{% url 'client_dashboard' %}" class="hover:text-blue-600">Dashboard</a>
@@ -77,8 +78,15 @@
           {% comment %} <a href="{% url 'withdrawal' %}" class="hover:text-blue-600">Withdraw Requests</a> {% endcomment %}
           <a href="{% url 'transactions' %}" class="hover:text-blue-600">Transactions</a>
           <a href="#" onclick="showLogoutCard(event)" class="block text-red-500">Log Out</a>
+
+          {% else %}
+          <a href="{% url 'client_dashboard' %}" class="hover:text-blue-600">Login</a>
+          <a href="{% url 'userprofile' %}" class="hover:text-blue-600">Register</a>
+
+          {% endif %}
     </nav>
 
+    {% if user.is_authenticated %}
         <!-- Mobile menu button -->
         <div class="md:hidden">
           <button onclick="toggleMenu()" class="text-gray-700 focus:outline-none">
@@ -237,7 +245,7 @@
     </a>
   </div>
 </nav>
-
+{% endif %}
 
 <script>
   // Wait for DOM content loaded
