@@ -3,6 +3,9 @@ from pathlib import Path
 import os
 import dj_database_url
 from decouple import config
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -56,6 +59,8 @@ INSTALLED_APPS = [
     'pwa',
     'rest_framework',
     'corsheaders',
+    'cloudinary',
+    'cloudinary_storage',
 
 
 ]
@@ -181,9 +186,17 @@ AUTH_USER_MODEL = 'clients_portal.CustomUser'  # Adjust to your app name and mod
 
 
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+cloudinary.config( 
+    cloud_name = config('CLOUDINARY_CLOUD_NAME'), 
+    api_key = config('CLOUDINARY_API_KEY'), 
+    api_secret = config('CLOUDINARY_API_SECRET'), 
+    secure = True 
+)
 
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Optional (for direct media linking in templates/forms)
+MEDIA_URL = f"https://res.cloudinary.com/{config('CLOUDINARY_CLOUD_NAME')}/"
 
 # Email
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For testing only
@@ -195,9 +208,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = 'info@somasave.com'
-
-
-
 
 
 

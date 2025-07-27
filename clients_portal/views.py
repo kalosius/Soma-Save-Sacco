@@ -1,5 +1,6 @@
 import json
 import uuid
+import cloudinary
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib import messages
@@ -981,14 +982,18 @@ def upload_photo(request):
     if request.method == 'POST' and request.FILES.get('photo'):
         photo = request.FILES['photo']
         borrower = request.user.borrower_profile
-        borrower.photo = photo  # assuming your Borrower model has a ImageField named 'photo'
+
+        # Upload to Cloudinary
+        result = cloudinary.uploader.upload(photo, folder="profile_photos/")
+
+        # Save the Cloudinary URL
+        borrower.photo_url = result['secure_url']
         borrower.save()
+
         messages.success(request, "Profile photo updated successfully.")
-        return redirect('userprofile')  # or your profile page url name
+        return redirect('userprofile')
 
     return render(request, 'edit/upload_photo.html')
-
-
 
 
 

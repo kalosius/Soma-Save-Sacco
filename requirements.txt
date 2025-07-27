@@ -3,8 +3,10 @@ cachetools==5.5.2
 certifi==2025.6.15
 chardet==5.2.0
 charset-normalizer==3.4.2
+cloudinary==1.44.1
 dj-database-url==3.0.0
 Django==5.2.2
+django-cloudinary-storage==0.3.0
 django-cors-headers==4.7.0
 django-pwa==2.0.1
 django-redis==6.0.0
@@ -31,6 +33,7 @@ redis==6.2.0
 reportlab==4.4.1
 requests==2.32.4
 rsa==4.9.1
+six==1.17.0
 sqlparse==0.5.3
 typing_extensions==4.14.0
 tzdata==2025.2
