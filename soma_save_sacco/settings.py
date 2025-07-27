@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'cloudinary',
     'cloudinary_storage',
+    'widget_tweaks',
 
 
 ]

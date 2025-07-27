@@ -35,6 +35,9 @@ from django.http import JsonResponse
 from .flutterwave import initiate_momo_payment
 from django.db import transaction
 import re
+from django.contrib.auth import update_session_auth_hash
+from .forms import CustomPasswordChangeForm
+
 
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
@@ -1078,3 +1081,19 @@ def download_statement(request, format):
     else:
         return HttpResponse("Invalid format", status=400)
 
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important
+            messages.success(request, 'Password updated successfully!')
+            return redirect('userprofile')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = CustomPasswordChangeForm(user=request.user)
+    
+    return render(request, 'auth/change_password_modal.html', {'form': form})
