@@ -31,47 +31,82 @@
 
     <!-- Left: Profile Picture & Actions -->
     <div class="flex flex-col items-center lg:w-1/3">
-      {% if borrower.photo_url %}
-        <img src="{{ borrower.photo_url }}" alt="Profile Photo" class="w-32 h-32 rounded-full object-cover" />
-      {% else %}
-        <img src="https://res.cloudinary.com/dnyfsfkmd/image/upload/v1753600965/profile_photos/yjezsk6zshhdlu3sklxg.jpg" alt="Profile Photo" class="w-32 h-32 rounded-full object-cover" />
-      {% endif %}
+      <div class="relative w-32 h-32 group">
+        {% if borrower.photo_url %}
+          <img src="{{ borrower.photo_url }}" alt="Profile Photo" class="w-32 h-32 rounded-full object-cover" />
+        {% else %}
+          <img src="https://res.cloudinary.com/dnyfsfkmd/image/upload/v1753600965/profile_photos/yjezsk6zshhdlu3sklxg.jpg" alt="Profile Photo" class="w-32 h-32 rounded-full object-cover" />
+        {% endif %}
+
+        <!-- Edit Icon Overlay -->
+        <a href="{% url 'upload_photo' %}"
+          class="absolute bottom-1 right-1 bg-white rounded-full p-1 shadow hover:bg-gray-100 transition-all opacity-0 group-hover:opacity-100">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-1.5l-7.5 7.5a2 2 0 00-.586 1.172l-.378 2.272a0.5 0.5 0 00.586.586l2.272-.378a2 2 0 001.172-.586l7.5-7.5a2 2 0 00-2.828-2.828z" />
+          </svg>
+        </a>
+      </div>
+
 
 
 
       <div class="mt-4 space-y-2 w-full text-center">
+          <!-- Upload New Photo Button -->
+          <a href="{% url 'upload_photo' %}" id="uploadBtn"
+            class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm flex justify-center items-center space-x-2"
+            onclick="showSpinner(event)">
 
-             <!-- Upload New Photo Button -->
-            <a href="{% url 'upload_photo' %}" id="uploadBtn"
-              class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm flex justify-center items-center space-x-2"
-              onclick="showSpinner(event)">
-                <span class="btn-text">Profile Image</span>
-                <svg id="spinner" class="animate-spin ml-2 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                </svg>
-            </a>
+            <!-- Upload Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M16 10l-4-4m0 0l-4 4m4-4v12" />
+            </svg>
 
-            <!-- Edit Profile Button -->
-            <a href="{% url 'edit_profile' %}">
-                <button id="editProfileBtn" class="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 text-sm flex justify-center items-center">
-                    <span class="btn-text">Edit Profile</span>
-                    <svg class="spinner hidden ml-2 w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                    </svg>
-                </button>
-            </a>
+            <span class="btn-text">Profile Image</span>
 
-            <!-- Change Password Button -->
-            <a href="{% url 'change_password' %}" id="changePasswordBtn"
-              class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm flex justify-center items-center">
-                <span class="btn-text">Change Password</span>
-                <svg class="spinner hidden ml-2 h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                </svg>
-            </a>
+            <!-- Spinner -->
+            <svg id="spinner" class="animate-spin ml-2 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+          </a>
+
+
+           <!-- Edit Profile Button -->
+          <a href="{% url 'edit_profile' %}">
+            <button id="editProfileBtn" class="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 text-sm flex justify-center items-center gap-2">
+              
+              <!-- Pencil Icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4h2m2 0h2a2 2 0 012 2v2m0 2v10a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h2m2 0V2m0 2v2m-4 8h8" />
+              </svg>
+
+              <span class="btn-text">Edit Profile</span>
+
+              <!-- Spinner -->
+              <svg class="spinner hidden ml-2 w-4 h-4 animate-spin text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+            </button>
+          </a>
+
+          <!-- Change Password Button -->
+          <a href="{% url 'change_password' %}" id="changePasswordBtn"
+            class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm flex justify-center items-center gap-2">
+
+            <!-- Lock Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c.828 0 1.5.672 1.5 1.5S12.828 14 12 14s-1.5-.672-1.5-1.5S11.172 11 12 11zm6 2V9a6 6 0 10-12 0v4H5a2 2 0 00-2 2v6a2 2 0 002 2h14a2 2 0 002-2v-6a2 2 0 00-2-2h-1z" />
+            </svg>
+
+            <span class="btn-text">Change Password</span>
+
+            <!-- Spinner -->
+            <svg class="spinner hidden ml-2 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+          </a>
 
         </div>
     </div>
