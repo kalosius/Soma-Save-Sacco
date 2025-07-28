@@ -37,11 +37,10 @@ from django.db import transaction
 import re
 from django.contrib.auth import update_session_auth_hash
 from .forms import CustomPasswordChangeForm
-
+from django.core.paginator import Paginator
 
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
-
 
 # id verification view
 import pytesseract
@@ -357,12 +356,77 @@ def get_location_from_ip(ip):
 
 
 
-
-
-# transactions
+# Transactions
 @login_required(login_url='login')
 def transactions(request):
-    return render(request, 'main/transactions.html')
+    user = request.user
+    search_query = request.GET.get('search', '')
+    txn_type = request.GET.get('type', '')
+
+    transactions = []
+
+    # Deposits
+    if txn_type in ['', 'deposit']:
+        deposits = Deposit.objects.filter(user=user)
+        if search_query:
+            deposits = deposits.filter(tx_ref__icontains=search_query)
+        for dep in deposits:
+            transactions.append({
+                'date': dep.created_at,
+                'type': 'deposit',
+                'description': f'Deposit Ref: {dep.tx_ref}',
+                'amount': dep.amount,
+                'balance_after': '—',  # If you have running balance logic
+                'status': dep.status
+            })
+
+    # Share Transactions
+    if txn_type in ['', 'share']:
+        shares = ShareTransaction.objects.filter(user=user)
+        if search_query:
+            shares = shares.filter(transaction_type__icontains=search_query)
+        for s in shares:
+            transactions.append({
+                'date': s.timestamp,
+                'type': 'share',
+                'description': f'{s.transaction_type} - {s.number_of_shares} shares',
+                'amount': s.amount,
+                'balance_after': '—',
+                'status': s.status
+            })
+
+    # Payments (for loans)
+    if txn_type in ['', 'loan', 'withdrawal']:
+        try:
+            borrower = Borrower.objects.get(user=user)
+            payments = Payment.objects.filter(borrower=borrower)
+            if search_query:
+                payments = payments.filter(loan__loan_code__icontains=search_query)
+            for p in payments:
+                transactions.append({
+                    'date': p.payment_date,
+                    'type': 'loan',
+                    'description': f'Loan Payment - Loan #{p.loan.loan_code}',
+                    'amount': -p.amount,  # Payments are outgoing
+                    'balance_after': '—',
+                    'status': p.payment_status
+                })
+        except Borrower.DoesNotExist:
+            pass
+
+    # Optional: Sort by date descending
+    transactions = sorted(transactions, key=lambda x: x['date'], reverse=True)
+
+    # Pagination
+    paginator = Paginator(transactions, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'main/transactions.html', {
+        'transactions': page_obj.object_list,
+        'page_obj': page_obj,
+        'is_paginated': page_obj.has_other_pages(),
+    })
 
 # withdrawal
 @login_required(login_url='login')
@@ -484,7 +548,7 @@ def statement(request):
 
 
 # shares
-SHARE_VALUE = 200000  # Current share value in UGX
+SHARE_VALUE = 6000  # Current share value in UGX
 @login_required(login_url='login')
 def shares(request):
     user = request.user
@@ -1081,7 +1145,7 @@ def download_statement(request, format):
     else:
         return HttpResponse("Invalid format", status=400)
 
-
+# change password
 @login_required
 def change_password(request):
     if request.method == 'POST':
