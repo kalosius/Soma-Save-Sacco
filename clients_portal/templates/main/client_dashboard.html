@@ -64,7 +64,50 @@
       <p class="text-sm text-gray-500 mb-1">A/C No:</p>
       <p class="font-bold text-gray-700 mb-1">{{ account_number }}</p>
       <p class="text-sm text-gray-500 mb-1">Balance:</p>
-      <p id="account-balance" class="text-xl font-bold text-green-600">UGX {{ account_balance|floatformat:0 }}</p>
+<div class="flex items-center space-x-2">
+  <p id="account-balance" class="text-xl font-bold text-green-600 select-none">UGX ****</p>
+  <button id="toggle-balance" aria-label="Toggle balance visibility" class="focus:outline-none">
+    <!-- Eye icon SVG (closed by default) -->
+    <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path id="eye-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path id="eye-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+      <!-- Hidden eye closed icon path -->
+      <path id="eye-closed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.967 9.967 0 012.311-3.644m1.662-1.66A9.953 9.953 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.962 9.962 0 01-3.06 4.049M15 12a3 3 0 11-6 0 3 3 0 016 0z" style="display:none;" />
+      <line id="eye-closed-line" x1="3" y1="3" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none;" />
+    </svg>
+  </button>
+</div>
+
+<script>
+  const balanceEl = document.getElementById('account-balance');
+  const toggleBtn = document.getElementById('toggle-balance');
+  const eyeIcon = document.getElementById('eye-icon');
+  const eyeOpenPaths = document.querySelectorAll('#eye-open');
+  const eyeClosedPath = document.getElementById('eye-closed');
+  const eyeClosedLine = document.getElementById('eye-closed-line');
+
+  let visible = false;
+
+  // Store the actual balance value from Django template for toggling
+  const actualBalance = 'UGX {{ account_balance|floatformat:0 }}';
+
+  toggleBtn.addEventListener('click', () => {
+    visible = !visible;
+    if (visible) {
+      balanceEl.textContent = actualBalance;
+      // Show eye open, hide eye closed
+      eyeOpenPaths.forEach(p => p.style.display = 'block');
+      eyeClosedPath.style.display = 'none';
+      eyeClosedLine.style.display = 'none';
+    } else {
+      balanceEl.textContent = 'UGX ****';
+      // Show eye closed, hide eye open
+      eyeOpenPaths.forEach(p => p.style.display = 'none');
+      eyeClosedPath.style.display = 'block';
+      eyeClosedLine.style.display = 'block';
+    }
+  });
+</script>
     </div>
 
     <div class="bg-white shadow rounded-2xl p-6 hover:shadow-md transition">
