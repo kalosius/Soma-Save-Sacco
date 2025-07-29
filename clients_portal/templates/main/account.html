@@ -164,8 +164,9 @@
         <tr>
           <td class="border px-4 py-2">{{ tx.date|date:"Y-m-d" }}</td>
           <td class="border px-4 py-2">{{ tx.type }}</td>
+          {% comment %} <td class="border px-4 py-2">{{ tx.description }}</td> {% endcomment %}
           <td class="border px-4 py-2">{{ tx.amount|floatformat:0 }}</td>
-          <td class="border px-4 py-2 {% if 'Complete' in tx.status %}text-green-600{% elif 'Pending' in tx.status %}text-yellow-600{% else %}text-red-600{% endif %} font-medium">
+          <td class="border px-4 py-2 {% if 'Complete' in tx.status or 'success' in tx.status %}text-green-600{% elif 'Pending' in tx.status %}text-yellow-600{% else %}text-red-600{% endif %} font-medium">
             {{ tx.status }}
           </td>
         </tr>

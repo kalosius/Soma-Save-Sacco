@@ -664,22 +664,40 @@ def user_account(request):
         total=Sum('amount'))['total'] or 0
     dividends_earned = Decimal('0')  # Replace with logic
 
-    # Transactions
-    transactions = list(ShareTransaction.objects.filter(user=user).values(
-        'timestamp', 'transaction_type', 'amount', 'status')) + \
-        list(Payment.objects.filter(borrower=borrower).values(
-            'payment_date', 'amount', 'payment_status'))
+    transactions = []
 
-    normalized_transactions = [
-        {
-            'date': tx.get('timestamp') or tx.get('payment_date'),
-            'type': tx.get('transaction_type') or 'Loan Repayment',
-            'amount': tx['amount'],
-            'status': tx.get('status') or tx.get('payment_status'),
-        }
-        for tx in transactions
-    ]
-    normalized_transactions.sort(key=lambda x: x['date'], reverse=True)
+    # Share Transactions
+    for tx in ShareTransaction.objects.filter(user=user):
+        transactions.append({
+            'date': tx.timestamp,
+            'type': 'Share Transaction',
+            'description': f'{tx.transaction_type} - {tx.number_of_shares} shares',
+            'amount': tx.amount,
+            'status': tx.status,
+        })
+
+    # Loan Payments
+    for p in Payment.objects.filter(borrower=borrower):
+        transactions.append({
+            'date': p.payment_date,
+            'type': 'Loan Repayment',
+            'description': f'Repayment for Loan #{p.loan.loan_code}',
+            'amount': -p.amount,
+            'status': p.payment_status,
+        })
+
+    # Deposits
+    for d in Deposit.objects.filter(user=user):
+        transactions.append({
+            'date': d.created_at,
+            'type': 'Deposit',
+            'description': f'Deposit - Ref: {d.tx_ref}',
+            'amount': d.amount,
+            'status': d.status,
+        })
+
+    # Sort all transactions
+    transactions = sorted(transactions, key=lambda x: x['date'], reverse=True)
 
     context = {
         'account_number': account.account_number,
@@ -690,9 +708,10 @@ def user_account(request):
         'outstanding_loan': outstanding_loan,
         'dividends_earned': dividends_earned,
         'account_balance': account.balance,
-        'recent_transactions': normalized_transactions[:5],
+        'recent_transactions': transactions[:5],
     }
     return render(request, 'main/account.html', context)
+
 
 
 # userprofile
