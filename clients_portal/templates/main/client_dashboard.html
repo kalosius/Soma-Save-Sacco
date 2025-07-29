@@ -78,36 +78,6 @@
   </button>
 </div>
 
-<script>
-  const balanceEl = document.getElementById('account-balance');
-  const toggleBtn = document.getElementById('toggle-balance');
-  const eyeIcon = document.getElementById('eye-icon');
-  const eyeOpenPaths = document.querySelectorAll('#eye-open');
-  const eyeClosedPath = document.getElementById('eye-closed');
-  const eyeClosedLine = document.getElementById('eye-closed-line');
-
-  let visible = false;
-
-  // Store the actual balance value from Django template for toggling
-  const actualBalance = 'UGX {{ account_balance|floatformat:0 }}';
-
-  toggleBtn.addEventListener('click', () => {
-    visible = !visible;
-    if (visible) {
-      balanceEl.textContent = actualBalance;
-      // Show eye open, hide eye closed
-      eyeOpenPaths.forEach(p => p.style.display = 'block');
-      eyeClosedPath.style.display = 'none';
-      eyeClosedLine.style.display = 'none';
-    } else {
-      balanceEl.textContent = 'UGX ****';
-      // Show eye closed, hide eye open
-      eyeOpenPaths.forEach(p => p.style.display = 'none');
-      eyeClosedPath.style.display = 'block';
-      eyeClosedLine.style.display = 'block';
-    }
-  });
-</script>
     </div>
 
     <div class="bg-white shadow rounded-2xl p-6 hover:shadow-md transition">
@@ -179,6 +149,39 @@
     window.requestAnimationFrame(step);
   }
   animateValue("shares-counter", 0, {{ total_shares }}, 1500);
+</script>
+
+
+
+<script>
+  const balanceEl = document.getElementById('account-balance');
+  const toggleBtn = document.getElementById('toggle-balance');
+  const eyeIcon = document.getElementById('eye-icon');
+  const eyeOpenPaths = document.querySelectorAll('#eye-open');
+  const eyeClosedPath = document.getElementById('eye-closed');
+  const eyeClosedLine = document.getElementById('eye-closed-line');
+
+  let visible = false;
+
+  // Store the actual balance value from Django template for toggling
+  const actualBalance = 'UGX {{ account_balance|floatformat:0 }}';
+
+  toggleBtn.addEventListener('click', () => {
+    visible = !visible;
+    if (visible) {
+      balanceEl.textContent = actualBalance;
+      // Show eye open, hide eye closed
+      eyeOpenPaths.forEach(p => p.style.display = 'block');
+      eyeClosedPath.style.display = 'none';
+      eyeClosedLine.style.display = 'none';
+    } else {
+      balanceEl.textContent = 'UGX ****';
+      // Show eye closed, hide eye open
+      eyeOpenPaths.forEach(p => p.style.display = 'none');
+      eyeClosedPath.style.display = 'block';
+      eyeClosedLine.style.display = 'block';
+    }
+  });
 </script>
 
 
