@@ -55,9 +55,12 @@
           <td class="px-3 py-2 border text-right text-gray-800">{{ txn.balance_after|floatformat:0 }}</td>
           <td class="px-3 py-2 border">
             <span class="inline-block px-2 py-0.5 rounded text-xs 
-              {% if txn.status == 'success' %} bg-green-100 text-green-700 
-              {% elif txn.status == 'pending' %} bg-yellow-100 text-yellow-700 
-              {% else %} bg-red-100 text-red-700 
+             {% if txn.status|lower == 'success' or txn.status|lower == 'successful' or txn.status|lower == 'completed' %}
+                bg-green-100 text-green-700
+              {% elif txn.status|lower == 'pending' %}
+                bg-yellow-100 text-yellow-700
+              {% else %}
+                bg-red-100 text-red-700
               {% endif %}
             ">
               {{ txn.status|title }}

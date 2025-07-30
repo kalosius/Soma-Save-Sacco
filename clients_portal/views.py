@@ -487,64 +487,6 @@ def generate_unique_loan_code():
 
 
 # statement
-# @login_required(login_url='login')
-# def statement(request):
-#     user = request.user
-#     borrower = getattr(user, 'borrower_profile', None)
-
-#     # GET filters
-#     start_date = request.GET.get('start_date')
-#     end_date = request.GET.get('end_date')
-#     transaction_type = request.GET.get('transaction_type')
-
-#     # Share Transactions
-#     share_txns = ShareTransaction.objects.filter(user=user).values(
-#         'timestamp', 'transaction_type', 'amount', 'status'
-#     )
-#     share_data = [
-#         {
-#             'date': tx['timestamp'],
-#             'type': tx['transaction_type'].replace('_', ' ').title(),
-#             'reference': f"SHR-{tx['timestamp'].strftime('%Y%m%d%H%M%S')}",
-#             'amount': tx['amount'],
-#             'status': tx['status'].title()
-#         } for tx in share_txns
-#     ]
-
-#     # Loan Payments
-#     payments = Payment.objects.filter(borrower=borrower).select_related('loan').values(
-#         'id', 'payment_date', 'amount', 'payment_status', 'loan__loan_code'
-#     )
-#     payment_data = [
-#         {
-#             'date': tx['payment_date'],
-#             'type': "Loan Repayment",
-#             'reference': tx['loan__loan_code'] if tx['loan__loan_code'] else f"PAY-{tx['id']}",
-#             'amount': -tx['amount'],  # repayments are outflows
-#             'status': tx['payment_status'].title()
-#         } for tx in payments
-#     ]
-
-#     # Combine
-#     transactions = sorted(
-#         chain(share_data, payment_data),
-#         key=lambda x: x['date'],
-#         reverse=True
-#     )
-
-#     # Filters
-#     if start_date:
-#         transactions = [tx for tx in transactions if tx['date'].date() >= datetime.strptime(start_date, "%Y-%m-%d").date()]
-#     if end_date:
-#         transactions = [tx for tx in transactions if tx['date'].date() <= datetime.strptime(end_date, "%Y-%m-%d").date()]
-#     if transaction_type:
-#         transactions = [tx for tx in transactions if tx['type'].lower().replace(" ", "_") == transaction_type]
-
-#     context = {
-#         'transactions': transactions,
-#     }
-#     return render(request, 'main/mystatement.html', context)
-
 @login_required(login_url='login')
 def statement(request):
     user = request.user
