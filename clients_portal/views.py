@@ -1159,12 +1159,11 @@ def upload_photo(request):
 
 
 # CVC and pdf download
-@login_required(login_url='login')
 def download_statement(request, format):
     user = request.user
     borrower = getattr(user, 'borrower_profile', None)
 
-    # Similar logic from your statement() view
+    # Share Transactions
     share_txns = ShareTransaction.objects.filter(user=user).values(
         'timestamp', 'transaction_type', 'amount', 'status'
     )
@@ -1178,6 +1177,7 @@ def download_statement(request, format):
         } for tx in share_txns
     ]
 
+    # Loan Payments
     payments = Payment.objects.filter(borrower=borrower).select_related('loan').values(
         'id', 'payment_date', 'amount', 'payment_status', 'loan__loan_code'
     )
@@ -1191,12 +1191,28 @@ def download_statement(request, format):
         } for tx in payments
     ]
 
+    # Deposits
+    deposits = Deposit.objects.filter(user=user).values(
+        'created_at', 'tx_ref', 'amount', 'status'
+    )
+    deposit_data = [
+        {
+            'date': tx['created_at'],
+            'type': "Deposit",
+            'reference': tx['tx_ref'],
+            'amount': tx['amount'],
+            'status': tx['status'].title()
+        } for tx in deposits
+    ]
+
+    # Combine all transactions
     transactions = sorted(
-        chain(share_data, payment_data),
+        chain(share_data, payment_data, deposit_data),
         key=lambda x: x['date'],
         reverse=True
     )
 
+    # CSV download
     if format == 'csv':
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="statement.csv"'
@@ -1214,6 +1230,7 @@ def download_statement(request, format):
             ])
         return response
 
+    # PDF download
     elif format == 'pdf':
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="statement.pdf"'
