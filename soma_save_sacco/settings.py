@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback-insecure-dev-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -28,7 +28,6 @@ ALLOWED_HOSTS = [
     'www.somasave.com',
     'soma-save-sacco.onrender.com',
 ]
-
 
 
 CSRF_TRUSTED_ORIGINS = [
@@ -45,7 +44,6 @@ CORS_ALLOWED_ORIGINS = [
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

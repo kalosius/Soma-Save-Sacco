@@ -10,3 +10,4 @@ def generate_unique_account_number():
         account_number = f"{prefix}{random_digits}"
         if not Account.objects.filter(account_number=account_number).exists():
             return account_number
+        
