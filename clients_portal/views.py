@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from adminapp.models import Loan, Payment, Borrower, RepaymentSchedule
 from django.db.models import Sum, F, Value, CharField
 from datetime import timedelta
-import random
+import random, string
 from django.utils import timezone
 from decimal import Decimal
 from datetime import datetime
@@ -826,6 +826,7 @@ def login_view(request):
         identifier = request.POST.get('username')
         password = request.POST.get('password')
 
+        # Find username by email or directly
         if '@' in identifier:
             try:
                 user_obj = User.objects.get(email=identifier)
@@ -835,97 +836,55 @@ def login_view(request):
         else:
             username = identifier
 
-        if username:
-            user = authenticate(request, username=username, password=password)
-        else:
-            user = None
+        # Authenticate
+        user = authenticate(request, username=username, password=password) if username else None
 
-        if user is not None:
-            login(request, user)
-            messages.success(request, f'Welcome! {user.username} Login successful')
-
-            # Gather login details
-            ip = get_client_ip(request)
-            location = get_location_from_ip(ip)
-            login_time = now().strftime('%Y-%m-%d %H:%M:%S')
-
-            # Device info
-            user_agent_str = request.META.get('HTTP_USER_AGENT', '')
-            user_agent = parse_ua(user_agent_str)
-            device_type = (
-                "Mobile" if user_agent.is_mobile else
-                "Tablet" if user_agent.is_tablet else
-                "PC" if user_agent.is_pc else
-                "Other"
-            )
-            browser = f"{user_agent.browser.family} {user_agent.browser.version_string}"
-            os = f"{user_agent.os.family} {user_agent.os.version_string}"
-
-            # Save login activity
-            activity = LoginActivity.objects.create(
-            user=user,
-            ip_address=ip,
-            location=location,
-            device=device_type
-            )
-            request.session['login_activity_id'] = activity.id  # Save log ID for logout tracking
-
-
-            # Send login alert email
-            subject = '🔐 Login Alert - SomaSave SACCO'
-
-            html_content = f"""
-            <html>
-            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-                <h2 style="color: #1a73e8;">Login Alert - SomaSave SACCO</h2>
-                <p>Hello {user.first_name},</p>
-
-                <p>You have successfully logged into your <strong>SomaSave SACCO</strong> account.</p>
-
-                <h3 style="color: #444;">🔍 Login Details:</h3>
-                <ul style="list-style-type: none; padding: 0;">
-                <li><strong>📅 Time:</strong> {login_time}</li>
-                <li><strong>🌍 IP Address:</strong> {ip}</li>
-                <li><strong>📍 Location:</strong> {location}</li>
-                <li><strong>💻 Device:</strong> {device_type}</li>
-                <li><strong>🖥️ Operating System:</strong> {os}</li>
-                <li><strong>🌐 Browser:</strong> {browser}</li>
-                </ul>
-
-                <p>If this login was made by you, no further action is required.</p>
-                <p style="color: red;">
-                <strong>
-                    If this wasn't you, please 
-                    <a href="https://www.somasave.com/reset-password" style="color: #d93025;">reset your password</a> immediately.
-                </strong>
-                </p>
-
-                <p>Stay safe,<br><strong>The SomaSave SACCO Team</strong></p>
-            </body>
-            </html>
-            """
-
-            # plain text fallback
-            text_content = strip_tags(html_content)
-
-            email = EmailMultiAlternatives(
-                subject=subject,
-                body=text_content,
-                from_email='info@somasave.com',
-                to=[user.email],
-            )
-            email.attach_alternative(html_content, "text/html")
-            email.send()
-
-
-            return redirect('client_dashboard')
-        else:
+        if user is None:
             return render(request, 'auth/login.html', {'error': 'Invalid username/email or password'})
-    
+
+        # ✅ Check if user is verified
+        if not user.is_verified:
+            # For existing users without OTP, generate one
+            if not user.otp_code:
+                otp = generate_otp()
+                user.otp_code = otp
+                user.otp_created_at = timezone.now()
+                user.save()
+
+                # send OTP email
+                subject = 'Verify your SomaSave Account'
+                html_content = f"""
+                <p>Hello {user.first_name},</p>
+                <p>Your OTP code is: <strong>{otp}</strong></p>
+                <p>This code will expire in 10 minutes.</p>
+                """
+                text_content = strip_tags(html_content)
+                email_msg = EmailMultiAlternatives(
+                    subject=subject,
+                    body=text_content,
+                    from_email='info@somasave.com',
+                    to=[user.email],
+                )
+                email_msg.attach_alternative(html_content, "text/html")
+                email_msg.send()
+
+            # store pending email in session for resend
+            request.session['pending_email'] = user.email
+
+            messages.info(request, 'Please verify your email to continue.')
+            return redirect('verify_email')
+
+        # login success
+        login(request, user)
+        messages.success(request, f'Welcome! {user.username} Login successful')
+        return redirect('client_dashboard')
+
     return render(request, 'auth/login.html')
 
-
 # register
+def generate_otp(length=6):
+    return ''.join(random.choices(string.digits, k=length))
+
 User = get_user_model()
 def register_view(request):
     if request.method == 'POST':
@@ -945,6 +904,7 @@ def register_view(request):
             'last_name': last_name,
         }
 
+        # validations
         if password != confirm_password:
             context['error'] = 'Passwords do not match'
             return render(request, 'auth/register.html', context)
@@ -956,64 +916,138 @@ def register_view(request):
         if User.objects.filter(email=email).exists():
             context['error'] = 'Email already in use'
             return render(request, 'auth/register.html', context)
-        
+
         if User.objects.filter(phone_number=phone_number).exists():
             context['error'] = 'Phone number already in use'
             return render(request, 'auth/register.html', context)
 
+        # create user unverified
         user = User.objects.create(
             username=username,
             email=email,
             phone_number=phone_number,
             first_name=first_name,
             last_name=last_name,
-            password=make_password(password)
+            password=make_password(password),
+            is_verified=False
         )
 
         Borrower.objects.create(user=user)
 
-        subject = '🎉 Welcome to SomaSave SACCO'
+        # generate OTP
+        otp = generate_otp()
+        user.otp_code = otp
+        user.otp_created_at = timezone.now()
+        user.save()
 
+        # store email in session for resend OTP
+        request.session['pending_email'] = email
+
+        # send OTP email
+        subject = 'Verify your SomaSave Account'
         html_content = f"""
-        <html>
-        <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-            <div style="max-width: 600px; margin: auto; padding: 20px;">
-            <h2 style="color: #1a73e8;">Welcome to SomaSave SACCO!</h2>
-            <p>Hello {first_name},</p>
-
-            <p>We're excited to have you on board. Your account has been <strong>successfully created</strong>.</p>
-
-            <p>You can now log in and start enjoying the benefits of being part of the SomaSave community.</p>
-
-            <p>
-                <a href="https://www.somasave.com/login" style="display: inline-block; padding: 10px 20px; background-color: #1a73e8; color: white; text-decoration: none; border-radius: 4px;">
-                Log In to Your Account
-                </a>
-            </p>
-
-            <p>Thank you for joining us!</p>
-
-            <p>Warm regards,<br><strong>The SomaSave SACCO Team</strong></p>
-            </div>
-        </body>
-        </html>
+        <p>Hello {first_name},</p>
+        <p>Your OTP code is: <strong>{otp}</strong></p>
+        <p>This code will expire in 10 minutes.</p>
         """
-
         text_content = strip_tags(html_content)
 
-        email = EmailMultiAlternatives(
+        email_msg = EmailMultiAlternatives(
             subject=subject,
             body=text_content,
             from_email='info@somasave.com',
             to=[email],
         )
-        email.attach_alternative(html_content, "text/html")
-        email.send()
+        email_msg.attach_alternative(html_content, "text/html")
+        email_msg.send()
 
-        messages.success(request, 'Account created successfully. You can now log in.')
-        return redirect('login')
+        messages.info(request, 'We sent you an OTP. Please verify your email.')
+        return redirect('verify_email')  # stop here (no welcome email yet!)
 
     return render(request, 'auth/register.html')
+
+def verify_email(request):
+    if request.method == 'POST':
+        otp = request.POST.get('otp')
+        try:
+            user = User.objects.get(otp_code=otp, is_verified=False)
+
+            if timezone.now() > user.otp_created_at + timedelta(minutes=10):
+                messages.error(request, 'OTP expired. Please request a new one.')
+                return redirect('resend_otp')
+
+            user.is_verified = True
+            user.otp_code = None
+            user.save()
+
+            # ✅ Send Welcome email only after verification
+            subject = '🎉 Welcome to SomaSave SACCO'
+            html_content = f"""
+            <h2 style="color: #1a73e8;">Welcome to SomaSave SACCO!</h2>
+            <p>Hello {user.first_name},</p>
+            <p>Your account has been successfully verified and created.</p>
+            """
+            text_content = strip_tags(html_content)
+
+            email_msg = EmailMultiAlternatives(
+                subject=subject,
+                body=text_content,
+                from_email='info@somasave.com',
+                to=[user.email],
+            )
+            email_msg.attach_alternative(html_content, "text/html")
+            email_msg.send()
+
+            messages.success(request, 'Email verified successfully! You can now log in.')
+            return redirect('login')
+
+        except User.DoesNotExist:
+            messages.error(request, 'Invalid OTP. Please try again.')
+
+    return render(request, 'auth/verify_email.html')
+
+
+# resend OTP
+def resend_otp(request):
+    if request.method == "POST":
+        email = request.POST.get("email") or request.session.get("pending_email")
+
+        try:
+            user = User.objects.get(email=email, is_verified=False)
+
+            # generate new OTP
+            otp = generate_otp()
+            user.otp_code = otp
+            user.otp_created_at = timezone.now()
+            user.save()
+
+            # send email again
+            subject = "🔄 Resend OTP - Verify your SomaSave Account"
+            html_content = f"""
+            <p>Hello {user.first_name},</p>
+            <p>Your new OTP code is: <strong>{otp}</strong></p>
+            <p>This code will expire in 10 minutes.</p>
+            """
+            text_content = strip_tags(html_content)
+
+            email_msg = EmailMultiAlternatives(
+                subject=subject,
+                body=text_content,
+                from_email="info@somasave.com",
+                to=[user.email],
+            )
+            email_msg.attach_alternative(html_content, "text/html")
+            email_msg.send()
+
+            messages.success(request, "A new OTP has been sent to your email.")
+            return redirect("verify_email")
+
+        except User.DoesNotExist:
+            messages.error(request, "We could not find an unverified account with that email.")
+            return redirect("register_view")
+
+    return redirect("verify_email")
+
 
 # logout
 @login_required(login_url='login')

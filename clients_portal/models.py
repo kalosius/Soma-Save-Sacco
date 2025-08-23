@@ -12,6 +12,9 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=15, unique=True)
     national_id = models.CharField(max_length=20, unique=True, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
+    is_verified = models.BooleanField(default=False)
+    otp_code = models.CharField(max_length=6, blank=True, null=True)
+    otp_created_at = models.DateTimeField(blank=True, null=True)
 
     GENDER_CHOICES = [
         ('Male', 'Male'),

@@ -44,6 +44,8 @@ urlpatterns = [
     path('profile/upload-photo/', views.upload_photo, name='upload_photo'),
     path('change-password/', views.change_password, name='change_password'),
 
+    path('verify-email/', views.verify_email, name='verify_email'),  # ✅ add this
+    path("resend-otp/", views.resend_otp, name="resend_otp"),
 
 
     # CVC and pdf
