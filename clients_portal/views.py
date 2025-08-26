@@ -823,7 +823,7 @@ def client_dashboard(request):
 # login
 def login_view(request):
     if request.method == 'POST':
-        identifier = request.POST.get('username')
+        identifier = request.POST.get('username').strip()
         password = request.POST.get('password')
 
         # Find username by email or directly
